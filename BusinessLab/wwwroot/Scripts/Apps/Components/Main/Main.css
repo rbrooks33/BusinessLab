@@ -1,0 +1,28 @@
+﻿.Main_Container_Style {
+    display: flex;
+/*    border: 1px solid green;
+*/    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    margin:30px;
+}
+.Main_Left_Style {
+/*    border: 1px solid red;
+*/    width: 35vw;
+}
+.Main_Right_Style {
+    padding:20px;
+/*    border: 1px solid blue;
+*/    width: 65vw;
+}
+.bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 200;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(15px);
+    display: none;
+}

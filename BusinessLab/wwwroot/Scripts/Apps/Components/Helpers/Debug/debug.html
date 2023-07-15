@@ -1,0 +1,94 @@
+﻿<script id="Bar" type="text/template">
+
+    <div id="divDebug" class="debugContainerStyle">
+        <div class="btn-group debugbuttongroup">
+            <div class="btn btn-primary" onclick="Apps.Components.Debug.ShowComponents();">Components</div>
+            <div class="btn btn-success" onclick="Apps.Components.Debug.ShowHTML();">HTML</div>
+            <div class="btn btn-warning" onclick="Apps.Components.Debug.ShowData();">Data</div>
+            <div class="btn btn-primary" onclick="Apps.Components.Debug.ShowTopology();">Topology</div>
+        </div>
+    </div>
+</script>
+
+
+
+<script id="Window" type="text/template">
+
+    <!--
+        0 = Component tree html
+        1 = Component detail 
+        2 = Preview
+    -->
+    <table>
+        <tr>
+            <td>{0}</td>
+            <td valign="top" style="padding-left:10px;">{1}</td>
+            <td valign="top" style="padding-left:10px;"><div id="debug_PreviewContainer">{2}</div></td>
+        </tr>
+    </table>
+
+</script>
+
+<script id="Preview" type="text/template">
+    <!--
+        0 = iFrame source    
+    -->
+    <div id="debug_PreviewIframe">
+        <iframe src="{0}" style="width: 850px; height: 600px;"></iframe>
+    </div>
+</script>
+
+<script id="ComponentsTab" type="text/template">
+
+    <div id="ComponentsTabstrip" data-type="tabstrip">
+        <div data-tabstrip-tabtitle="Components" data-tabstrip-templateid="ComponentsTab_MainTab"></div>
+    </div>
+
+</script>
+
+<script id="PreviewTab" type="text/template">
+
+    <div id="PreviewTabstrip" data-type="tabstrip">
+        <div data-tabstrip-tabtitle="Preview" data-tabstrip-templateid="PreviewTab_MainTab"></div>
+    </div>
+
+</script>
+
+<script id="ComponentEditorTabs" type="text/template">
+
+    <div id="ComponentEditorTabstrip" data-type="tabstrip">
+        <div data-tabstrip-tabtitle="HTML" data-tabstrip-templateid="ComponentEditor_HTMLTab"></div>
+        <div data-tabstrip-tabtitle="JS" data-tabstrip-templateid="ComponentEditor_JSTab"></div>
+        <div data-tabstrip-tabtitle="DATA" data-tabstrip-templateid="ComponentEditor_DataTab"></div>
+    </div>
+
+</script>
+
+<script id="Settings" type="text/template">
+
+    <h3>Apps Settings</h3>
+    <h4>Web Root</h4>
+    <input id="txtWebRoot" value="{0}" class="form-control" />
+    <h4>Port</h4>
+    <input id="txtPort" value="{1}" class="form-control" />
+    <h4>Virtual Folder</h4>
+    <input id="txtVirtualFolder" value="{2}" class="form-control" />
+    <h4>Apps Root</h4>
+    <input id="txtAppsRoot" value="{3}" class="form-control" />
+    <h4>Required Components</h4>
+    <input id="txtRequired" value="{4}" class="form-control" />
+
+</script>
+
+<script id="Debug_HTMLEditor" type="text/template">
+
+    <!--
+        0= templates    
+    -->
+    <div style="display:flex; flex-flow:row">
+        <div>left {0}</div>
+        <div>right</div>
+
+    </div>
+
+</script>
