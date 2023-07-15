@@ -178,7 +178,6 @@
         };
     },
     LoadSettings: function () {
-
         Apps.ApplyStringSearchAndReplaceExtension();
 
         let deployment = Apps.ActiveDeployment;
