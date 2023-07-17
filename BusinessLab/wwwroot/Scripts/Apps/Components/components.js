@@ -18,7 +18,7 @@
                 {
 
                     "Name": "Debug",
-                    "Load": false,
+                    "Load": true,
                     "UI": true,
                     "Initialize": true
                 },

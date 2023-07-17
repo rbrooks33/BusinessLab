@@ -3,7 +3,7 @@
 
         Initialize: function (callback) {
 
-            Me.UI.Show();
+            //Me.UI.Show();
 
             Apps.Data.RegisterMyGET(Me, 'AddComponent', '/api/CLI/AddComponent?relativePath={0}&name={1}', null, true);
             Apps.Data.RegisterMyGET(Me, 'RemoveComponent', '/api/CLI/RemoveComponent?relativePath={0}&name={1}', null, true);
