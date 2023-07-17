@@ -1,0 +1,57 @@
+﻿<div class="Home_Container">
+
+    <div class="HeaderContainer_DivStyle">
+
+        <img src="Images/logo144.png" style="height:37px;" />
+        <span class="Title_SpanStyle">Business</span>
+        <span class="SubTitle_SpanStyle">Lab</span>
+
+        <div class="dropdown">
+            <div class="btn btn-warning" style="margin-top: -2px;">Tools</div>
+            <div class="dropdown-content">
+                <a href="#" onclick="Apps.Components.Apps.Tools.Common.Show();">Common Tools</a>
+                <a href="#" onclick="Apps.Components.Apps.Publish.Tools.Show();">Permissions</a>
+                <a href="#" onclick="Apps.Components.Apps.Create.Templates.Show();">Templates</a>
+                <a href="#" onclick="Apps.Components.Helpers.Docs.Show();">Docs</a>
+                <a href="#" onclick="Apps.Components.Helpers.Login.Show();">Login</a>
+                <a href="#" onclick="Apps.Components.Journal.Show();">Journal</a>
+                <a href="#" onclick="Apps.Components.Helpers.Login.About();">About</a>
+            </div>
+        </div>
+
+        <div class="btn btn-warning" onclick="Apps.Components.Apps.Track.Events.ShowHide();" style="float:right;margin-right:5px;">Events</div>
+
+        <!--<div class="btn btn-success" onclick="Apps.connection.invoke('SendMessage', 'hi', 'ya');">Send</div>-->
+
+        <div class="dropdown">
+            <div class="btn btn-warning" style="margin-top: -2px;">New</div>
+            <div class="dropdown-content">
+                <a href="#" onclick="Apps.Components.Apps.Create.List('software');">Software</a>
+                <a href="#" onclick="Apps.Components.Apps.New('system');">New System</a>
+                <a href="#" onclick="Apps.Components.Apps.New('app');">New App</a>
+                <!--<a href="#" onclick="Apps.Components.Plan.Apps.Stories.New('story');">New Story</a>-->
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="btn-group HeadsUp_StageButtons">
+        <div class="btn btn-secondary Home_StageButtons_First"
+             onclick="Apps.Components.Home.Show();">Home</div>
+        <div class="btn btn-secondary"
+             onclick="Apps.Components.Home.Plan.Show();">Plan</div>
+        <div class="btn btn-secondary"
+             onclick="Apps.Components.Home.Create.Show();">Create</div>
+        <div class="btn btn-secondary"
+             onclick="Apps.Components.Home.Test.Show();">Test</div>
+        <div class="btn btn-secondary"
+             onclick="Apps.Components.Home.Publish.Show();">Publish</div>
+        <div class="btn btn-secondary Home_StageButtons_Last"
+             onclick="Apps.Components.Home.Track.Show();">Track</div>
+    </div>
+
+</div>
+<div class="HomeContent_Container Stage_Container">
+    home
+</div>

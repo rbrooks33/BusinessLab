@@ -74,10 +74,18 @@
             ]
         },
         {
-            "Name": "Main",
+            "Name": "Home",
             "Load": true,
             "UI": true,
-            "Initialize": true
+            "Initialize": true,
+            "Components": [
+                {
+                    "Name": "Plan",
+                    "Load": true,
+                    "UI": true,
+                    "Initialize": true
+                }
+            ]
         }
 
     ]

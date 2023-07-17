@@ -24,7 +24,14 @@
         },
         Show: function () {
 
-            Me.UI.Templates.Main_Template.Show();
+            Me.UI.Show();
+            Me.PutOnTop();
+        },
+        PutOnTop: function () {
+
+            $('.Stage_Container').css('z-index', '100');
+
+            $('.HomeContent_Container').css('z-index', '200');
 
         },
         HandleError: function (result) {
