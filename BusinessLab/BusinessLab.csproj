@@ -18,6 +18,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.9" />
+    <PackageReference Include="Quartz" Version="3.6.3" />
+    <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.6.3" />
+    <PackageReference Include="Quartz.Serialization.Json" Version="3.6.3" />
   </ItemGroup>
 
   <ItemGroup>
