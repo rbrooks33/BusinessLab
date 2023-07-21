@@ -17,7 +17,7 @@ builder.Services.AddQuartz(q =>
 	
 });
 
-builder.Services.AddSingleton<ISchedulerFactory, SchedulerFactory>();
+builder.Services.AddSingleton<WorkflowScheduler, WorkflowScheduler>();
 //builder.Services.AddQuartzServer(options =>
 //{
 //	options.WaitForJobsToComplete = true;
@@ -32,7 +32,7 @@ app.UseStaticFiles();
 app.Urls.Add("https://localhost:54322/");
 
 
-app.MapPost("/api", ([FromServices] Quartz.IScheduler scheduler, [FromBody] Result result) =>
+app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromBody] Result result) =>
 {
     try
     {
@@ -42,19 +42,20 @@ app.MapPost("/api", ([FromServices] Quartz.IScheduler scheduler, [FromBody] Resu
 
         if(requestName.Count() == 1)
         {
-            if(requestName.Single().Value == "TriggerStepJob")
+            switch (requestName.Single().Value)
             {
-                business.TriggerStepJob(ref result);
+                case "TriggerStepJob":  business.TriggerStepJob(ref result); break;
+                case "GetActions": Business.GetActions(ref result); break;
+                case "SaveAction": Business.SaveAction(ref result); break;
             }
         }
-        //Business.GetAreas(ref result);
     }
     catch (System.Exception ex)
     {
-        
+        result.FailMessages.Add("api exception: " + ex.ToString());
     }
 
-    return result;
+    return Newtonsoft.Json.JsonConvert.SerializeObject(result);
 
 });
 

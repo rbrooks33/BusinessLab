@@ -1,0 +1,126 @@
+﻿
+<script id="Admin_Editor_Actions_Max" type="text/template">
+
+    <!--
+        0 = action type id
+        1 = action type name
+        2 = action type description
+        3 = is custom
+        4 = sql 
+        5 = c#
+    -->
+    <div id="Admin_Editor_Actions_Max_Container_{0}" class="Admin_Editor_Actions_Max_Container">
+
+        <div style="float: right; margin-right: 20px; margin-top: 20px; color: #009500; font-weight: 700; cursor:pointer;"
+             onclick="Apps.Components.Helpers.Actions.CloseMax();">X</div>
+
+        <h4>Action #{0}: {1}</h4>
+        <p>{2}</p>
+
+        <h4>Unique ID</h4>
+        <input type="text" id="Admin_Editor_Actions_UniqueID" class="form-control" />
+
+        <h4>Variable Delimiter</h4>
+        <input type="text" id="Admin_Editor_Actions_VariableDelimiter" class="form-control" />
+
+        <span>SQL</span>
+        <input type="radio" id="Admin_Editor_Action_SqlRadio" name="editortype" value="sql" checked style="transform: scale(2); margin: 10px; font-size: 20px; cursor:pointer;"
+               onclick="Apps.Components.Helpers.Actions.SwitchType({0},'sql');" />
+        <span>C#</span>
+        <input type="radio" id="Admin_Editor_Action_CSharpRadio" name="editortype" value="csharp" style="transform: scale(2); margin: 10px; font-size: 20px; cursor:pointer;"
+               onclick="Apps.Components.Helpers.Actions.SwitchType({0},'csharp');" />
+
+        <h4 id="Admin_Editor_Actions_EditorTypeLabel">SQL</h4> <!--switches in code-->
+        
+    <!--Editor Types-->
+        <div id="Admin_Editor_Actions_Editor_SQL" class="EditorRadioStyle" style="width:100%;height:300px;">{4}</div>
+        <div id="Admin_Editor_Actions_Editor_CSHARP" class="EditorRadioStyle" style="width:100%;height:300px;">{5}</div>
+
+        <div class="btn-group" style="margin-top:10px;">
+            <div class="btn btn-warning" onclick="Apps.Components.Helpers.Actions.Save({0});">Save &amp; Generate Examples</div>
+            <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Actions.TestCode({0});">Test Code</div>
+            <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Actions.TestSql({0});">Test SQL</div>
+            <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Actions.TestPrint({0});">Test Print</div>
+        </div>
+
+        <h3>Output</h3>
+        <div id="Admin_Editor_Actions_Output" class="form-control" style="width:100%;"></div>
+
+        <h3>JavaScript/Postman</h3>
+        <textarea id="Admin_Editor_Actions_JS" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
+        <div class="btn btn-success" style="margin-bottom:10px;" onclick="Apps.Components.Helpers.Actions.RunJS({0});">Run</div>
+
+        <h3>T-SQL</h3>
+        <textarea id="Admin_Editor_Actions_TSQL" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
+        <div class="btn-group" style="margin-bottom:10px;">
+            <div class="btn btn-success" onclick="Apps.Components.Helpers.ReportsTable.TSQLRun({0});;">Run</div>
+        </div>
+
+        <h3>C#</h3>
+        <textarea id="Admin_Editor_Actions_CSHARP" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
+        <div class="btn-group" style="margin-bottom:10px;">
+            <div class="btn btn-success" onclick="Apps.Components.Main.Helpers.ReportsTable.CSHARPRun({0});;">Run</div>
+        </div>
+
+        <h4>Execution Result</h4>
+        <textarea id="Admin_Editor_EditSaveResult" class="form-control" style="width:100%;"></textarea>
+
+
+
+    </div>
+
+</script>
+
+<!--<script id="Admin_Editor_Max" type="text/template">-->
+
+    <!--
+        0 = report id
+        1 = workflow id
+        2 = report name
+        3 = report description
+        4 = sql (added in code)
+        5 = c# (added in code)
+    -->
+
+    <!--<div id="Admin_Editor_Max_Container_{0}" class="Admin_Editor_Max_Container">
+        <div style="float: right; margin-right: 20px; margin-top: 20px; color: #009500; font-weight: 700; cursor:pointer;"
+             onclick="Apps.Components.Admin.Editor.CloseMax();">X</div>
+
+        <h4>Visual #{0}: {2}</h4>
+        <p>{3}</p>
+
+        <h4>Format</h4>
+        <input type="text" class="form-control" style="width:400px;display:inline;" value="render" />
+
+        <h4>SQL</h4>
+        <div id="Admin_Editor_Edit_Sql" class="form-control" style="width:100%;height:300px;">{4}</div>
+        <div class="btn-group" style="margin-top:10px;">
+            <div class="btn btn-warning" onclick="Apps.Components.Admin.Editor.ReportSave({0});">Save &amp; Generate Examples</div>-->
+            <!--<div class="btn btn-success" onclick="Apps.Components.Admin.Editor.ReportsTable.ReportRun({0});;">Run</div>-->
+        <!--</div>
+
+        <h3>Power Apps/JavaScript/Postman</h3>
+        <textarea id="Admin_Editor_PACall" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
+        <div class="btn btn-success" style="margin-bottom:10px;" onclick="Apps.Components.Admin.Editor.ReportsTable.ReportRunPACall({0});">Run</div>
+
+        <h3>Visual Server</h3>
+        <textarea id="Admin_Editor_VisualCall" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
+        <div class="btn-group" style="margin-bottom:10px;">
+            <div class="btn btn-success" onclick="Apps.Components.Admin.Editor.ReportsTable.ReportRun({0},'render');;">Render</div>
+            <div class="btn btn-success" onclick="Apps.Components.Admin.Editor.ReportsTable.ReportRun({0},'html');">HTML</div>
+        </div>
+
+        <h3>T-SQL</h3>
+        <textarea id="Admin_Editor_TSQLCall" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
+        <div class="btn btn-success" style="margin-bottom:10px;" onclick="Apps.Components.Admin.Editor.ReportsTable.ReportRunTSQLCall({0});">Run</div>
+
+        <h3>Output</h3>
+        <div id="Admin_Editor_EditRunData" class="form-control" style="width:100%;"></div>
+
+        <h4>Execution Result</h4>
+        <textarea id="Admin_Editor_EditSaveResult" class="form-control" style="width:100%;"></textarea>
+
+
+
+    </div>
+</script>-->

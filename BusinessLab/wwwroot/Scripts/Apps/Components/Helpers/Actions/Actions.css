@@ -1,0 +1,12 @@
+﻿.Admin_Editor_Actions_Max_Container {
+    height: 90vh;
+    width: 90vw;
+    border: 3px solid #009500;
+    position: fixed;
+    border-radius: 10px;
+    background: white;
+    z-index: 300;
+    display: none;
+    padding: 20px;
+    overflow: auto;
+}

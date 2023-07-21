@@ -5,8 +5,8 @@
         Initialize: function (callback) {
 
             //Main: Used for internal methods
-            Apps.Data.RegisterMyPOST(Me, 'Main', Apps.ActiveDeployment.WebRoot + '/MainEvent', [], true);
-            Apps.Data.RegisterMyPOST(Me, 'MainAsync', Apps.ActiveDeployment.WebRoot + '/MainEvent', [], false);
+            Apps.Data.RegisterMyPOST(Me, 'Main', Apps.ActiveDeployment.WebRoot + '/api', [], true);
+            Apps.Data.RegisterMyPOST(Me, 'MainAsync', Apps.ActiveDeployment.WebRoot + '/api', [], false);
 
             //Actions (universal actions)
             Apps.Data.RegisterMyPOST(Me, 'Actions', Apps.ActiveDeployment.WebRoot + '/ActionsEvent', [], true);

@@ -10,6 +10,13 @@
             "Components": [
                 {
 
+                    "Name": "Actions",
+                    "Load": true,
+                    "UI": true,
+                    "Initialize": true
+                },
+               {
+
                     "Name": "Dialogs",
                     "Load": true,
                     "UI": true,

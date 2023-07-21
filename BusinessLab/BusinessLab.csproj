@@ -17,6 +17,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\Scripts\Apps\Components\Helpers\Actions\Actions.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Helpers\Actions\Controls\ActionsTable.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CS-Script" Version="4.8.1" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.9" />
     <PackageReference Include="Quartz" Version="3.6.3" />
     <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.6.3" />
