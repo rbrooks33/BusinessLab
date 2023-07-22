@@ -1,2 +1,2 @@
-# Business Lab
+# BusinessLab
 ### Business Software Factory
