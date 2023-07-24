@@ -4,6 +4,7 @@ using Quartz.Logging;
 using Quartz.Impl;
 using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
+using Quartz.Impl.Matchers;
 
 namespace BusinessLab
 {
@@ -16,7 +17,7 @@ namespace BusinessLab
 
 		public void Start()
 		{
-
+			var result = new Result();
 			//LogProvider.SetCurrentLogProvider(new ConsoleLogProvider());
 
 			var properties = new NameValueCollection();
@@ -37,9 +38,19 @@ namespace BusinessLab
 
 			_scheduler.Start();
 
-			
+
 			//Set up jobs
-			//var apjob = JobBuilder.Create<StepJob>().WithIdentity("ap1", "group3").Build();
+			var actions = Data.Execute<List<Actions.Action>>("SELECT * FROM Actions WHERE IsJob = 1", ref result);
+
+			foreach (var action in actions)
+			{
+				var job = JobBuilder
+					.Create<StepJob>()
+					.WithIdentity(action.ActionID.ToString(), "group3")
+					.Build();
+
+				_scheduler.ListenerManager.AddTriggerListener(new BusinessLab.StepListener());
+			}
 
 
 		}
