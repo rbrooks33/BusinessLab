@@ -1,4 +1,6 @@
 ﻿
+using Newtonsoft.Json;
+
 namespace BusinessLab
 {
     public class Actions
@@ -12,6 +14,8 @@ namespace BusinessLab
             public string? VariableDelimiter { get; set; }
             public string? Sql { get ; set; }
             public string? UniqueID { get; set; }
+            public bool IsJob { get; set; }
+            public int TriggerListenerActionID { get; set; }
         }
         public static void RunUniversalAction(dynamic props, ref Result result)
         {
@@ -24,7 +28,6 @@ namespace BusinessLab
 
                 if (result.Success)
                 {
-                    //var action = new Action();
 
                     if (action != null)
                     {
@@ -46,7 +49,7 @@ namespace BusinessLab
 
                                     dynamic script = CSScriptLib.CSScript.Evaluator.LoadMethod(
                                     $@"
-                                    public string Product(WebApplication1.Classes.BBContext db, dynamic props, ref WebApplication1.Models.Common.Result result)
+                                    public string Product(dynamic props, ref Result result)
                                     {{
                                         {code}           
                                     }}      
@@ -83,9 +86,9 @@ namespace BusinessLab
                                     }
                                 }
                                 sql = (String.IsNullOrEmpty(sql) ? "select 'empty sql'" : sql);
-                                
+
                                 Data.Execute(sql, ref result, parameters.ToArray());
-                                
+
                                 result.Success = true;
                             }
                             else result.FailMessages.Add("Arg Code null or empty.");
@@ -93,8 +96,6 @@ namespace BusinessLab
                         }
                         else
                             result.FailMessages.Add("action type " + action.ActionName + " has no handler.");
-
-                        //common.AddLog(iLogAppId, LogSeverities.Information, officeId, "Action:" + actionType.sActionType + ": " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "SuccessfullActionTest", hub);
 
                     }
                     else
@@ -115,24 +116,33 @@ namespace BusinessLab
             //        common.AddLog(iLogAppId, LogSeverities.Exception, officeId, "Universal Action Fails: " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "ActionFail", hub);
             //}
         }
-        public static void TestCode(dynamic props, ref Result result)
+        public static void TestCode(WorkflowScheduler scheduler, ref Result result)
         {
-            if (!String.IsNullOrEmpty(props.Code))
+            if (result.Data != null)
             {
-                dynamic script = CSScriptLib.CSScript.Evaluator.LoadMethod(
-                $@"
+                var action = JsonConvert.DeserializeObject<Actions.Action>(result.Data.ToString());
+
+                if (!String.IsNullOrEmpty(action.Code))
+                {
+                    dynamic script = CSScriptLib.CSScript.Evaluator.LoadMethod(
+                    $@"
                     
-                    public string Product(dynamic props, MiniApps.Classes.MiniAppsContext db, ref MiniApps.Models.Result result)
+                    public string Product(BusinessLab.Actions.Action action, BusinessLab.WorkflowScheduler scheduler, BusinessLab.Result result)
                     {{
-                        {props.Code}           
+                        {action.Code}           
                     }}      
                 ");
 
-                result.Data = script.Product(props, ref result);
-                result.Success = true;
+                    result.Data = script.Product(action, scheduler, result);
+                    result.Success = true;
+                }
+                else
+                    result.FailMessages.Add("Arg sCode empty.");
+
             }
             else
-                result.FailMessages.Add("Arg sCode empty.");
+                result.FailMessages.Add("Data obj is null");
+
         }
         public static void TestSql(dynamic props, ref Result result)
         {

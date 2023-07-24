@@ -79,7 +79,7 @@
                     Apps.Notify('success', 'Action added!');
                 }
                 else {
-                    Apps.Components.HandleError(post.Result);
+                    Apps.Components.Home.HandleError(post.Result);
                 }
             });
         },

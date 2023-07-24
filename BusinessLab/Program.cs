@@ -47,6 +47,7 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromBody] Resu
                 case "TriggerStepJob":  business.TriggerStepJob(ref result); break;
                 case "GetActions": Business.GetActions(ref result); break;
                 case "SaveAction": Business.SaveAction(ref result); break;
+                case "TestActionCode": Actions.TestCode(scheduler, ref result); break;
             }
         }
     }

@@ -29,8 +29,8 @@ namespace BusinessLab
                     var dt = new DataTable();
                     dt.Load(reader);
 
-                    returnObj = (T)Convert.ChangeType(result.Data, typeof(T));
                     result.Data = JsonConvert.SerializeObject(dt);
+					returnObj = JsonConvert.DeserializeObject<T>(result.Data.ToString()); // (T)Convert.ChangeType(result.Data, typeof(T));
                     result.Success = true;
 				}
 			}

@@ -32,7 +32,7 @@ namespace BusinessLab
             {
                 var action = JsonConvert.DeserializeObject<Actions.Action>(result.Data.ToString());
 
-                string sql = $"UPDATE Actions SET Sql = '{action.Sql}', Code = '{action.Code}', VariableDelimiter = '{action.VariableDelimiter}', UniqueID = '{action.UniqueID}', EditorType = '{action.EditorType}' WHERE ActionID = {action.ActionID}";
+                string sql = $"UPDATE Actions SET Sql = '{action.Sql.Replace("'", "''")}', Code = '{action.Code.Replace("'", "''")}', VariableDelimiter = '{action.VariableDelimiter}', UniqueID = '{action.UniqueID}', EditorType = '{action.EditorType}' WHERE ActionID = {action.ActionID}";
 
                 Data.Execute(sql, ref result);
             }
@@ -42,23 +42,24 @@ namespace BusinessLab
 
 		public void TriggerStepJob(ref Result result)
         {
-            var jobName = result.Params.Where(p => p.Name == "JobName").SingleOrDefault();
+            var actionId = result.Params.Where(p => p.Name == "ActionID").SingleOrDefault();
             var jobGroup = result.Params.Where(p => p.Name == "JobGroup").SingleOrDefault();
             var stepId = result.Params.Where(p => p.Name == "StepID").SingleOrDefault();
 
-            if (jobName != null && jobGroup != null && stepId != null)
+            if (actionId != null && jobGroup != null && stepId != null)
             {
 
 
-                var apjob = JobBuilder.Create<StepJob>().WithIdentity("ap1", "group3").Build();
+                var apjob = JobBuilder.Create<StepJob>().WithIdentity(actionId.Value, "group3").Build();
 
-                var aptrigger = TriggerBuilder.Create().WithIdentity("ap1", "group3").StartNow().Build();
+                var aptrigger = TriggerBuilder.Create().WithIdentity(actionId.Value, "group3").StartNow().Build();
 
                 
                 //StdSchedulerFactory factory = new StdSchedulerFactory();
                 //IScheduler scheduler = _scheduler..NewJob().GetScheduler().Result;
 
                 _scheduler.Scheduler.ScheduleJob(apjob, aptrigger);
+                //_scheduler.Scheduler.ScheduleJob()
             }
         }
     }

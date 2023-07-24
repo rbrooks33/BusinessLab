@@ -308,15 +308,25 @@
                 spuserid = Apps.Components.Auth.User.SPUserID;
             }
 
-            let myargs = {
-                Method: "TestCode",
-                iActionTypeID: actionid.toString(),
-                sCode: Me.CSharpEditor.getValue(),
-                OfficeID: officeId,
-                Email: email
+            //let myargs = {
+            //    Method: "TestCode",
+            //    iActionTypeID: actionid.toString(),
+            //    sCode: Me.CSharpEditor.getValue(),
+            //    OfficeID: officeId,
+            //    Email: email
+            //};
+
+            let args = {
+                Params: [
+                    { Name: 'RequestName', Value: 'TestActionCode' }
+                ],
+                Data: {
+                    ActionID: actionid.toString(),
+                    Code: Me.CSharpEditor.getValue()
+                }
             };
 
-            post.Refresh(myargs, [], function () {
+            post.Refresh(args, [], function () {
 
                 if (post.Success) {
                     Apps.Notify('success', 'Test Run Success!');
