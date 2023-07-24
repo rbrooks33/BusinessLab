@@ -15,107 +15,91 @@ namespace BusinessLab
             public string? Sql { get ; set; }
             public string? UniqueID { get; set; }
             public bool IsJob { get; set; }
-            public int TriggerListenerActionID { get; set; }
+            public int SuccessActionID { get; set; }
+            public string FailActionID { get; set;}
         }
-        public static void RunUniversalAction(dynamic props, ref Result result)
+        public static void RunAction(int actionId, ref Result result)
         {
+            result.Success = false; //reset
+
             string actionName = "[no name]";
-            string actionId = "0";
 
-            if (int.TryParse(props.ActionID.ToString(), out int actionid))
+            var action = Data.GetAction(actionId, ref result);
+
+            if (result.Success)
             {
-                var action = Data.Execute<Action>($"SELECT * FROM Actions WHERE ActionID = {actionid}", ref result);
 
-                if (result.Success)
+                if (action != null)
                 {
+                    actionName = action.ActionName;
 
-                    if (action != null)
+                    string editorType = action.EditorType.Trim().ToLower();
+
+                    if (editorType == "csharp")
                     {
-                        actionName = action.ActionName;
-                        actionId = action.ActionID.ToString();
-
-                        string editorType = action.EditorType.Trim().ToLower();
-
-                        if (editorType == "csharp")
+                        if (!String.IsNullOrEmpty(action.Code.Trim())
+                            && !String.IsNullOrEmpty(action.VariableDelimiter.Trim()))
                         {
-                            if (!String.IsNullOrEmpty(action.Code.Trim())
-                                && !String.IsNullOrEmpty(action.VariableDelimiter.Trim()))
+                            string code = action.Code;
+
+                            try
                             {
-                                string code = action.Code;
+                                result.Success = false; //reset
 
-                                try
-                                {
-                                    result.Success = false; //reset
-
-                                    dynamic script = CSScriptLib.CSScript.Evaluator.LoadMethod(
-                                    $@"
-                                    public string Product(dynamic props, ref Result result)
+                                dynamic script = CSScriptLib.CSScript.Evaluator.LoadMethod(
+                                $@"
+                                    public string Product(ref BusinessLab.Result result)
                                     {{
                                         {code}           
                                     }}      
                                 ");
-                                    //Action is a placeholder for back compat. and deprecated
-                                    result.Data = script.Product(props, ref result);
-                                    result.SuccessMessages.Add($"Action run success for #{actionid}. Result: {Newtonsoft.Json.JsonConvert.SerializeObject(result)}");
-                                    //common.AddLog(iLogAppId, LogSeverities.Information, officeId, $"Action run success for #{actiontypeid}. Result: {Newtonsoft.Json.JsonConvert.SerializeObject(result)} code: " + code, "", hub);
-                                    result.Success = true;
-                                }
-                                catch (Exception ex)
-                                {
-                                    result.FailMessages.Add($"Action run for #{actionid} exception: {ex.ToString()}");
-                                    //common.AddLog(iLogAppId, LogSeverities.Exception, officeId, $"Action run exception for #{actiontypeid}: {ex.ToString()}", "", hub);
-                                }
-                            }
-                            else result.FailMessages.Add("Arg sCode null or empty.");
-                        }
-                        else if (editorType == "sql")
-                        {
-                            if (!String.IsNullOrEmpty(action.Sql.Trim())
-                                && !String.IsNullOrEmpty(action.VariableDelimiter.Trim()))
-                            {
-                                string sql = action.Sql;
-
-                                var parameters = new List<Microsoft.Data.Sqlite.SqliteParameter>();
-
-                                if (props.Params != null)
-                                {
-                                    foreach (var p in props.Params)
-                                    {
-                                        var param = new Microsoft.Data.Sqlite.SqliteParameter(action.VariableDelimiter + p.Name.ToString(), p.Value.ToString());
-                                        parameters.Add(param);
-                                    }
-                                }
-                                sql = (String.IsNullOrEmpty(sql) ? "select 'empty sql'" : sql);
-
-                                Data.Execute(sql, ref result, parameters.ToArray());
-
+                                //Action is a placeholder for back compat. and deprecated
+                                result.Data = script.Product(ref result);
+                                result.SuccessMessages.Add($"Action run success for #{actionId}. Result: {Newtonsoft.Json.JsonConvert.SerializeObject(result)}");
+                                //common.AddLog(iLogAppId, LogSeverities.Information, officeId, $"Action run success for #{actiontypeid}. Result: {Newtonsoft.Json.JsonConvert.SerializeObject(result)} code: " + code, "", hub);
                                 result.Success = true;
                             }
-                            else result.FailMessages.Add("Arg Code null or empty.");
-
+                            catch (Exception ex)
+                            {
+                                result.FailMessages.Add($"Action run for #{actionId} exception: {ex.ToString()}");
+                                //common.AddLog(iLogAppId, LogSeverities.Exception, officeId, $"Action run exception for #{actiontypeid}: {ex.ToString()}", "", hub);
+                            }
                         }
-                        else
-                            result.FailMessages.Add("action type " + action.ActionName + " has no handler.");
+                        else result.FailMessages.Add("Arg sCode null or empty.");
+                    }
+                    else if (editorType == "sql")
+                    {
+                        if (!String.IsNullOrEmpty(action.Sql.Trim())
+                            && !String.IsNullOrEmpty(action.VariableDelimiter.Trim()))
+                        {
+                            string sql = action.Sql;
+
+                            var parameters = new List<Microsoft.Data.Sqlite.SqliteParameter>();
+
+                            foreach (var p in result.Params)
+                            {
+                                var param = new Microsoft.Data.Sqlite.SqliteParameter(action.VariableDelimiter + p.Name.ToString(), p.Value.ToString());
+                                parameters.Add(param);
+                            }
+
+                            Data.Execute(sql, ref result, parameters.ToArray());
+
+                            result.Success = true;
+                        }
+                        else result.FailMessages.Add("Arg Code null or empty.");
 
                     }
                     else
-                        result.FailMessages.Add("Action not found for id " + actionid.ToString());
+                        result.FailMessages.Add("action type " + action.ActionName + " has no handler.");
+
                 }
                 else
-                    result.FailMessages.Add("Getting action from db failed.");
+                    result.FailMessages.Add("Action not found for id " + actionId.ToString());
             }
             else
-                result.FailMessages.Add("iActionID not found in args.");
-
-            //common.AddLog(iLogAppId, LogSeverities.Information, officeId, actionName + $" Action (#{actionId})  Result: " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "UniversalActionResult", hub);
-            //if (result.FailMessages.Count > 0)
-            //{
-            //    if (result.Success)
-            //        common.AddLog(iLogAppId, LogSeverities.Warning, officeId, "Universal Action Warnings: " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "ActionSuccessWithFails", hub);
-            //    else
-            //        common.AddLog(iLogAppId, LogSeverities.Exception, officeId, "Universal Action Fails: " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "ActionFail", hub);
-            //}
+                result.FailMessages.Add("Getting action from db failed.");
         }
+
         public static void TestCode(WorkflowScheduler scheduler, ref Result result)
         {
             if (result.Data != null)

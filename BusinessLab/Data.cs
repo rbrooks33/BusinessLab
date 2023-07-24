@@ -7,7 +7,33 @@ namespace BusinessLab
 {
     public class Data
     {
-        public static T Execute<T>(string sql, ref Result result, SqliteParameter[]? parameters = null)
+		public static Actions.Action GetAction(string actionIdString, ref Result result)
+		{
+			var resultAction = new Actions.Action();
+
+			if (int.TryParse(actionIdString, out int actionId))
+			{
+				resultAction = GetAction(actionId, ref result);
+			}
+			else
+			{
+				result.FailMessages.Add("Unable to parse action string " + actionIdString);
+			}
+			return resultAction;
+		}
+
+		public static Actions.Action GetAction(int actionId, ref Result result)
+		{
+			var resultAction = new Actions.Action();
+
+			var actions = Data.Execute<List<Actions.Action>>($"SELECT * FROM Actions WHERE ActionID = {actionId}", ref result);
+			if (actions.Count() > 0)
+				resultAction = actions[0];
+
+			return resultAction;
+		}
+
+		public static T Execute<T>(string sql, ref Result result, SqliteParameter[]? parameters = null)
         {
             result.Success = false;
             T returnObj = default(T);

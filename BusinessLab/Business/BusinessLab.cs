@@ -40,6 +40,7 @@ namespace BusinessLab
                 result.FailMessages.Add("Data obj is null");
         }
 
+        //Trigger simple, start now
 		public void TriggerStepJob(ref Result result)
         {
             var actionId = result.Params.Where(p => p.Name == "ActionID").SingleOrDefault();
@@ -54,7 +55,8 @@ namespace BusinessLab
 
                 var aptrigger = TriggerBuilder.Create().WithIdentity(actionId.Value, "group3").StartNow().Build();
 
-                
+                aptrigger.JobDataMap.Add("result", result); // Newtonsoft.Json.JsonConvert.SerializeObject(result));
+
                 //StdSchedulerFactory factory = new StdSchedulerFactory();
                 //IScheduler scheduler = _scheduler..NewJob().GetScheduler().Result;
 
