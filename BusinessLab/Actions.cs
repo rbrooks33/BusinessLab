@@ -128,6 +128,7 @@ namespace BusinessLab
                 result.FailMessages.Add("Data obj is null");
 
         }
+
         public static void TestSql(dynamic props, ref Result result)
         {
             if (!String.IsNullOrEmpty(props.Sql.ToString().Trim())

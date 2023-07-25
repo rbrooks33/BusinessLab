@@ -10,6 +10,13 @@
             "Components": [
                 {
 
+                    "Name": "PushHub",
+                    "Load": true,
+                    "UI": false,
+                    "Initialize": true
+                },
+                {
+
                     "Name": "Actions",
                     "Load": true,
                     "UI": true,

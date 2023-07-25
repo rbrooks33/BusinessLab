@@ -3,21 +3,62 @@
 <head>
     <meta charset="utf-8" />
     <title>Business Lab</title>
-    
+
     <!--Ace-->
     <script src="Scripts/Apps/Resources/Ace/ace.js"></script>
     <script src="Scripts/Apps//Resources/Ace/theme-sqlserver.js" type="text/javascript" charset="utf-8"></script>
     <script src="Scripts/Apps/Resources/Ace/mode-sqlserver.js" type="text/javascript" charset="utf-8"></script>
     <script src="Scripts/Apps/Resources/Ace/mode-csharp.js" type="text/javascript" charset="utf-8"></script>
-    
+
+    <!--SignalR-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+
     <script src="Scripts/Apps/Apps.js"></script>
     <script>
         Apps.ComponentsReady = function () {
 
             Apps.Notify('success', 'Business Lab Actions is ready!');
-
+            Apps.Components.Helpers.PushHub.Connect();
             Apps.Components.Helpers.Actions.GetActions();
         }
+    </script>
+
+    <script>
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("/pushhub").build();
+
+        //Disable the send button until connection is established.
+        //document.getElementById("sendButton").disabled = true;
+
+        connection.on("ReceiveMessage", function (result) {
+            //var li = document.createElement("li");
+            //document.getElementById("messagesList").appendChild(li);
+            // We can assign user-supplied strings to an element's textContent because it
+            // is not interpreted as markup. If you're assigning in any other way, you
+            // should be aware of possible script injection concerns.
+            //li.textContent = `${user} says ${message}`;
+
+            var params = Enumerable.From(result.params).Where(p => p.name == 'TracePushName' && p.value == 'TestJob').ToArray();
+            if (params.length == 1)
+                Apps.Components.Helpers.Actions.TestCodeResult(result);
+        });
+
+        connection.start().then(function () {
+            //document.getElementById("sendButton").disabled = false;
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        //document.getElementById("sendButton").addEventListener("click", function (event) {
+        //    var user = document.getElementById("userInput").value;
+        //    var message = document.getElementById("messageInput").value;
+        //    connection.invoke("SendMessage", user, message).catch(function (err) {
+        //        return console.error(err.toString());
+        //    });
+        //    event.preventDefault();
+        //});
+
+
     </script>
 </head>
     <body>

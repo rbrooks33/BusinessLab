@@ -1,12 +1,22 @@
 ﻿.Admin_Editor_Actions_Max_Container {
-    height: 90vh;
-    width: 90vw;
+    height: 98vh;
+    width: 100%;
     border: 3px solid #009500;
-    position: fixed;
+    position: absolute;
+    top:0px;
     border-radius: 10px;
     background: white;
     z-index: 300;
     display: none;
     padding: 20px;
     overflow: auto;
+}
+.Actions_CloseMax {
+    float: right;
+    margin-right: 3px;
+    margin-top: -37px;
+    color: #009500;
+    font-weight: 300;
+    cursor: pointer;
+    font-size: 5rem;
 }

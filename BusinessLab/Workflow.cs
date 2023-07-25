@@ -5,11 +5,19 @@ using Quartz.Impl;
 using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
 using Quartz.Impl.Matchers;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BusinessLab
 {
 	public class WorkflowScheduler
 	{
+		//IHubContext<PushHub> _hub;
+
+		//public WorkflowScheduler(IHubContext<PushHub> hub)
+		//{
+		//	_hub = hub;
+		//}
+
 		public WorkflowScheduler()
 		{
 			this.Start();
@@ -39,18 +47,18 @@ namespace BusinessLab
 			_scheduler.Start();
 
 
-			//Set up jobs
-			var actions = Data.Execute<List<Actions.Action>>("SELECT * FROM Actions WHERE IsJob = 1", ref result);
+			////Set up jobs
+			//var actions = Data.Execute<List<Actions.Action>>("SELECT * FROM Actions WHERE IsJob = 1", ref result);
 
-			foreach (var action in actions)
-			{
-				var job = JobBuilder
-					.Create<StepJob>()
-					.WithIdentity(action.ActionID.ToString(), "group3")
-					.Build();
+			//foreach (var action in actions)
+			//{
+			//	var job = JobBuilder
+			//		.Create<StepJob>()
+			//		.WithIdentity(action.ActionID.ToString(), "group3")
+			//		.Build();
 
-				_scheduler.ListenerManager.AddTriggerListener(new BusinessLab.StepListener());
-			}
+			//	_scheduler.ListenerManager.AddTriggerListener(new BusinessLab.StepListener());
+			//}
 
 
 		}

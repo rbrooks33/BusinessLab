@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Simpl;
@@ -50,19 +51,33 @@ namespace BusinessLab
             if (actionId != null && jobGroup != null && stepId != null)
             {
 
+                _scheduler.Scheduler.DeleteJob(new JobKey(actionId.Value, jobGroup.Value));
 
-                var apjob = JobBuilder.Create<StepJob>().WithIdentity(actionId.Value, "group3").Build();
+    //            SendJobTraceMessage($"Creating and scheduling job and trigger #1{actionId.Value}");
 
-                var aptrigger = TriggerBuilder.Create().WithIdentity(actionId.Value, "group3").StartNow().Build();
+				//var apjob = JobBuilder.Create<StepJob>().WithIdentity(actionId.Value, "group3").Build();
 
-                aptrigger.JobDataMap.Add("result", result); // Newtonsoft.Json.JsonConvert.SerializeObject(result));
+    //            var aptrigger = TriggerBuilder.Create().WithIdentity(actionId.Value, "group3").StartNow().Build();
 
-                //StdSchedulerFactory factory = new StdSchedulerFactory();
-                //IScheduler scheduler = _scheduler..NewJob().GetScheduler().Result;
+    //            aptrigger.JobDataMap.Add("result", result); // Newtonsoft.Json.JsonConvert.SerializeObject(result));
 
-                _scheduler.Scheduler.ScheduleJob(apjob, aptrigger);
-                //_scheduler.Scheduler.ScheduleJob()
-            }
+    //            //StdSchedulerFactory factory = new StdSchedulerFactory();
+    //            //IScheduler scheduler = _scheduler..NewJob().GetScheduler().Result;
+				//SendJobTraceMessage($"Action #{actionId.Value} (step #{stepId.Value}) job created, triggered and scheduled.");
+
+    //            _scheduler.Scheduler.ScheduleJob(apjob, aptrigger);
+				////_scheduler.Scheduler.ScheduleJob()
+
+			}
+		}
+        public static void SendJobTraceMessage(string message)
+        {
+            var messageResult = new Result();
+            messageResult.Params.Add(new Param { Name = "TracePushName", Value = "TestJob" });
+            messageResult.Params.Add(new Param { Name = "RequestName", Value = "SendMessage" });
+            messageResult.Message = message; // $"Starting to execute job {actionId}";
+            PushHub.SendMessageByService(messageResult);
+
         }
     }
 }

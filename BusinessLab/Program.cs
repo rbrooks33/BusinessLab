@@ -1,6 +1,8 @@
 using BusinessLab;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Data.Sqlite;
+using Newtonsoft.Json;
 using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,20 +24,26 @@ builder.Services.AddSingleton<WorkflowScheduler, WorkflowScheduler>();
 //{
 //	options.WaitForJobsToComplete = true;
 //});
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseDefaultFiles(new DefaultFilesOptions { DefaultFileNames = new List<string> { "index.html" } });
 app.UseStaticFiles();
+app.MapHub<PushHub>("/pushhub");
 
 app.Urls.Add("https://localhost:54322/");
 
 
-app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromBody] Result result) =>
+app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]IHubContext <PushHub> hub, [FromBody] Result result) =>
 {
     try
     {
+        
+        //hub.Clients.All.SendAsync(JsonConvert.SerializeObject(result));
+        //PushHub.SendMessage(hub, result);
+
         var business = new Business(scheduler);
 
         var requestName = result.Params.Where(p => p.Name == "RequestName");
@@ -48,6 +56,7 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromBody] Resu
                 case "GetActions": Business.GetActions(ref result); break;
                 case "SaveAction": Business.SaveAction(ref result); break;
                 case "TestActionCode": Actions.TestCode(scheduler, ref result); break;
+                case "SendMessage": PushHub.SendMessage(hub, result, result.Message); break;
             }
         }
     }

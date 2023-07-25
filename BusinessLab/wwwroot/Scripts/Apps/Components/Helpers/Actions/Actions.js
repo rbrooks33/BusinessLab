@@ -98,10 +98,10 @@
             $(document.body).append(maxHtml);
 
 
-            Apps.Util.CenterAbsolute($('.Admin_Editor_Actions_Max_Container'));
-            Apps.Util.MiddleAbsolute($('.Admin_Editor_Actions_Max_Container'));
+            //Apps.Util.CenterAbsolute($('.Admin_Editor_Actions_Max_Container'));
+            //Apps.Util.MiddleAbsolute($('.Admin_Editor_Actions_Max_Container'));
 
-            $('.Admin_Editor_Actions_Max_Container').css('position', 'fixed').show(400);
+            $('.Admin_Editor_Actions_Max_Container').show(400);
 
             Apps.Components.Home.ShowBackground();
 
@@ -338,6 +338,11 @@
             });
 
 
+        },
+        TestCodeResult: function (result) {
+            let output = $('#Admin_Editor_Actions_Output').html();
+            output = result.message + '<br />' + output;
+            $('#Admin_Editor_Actions_Output').html(output);
         },
         TestSql: function (actionid) {
 
