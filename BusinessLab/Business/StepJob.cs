@@ -10,6 +10,13 @@ namespace BusinessLab
 {
     public class StepJob : IJob
     {
+        //WorkflowScheduler _scheduler;
+
+        //public StepJob(WorkflowScheduler scheduler)
+        //{
+        //    _scheduler = scheduler;
+        //}
+
         Task IJob.Execute(IJobExecutionContext context)
         {
             var result = new Result();
@@ -21,7 +28,7 @@ namespace BusinessLab
             {
                 result = (Result)context.Trigger.JobDataMap.Where(jm => jm.Key == "result").FirstOrDefault().Value;
                 
-                Business.SendJobTraceMessage($"Executing job #{name} action");
+                Business.SendJobTraceMessage($"Executing Action #{name}.");
 
                 //Get job action and run
                 var action = Data.GetAction(name, ref result);
@@ -32,26 +39,67 @@ namespace BusinessLab
 
                     if (!result.Success)
                     {
-                        string failString = $"Failed executing job {name}. Result: {JsonConvert.SerializeObject(result)}";
-						Business.SendJobTraceMessage(failString);
-						throw new JobExecutionException(failString);
+                        //Run fail action
+                        Business.SendJobTraceMessage($"Failed executing Action #{name}. Checking for Fail Action...");
+
+                        if (action.FailActionID > 0)
+                        {
+                            var failJob = JobBuilder.Create<StepJob>().WithIdentity(action.FailActionID.ToString(), "group3").Build();
+                            
+                            var failTrigger = TriggerBuilder.Create().WithIdentity(action.FailActionID.ToString(), "group3").StartNow().Build();
+
+                            failTrigger.JobDataMap.Add("result", result); 
+
+                            context.Scheduler.ScheduleJob(failJob, failTrigger);
+                        }
+                        else
+                            Business.SendJobTraceMessage($"No fail action for #{action.ActionID}");
                     }
                     else
-						Business.SendJobTraceMessage($"Success running action for job #{name}!");
-				}
+                    {
+                        //Run success action
+                        Business.SendJobTraceMessage($"Success running Action #{name}! Checking for Success Action...");
+                        
+                        if (action.SuccessActionID > 0)
+                        {
+							var successJob = JobBuilder.Create<StepJob>().WithIdentity(action.SuccessActionID.ToString(), "group3").Build();
+							
+                            var successTrigger = TriggerBuilder.Create().WithIdentity(action.SuccessActionID.ToString(), "group3").StartNow().Build();
 
+							successTrigger.JobDataMap.Add("result", result); // Newtonsoft.Json.JsonConvert.SerializeObject(result));
+
+							context.Scheduler.ScheduleJob(successJob, successTrigger);
+						}
+					}
+				}
             }
             catch (Exception ex)
             {
-                //TODO: log via web service & text file as backup
-                result.FailMessages.Add(ex.ToString());
-                string failMessage = $"Job for action name {name} exception. Result: {Newtonsoft.Json.JsonConvert.SerializeObject(result)}";
+                string failMessage = $"Action #{name} exception: {ex}.";
 				Business.SendJobTraceMessage(failMessage);
 				throw new JobExecutionException(failMessage);
             }
             return Task.CompletedTask;
         }
-    }
+        private int GetStepID(Result result)
+        {
+			int stepId = 0;
+
+			var stepParam = result.Params.Where(p => p.Name != null && p.Name.ToLower() == "stepid").FirstOrDefault();
+			if (stepParam != null)
+			{
+				int.TryParse(stepParam.Value, out stepId);
+
+				if (stepId == 0)
+					result.FailMessages.Add("StepID was not numeric.");
+			}
+			else
+				result.FailMessages.Add("No StepID param to log");
+
+            return stepId;
+		}
+	}
+    
     public class StepListener : ITriggerListener
     {
 		//IHubContext<PushHub> _hub;
@@ -65,54 +113,54 @@ namespace BusinessLab
 
         public Task TriggerComplete(ITrigger trigger, IJobExecutionContext context, SchedulerInstruction triggerInstructionCode, CancellationToken cancellationToken = default)
         {
-            var result = new Result();
+    //        var result = new Result();
 
-            try
-            {
-                //throw new NotImplementedException();
-                result = (Result)context.Trigger.JobDataMap.Where(jm => jm.Key == "result").FirstOrDefault().Value; //new Result();
+    //        try
+    //        {
+    //            //throw new NotImplementedException();
+    //            result = (Result)context.Trigger.JobDataMap.Where(jm => jm.Key == "result").FirstOrDefault().Value; //new Result();
 
-                //Get the job action from the name (actionid) and see if it fires an action on success
-                var action = Data.GetAction(trigger.JobKey.Name, ref result);
+    //            //Get the job action from the name (actionid) and see if it fires an action on success
+    //            var action = Data.GetAction(trigger.JobKey.Name, ref result);
 
-                if (action.ActionID > 0 && action.SuccessActionID > 0)
-                {
-                    var successAction = Data.GetAction(action.SuccessActionID, ref result);
+    //            if (action.ActionID > 0 && action.SuccessActionID > 0)
+    //            {
+    //                var successAction = Data.GetAction(action.SuccessActionID, ref result);
 
-                    Actions.RunAction(successAction.ActionID, ref result);
+    //                Actions.RunAction(successAction.ActionID, ref result);
 
-                    //TODO: Log
-                    string message = $"Triggered action #{successAction.ActionID} '{successAction.ActionName}' successful.";
-					Business.SendJobTraceMessage(message);
-					result.SuccessMessages.Add(message);
+    //                //TODO: Log
+    //                string message = $"Triggered action #{successAction.ActionID} '{successAction.ActionName}' successful.";
+				//	Business.SendJobTraceMessage(message);
+				//	result.SuccessMessages.Add(message);
 
-                    int stepId = 0;
+    //                int stepId = 0;
 
-                    var stepParam = result.Params.Where(p => p.Name.ToLower() == "stepid").FirstOrDefault();
-                    if (stepParam != null)
-                    {
-                        int.TryParse(stepParam.Value, out stepId);
+    //                var stepParam = result.Params.Where(p => p.Name.ToLower() == "stepid").FirstOrDefault();
+    //                if (stepParam != null)
+    //                {
+    //                    int.TryParse(stepParam.Value, out stepId);
                         
-                        if (stepId == 0)
-                            result.FailMessages.Add("StepID was not numeric.");
-                    }
-                    else
-                        result.FailMessages.Add("No StepID param to log");
+    //                    if (stepId == 0)
+    //                        result.FailMessages.Add("StepID was not numeric.");
+    //                }
+    //                else
+    //                    result.FailMessages.Add("No StepID param to log");
 
-					Business.SendJobTraceMessage($"Trigger for job {successAction.ActionName}, step {stepId} successfull.");
-					Logs.Add(stepId, "Trigger Successful", Newtonsoft.Json.JsonConvert.SerializeObject(result), ref result, Logs.LogSeverity.Info);
-                }
-                else
-                {
-                    //TODO: Log
-                }
-            }
-            catch (Exception ex)
-            {
-				//TODO: Log
-				Business.SendJobTraceMessage($"Trigger {context.Trigger.JobKey.Name} exception: {ex.ToString()}");
-				Logs.Add(0, "Trigger Complete Exception", ex.ToString(), ref result, Logs.LogSeverity.Exception);
-            }
+				//	Business.SendJobTraceMessage($"Trigger for job {successAction.ActionName}, step {stepId} successfull.");
+				//	Logs.Add(stepId, "Trigger Successful", Newtonsoft.Json.JsonConvert.SerializeObject(result), ref result, Logs.LogSeverity.Info);
+    //            }
+    //            else
+    //            {
+    //                //TODO: Log
+    //            }
+    //        }
+    //        catch (Exception ex)
+    //        {
+				////TODO: Log
+				//Business.SendJobTraceMessage($"Trigger {context.Trigger.JobKey.Name} exception: {ex.ToString()}");
+				//Logs.Add(0, "Trigger Complete Exception", ex.ToString(), ref result, Logs.LogSeverity.Exception);
+    //        }
             return Task.CompletedTask;
         }
 

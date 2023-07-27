@@ -16,7 +16,7 @@ namespace BusinessLab
             public string? UniqueID { get; set; }
             public bool IsJob { get; set; }
             public int SuccessActionID { get; set; }
-            public string FailActionID { get; set;}
+            public int FailActionID { get; set;}
         }
         public static void RunAction(int actionId, ref Result result)
         {
@@ -61,7 +61,7 @@ namespace BusinessLab
                             }
                             catch (Exception ex)
                             {
-                                result.FailMessages.Add($"Action run for #{actionId} exception: {ex.ToString()}");
+                                result.FailMessages.Add($"Action run for #{actionId} exception: {ex}");
                                 //common.AddLog(iLogAppId, LogSeverities.Exception, officeId, $"Action run exception for #{actiontypeid}: {ex.ToString()}", "", hub);
                             }
                         }

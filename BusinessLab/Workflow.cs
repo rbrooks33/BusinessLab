@@ -47,18 +47,22 @@ namespace BusinessLab
 			_scheduler.Start();
 
 
-			////Set up jobs
-			//var actions = Data.Execute<List<Actions.Action>>("SELECT * FROM Actions WHERE IsJob = 1", ref result);
+			//Set up jobs
+			var actions = Data.Execute<List<Actions.Action>>("SELECT * FROM Actions WHERE IsJob = 1", ref result);
 
-			//foreach (var action in actions)
-			//{
-			//	var job = JobBuilder
-			//		.Create<StepJob>()
-			//		.WithIdentity(action.ActionID.ToString(), "group3")
-			//		.Build();
+			foreach (var action in actions)
+			{
+				_scheduler.UnscheduleJob(new TriggerKey(action.ActionID.ToString(), "group3"));
+				_scheduler.DeleteJob(new JobKey(action.ActionID.ToString(), "group3"));
 
-			//	_scheduler.ListenerManager.AddTriggerListener(new BusinessLab.StepListener());
-			//}
+				var job = JobBuilder
+					.Create<StepJob>()
+					.WithIdentity(action.ActionID.ToString(), "group3")
+					.Build();
+
+				
+				_scheduler.ListenerManager.AddTriggerListener(new BusinessLab.StepListener());
+			}
 
 
 		}

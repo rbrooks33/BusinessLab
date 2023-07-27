@@ -340,9 +340,10 @@
 
         },
         TestCodeResult: function (result) {
-            let output = $('#Admin_Editor_Actions_Output').html();
-            output = result.message + '<br />' + output;
-            $('#Admin_Editor_Actions_Output').html(output);
+            let output = $('#Admin_Editor_Actions_Output').text();
+            let message = result.message; //.replace(':', '='); //.replace('}', '}}');
+            output = Apps.Util.Now() + ' ' + message + '\n' + output;
+            $('#Admin_Editor_Actions_Output').text(output);
         },
         TestSql: function (actionid) {
 

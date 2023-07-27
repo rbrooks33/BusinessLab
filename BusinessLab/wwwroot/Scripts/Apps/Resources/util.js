@@ -461,7 +461,7 @@
                 mm = '0' + mm
             }
 
-            today = yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + mn + ':' + sec + '.' + mil + '-07:00';
+            today = yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + mn + ':' + sec + '.' + mil; // + '-07:00';
 
             return today;
         },

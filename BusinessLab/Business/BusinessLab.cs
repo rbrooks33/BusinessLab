@@ -51,25 +51,25 @@ namespace BusinessLab
             if (actionId != null && jobGroup != null && stepId != null)
             {
 
-                _scheduler.Scheduler.DeleteJob(new JobKey(actionId.Value, jobGroup.Value));
+                //_scheduler.Scheduler.DeleteJob(new JobKey(actionId.Value, jobGroup.Value));
 
-    //            SendJobTraceMessage($"Creating and scheduling job and trigger #1{actionId.Value}");
+                SendJobTraceMessage($"Creating and scheduling Action #{actionId.Value}");
 
-				//var apjob = JobBuilder.Create<StepJob>().WithIdentity(actionId.Value, "group3").Build();
+                var apjob = JobBuilder.Create<StepJob>().WithIdentity(actionId.Value, jobGroup.Value).Build();
 
-    //            var aptrigger = TriggerBuilder.Create().WithIdentity(actionId.Value, "group3").StartNow().Build();
+                var aptrigger = TriggerBuilder.Create().WithIdentity(actionId.Value, jobGroup.Value).StartNow().Build();
 
-    //            aptrigger.JobDataMap.Add("result", result); // Newtonsoft.Json.JsonConvert.SerializeObject(result));
+                aptrigger.JobDataMap.Add("result", result); // Newtonsoft.Json.JsonConvert.SerializeObject(result));
 
-    //            //StdSchedulerFactory factory = new StdSchedulerFactory();
-    //            //IScheduler scheduler = _scheduler..NewJob().GetScheduler().Result;
-				//SendJobTraceMessage($"Action #{actionId.Value} (step #{stepId.Value}) job created, triggered and scheduled.");
+                //StdSchedulerFactory factory = new StdSchedulerFactory();
+                //IScheduler scheduler = _scheduler..NewJob().GetScheduler().Result;
 
-    //            _scheduler.Scheduler.ScheduleJob(apjob, aptrigger);
-				////_scheduler.Scheduler.ScheduleJob()
+                _scheduler.Scheduler.ScheduleJob(apjob, aptrigger);
+                //_scheduler.Scheduler.ScheduleJob()
+                SendJobTraceMessage($"Action #{actionId.Value} (step #{stepId.Value}) created and scheduled.");
 
-			}
-		}
+            }
+        }
         public static void SendJobTraceMessage(string message)
         {
             var messageResult = new Result();
