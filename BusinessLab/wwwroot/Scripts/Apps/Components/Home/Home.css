@@ -4,6 +4,9 @@
     justify-content:center;
     z-index:100;
 }
+.Home_Stage_Title {
+    font-size: 4rem;
+}
 .HeaderContainer_DivStyle {
     width: 100%;
     height: 51px;

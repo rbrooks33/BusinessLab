@@ -98,7 +98,14 @@
                     "Load": true,
                     "UI": true,
                     "Initialize": true
+                },
+                {
+                    "Name": "Create",
+                    "Load": true,
+                    "UI": true,
+                    "Initialize": true
                 }
+
             ]
         }
 

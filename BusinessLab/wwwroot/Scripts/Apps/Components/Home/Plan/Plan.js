@@ -12,7 +12,7 @@
         },
         PutOnTop: function () {
             $('.Stage_Container').css('z-index', '100');
-            $(Me.UI.Selector).css('z-index', '200');
+            $('.Plan_Container').css('z-index', '200');
         }
 
     };
