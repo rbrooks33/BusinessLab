@@ -33,10 +33,13 @@ define(['./util.js'], function (Util) {
                 if (ts.id === tabstripId) {
 
                     //Custom css file e.g. 'tabstripEditor-tabstrip-custom'
-                    var newTabstripHTML = $('<div class="css3-tabstrip ' + tabstripId + '-tabstrip-custom"><ul></ul> </div>');
-
-                    //if (newTabstripHTML.length === 0)
+                    //var newTabstripHTML = $('<div class="css3-tabstrip ' + tabstripId + '-tabstrip-custom"><ul></ul> </div>');
+                    //var test =              $('#contentCreate > div > div:nth-child(3)')
+                    //if (newTabstripHTML.length == 0)
+                    if ($('.' + tabstripId + '-tabstrip-custom').length == 0)
                     {
+                        let newTabstripHTML = $('<div class="css3-tabstrip ' + tabstripId + '-tabstrip-custom"><ul></ul> </div>');
+
                         //INSERT TABS & CONTENT
                         //Content element id is by convention: template id + 'Content' (e.g. 'templateTabLayoutContent')
                         $.each($(ts).children(), function (tabIndex, tab) {
