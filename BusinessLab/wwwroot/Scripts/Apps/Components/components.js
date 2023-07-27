@@ -1,7 +1,20 @@
 {
     "Components": [
        
-      
+        {
+            "Name": "Kentico",
+            "Load": true,
+            "UI": false,
+            "Initialize": true,
+            "Components": [
+                {
+
+                    "Name": "Apply",
+                    "Load": true,
+                    "UI": true,
+                    "Initialize": true
+                }]
+        },
         {
             "Name": "Helpers",
             "Load": true,
