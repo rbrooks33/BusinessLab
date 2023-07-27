@@ -9,3 +9,5 @@ Properties/
 /BusinessLab/appsettings.json
 /BusinessLab/appsettings.Development.json
 /BusinessLab/Properties/launchSettings.json
+/BusinessLab/businesslab.db
+/BusinessLab/businesslab_scheduler.sqbpro
