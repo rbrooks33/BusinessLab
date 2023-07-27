@@ -59,31 +59,29 @@
                 Me.CSharpEditor.resize();
             }
         },
-        GetActions: function () {
+        GetActions: function (selector) {
 
             let post = Apps.Components.Home.Main;
 
-            //let args = {
-            //    Method: "GetActions"
-            //};
             let args = {
                 "Params":
                     [
-                        {
-                            "Name": "RequestName", "Value": "GetActions"
-                        }
+                        { "Name": "RequestName", "Value": "GetActions" }
                     ]
             };
+
             post.Refresh(args, [], function () {
 
                 if (post.Success) {
                     var actions = post.Data;
                     var actionsTable = Me.ActionsTable.Create(actions);
-                    $('#Admin_Editor_ActionsTable_Container').html(actionsTable);
+
+                    //Drop
+                    selector.html(actionsTable);
+
                 }
                 else
                     Apps.Components.Main.HandleError(post.Result);
-
             });
         },
         Edit: function (args) {

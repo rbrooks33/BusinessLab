@@ -19,7 +19,7 @@
 
             Apps.Notify('success', 'Business Lab Actions is ready!');
             Apps.Components.Helpers.PushHub.Connect();
-            Apps.Components.Helpers.Actions.GetActions();
+            Apps.Components.Helpers.Actions.GetActions($('#Admin_Editor_ActionsTable_Container'));
         }
     </script>
 
