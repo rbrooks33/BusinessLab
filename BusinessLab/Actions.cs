@@ -8,6 +8,7 @@ namespace BusinessLab
         public class Action
         {
             public string? ActionName { get; set; }
+            public string? ActionDescription { get; set; }
             public int ActionID { get; set; }
             public string? EditorType { get; set; }
             public string? Code { get; set; }
@@ -17,6 +18,11 @@ namespace BusinessLab
             public bool IsJob { get; set; }
             public int SuccessActionID { get; set; }
             public int FailActionID { get; set;}
+            public string? SuccessActionDescription { get; set; }
+            public string? FailActionDescription { get;set; }
+            public int RepeatQuantity { get; set; }
+            public int RepeatIntervalSeconds { get; set; }
+            public string? CronSchedule { get; set; }
         }
         public static void RunAction(int actionId, ref Result result)
         {

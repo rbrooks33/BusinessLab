@@ -5,9 +5,10 @@
         0 = action type id
         1 = action type name
         2 = action type description
-        3 = is custom
+        3 = is job
         4 = sql 
         5 = c#
+        6 = job disabled button
     -->
     <div id="Admin_Editor_Actions_Max_Container_{0}" class="Admin_Editor_Actions_Max_Container">
 
@@ -39,8 +40,12 @@
             <div class="btn btn-warning" onclick="Apps.Components.Helpers.Actions.Save({0});">Save &amp; Generate Examples</div>
             <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Actions.TestCode({0});">Test Code</div>
             <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Actions.TestSql({0});">Test SQL</div>
-            <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Actions.TestPrint({0});">Test Print</div>
+            <button type="button" class="btn btn-secondary" {6} onclick="Apps.Components.Helpers.Actions.TestJob({0});">Test Job</button>
         </div>
+
+        <!--<div style="display: inline; font-size: 22px; vertical-align: bottom; margin-left: 6px;">
+            Is Job <input id="Actions_IsJob_Checkbox" type="checkbox" {3} />
+        </div>-->
 
         <h3>Output</h3>
         <textarea id="Admin_Editor_Actions_Output" class="form-control" style="width:100%;"></textarea>

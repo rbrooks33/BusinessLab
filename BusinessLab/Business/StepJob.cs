@@ -21,7 +21,7 @@ namespace BusinessLab
         {
             var result = new Result();
 
-            string group = context.JobDetail.Key.Group;
+            //string group = context.JobDetail.Key.Group;
             string name = context.JobDetail.Key.Name;
 
             try
@@ -44,6 +44,8 @@ namespace BusinessLab
 
                         if (action.FailActionID > 0)
                         {
+                            Business.SendJobTraceMessage($"Found action #{ action.FailActionID.ToString()}");
+
                             var failJob = JobBuilder.Create<StepJob>().WithIdentity(action.FailActionID.ToString(), "group3").Build();
                             
                             var failTrigger = TriggerBuilder.Create().WithIdentity(action.FailActionID.ToString(), "group3").StartNow().Build();
@@ -62,6 +64,8 @@ namespace BusinessLab
                         
                         if (action.SuccessActionID > 0)
                         {
+							Business.SendJobTraceMessage($"Found action #{action.SuccessActionID.ToString()}");
+
 							var successJob = JobBuilder.Create<StepJob>().WithIdentity(action.SuccessActionID.ToString(), "group3").Build();
 							
                             var successTrigger = TriggerBuilder.Create().WithIdentity(action.SuccessActionID.ToString(), "group3").StartNow().Build();
@@ -81,23 +85,23 @@ namespace BusinessLab
             }
             return Task.CompletedTask;
         }
-        private int GetStepID(Result result)
-        {
-			int stepId = 0;
+  //      private int GetStepID(Result result)
+  //      {
+		//	int stepId = 0;
 
-			var stepParam = result.Params.Where(p => p.Name != null && p.Name.ToLower() == "stepid").FirstOrDefault();
-			if (stepParam != null)
-			{
-				int.TryParse(stepParam.Value, out stepId);
+		//	var stepParam = result.Params.Where(p => p.Name != null && p.Name.ToLower() == "stepid").FirstOrDefault();
+		//	if (stepParam != null)
+		//	{
+		//		int.TryParse(stepParam.Value, out stepId);
 
-				if (stepId == 0)
-					result.FailMessages.Add("StepID was not numeric.");
-			}
-			else
-				result.FailMessages.Add("No StepID param to log");
+		//		if (stepId == 0)
+		//			result.FailMessages.Add("StepID was not numeric.");
+		//	}
+		//	else
+		//		result.FailMessages.Add("No StepID param to log");
 
-            return stepId;
-		}
+  //          return stepId;
+		//}
 	}
     
     public class StepListener : ITriggerListener

@@ -33,7 +33,24 @@ namespace BusinessLab
             {
                 var action = JsonConvert.DeserializeObject<Actions.Action>(result.Data.ToString());
 
-                string sql = $"UPDATE Actions SET Sql = '{action.Sql.Replace("'", "''")}', Code = '{action.Code.Replace("'", "''")}', VariableDelimiter = '{action.VariableDelimiter}', UniqueID = '{action.UniqueID}', EditorType = '{action.EditorType}' WHERE ActionID = {action.ActionID}";
+                string sql = @$"
+                
+                UPDATE Actions SET 
+                    ActionName = '{action.ActionName}',
+                    ActionDescription = '{action.ActionDescription}',
+                    Sql = '{action.Sql.Replace("'", "''")}', 
+                    Code = '{action.Code.Replace("'", "''")}', 
+                    VariableDelimiter = '{action.VariableDelimiter}', 
+                    UniqueID = '{action.UniqueID}', 
+                    EditorType = '{action.EditorType}',
+                    FailActionDescription = '{action.FailActionDescription}',
+                    SuccessActionDescription = '{action.SuccessActionDescription}',
+                    RepeatQuantity = {action.RepeatQuantity},
+                    RepeatIntervalSeconds = {action.RepeatIntervalSeconds},
+                    CronSchedule = {action.CronSchedule}
+
+                WHERE 
+                    ActionID = {action.ActionID}";
 
                 Data.Execute(sql, ref result);
             }
@@ -42,38 +59,69 @@ namespace BusinessLab
         }
 
         //Trigger simple, start now
-		public void TriggerStepJob(ref Result result)
+		public void TriggerJob(ref Result result)
         {
             var actionId = result.Params.Where(p => p.Name == "ActionID").SingleOrDefault();
-            var jobGroup = result.Params.Where(p => p.Name == "JobGroup").SingleOrDefault();
-            var stepId = result.Params.Where(p => p.Name == "StepID").SingleOrDefault();
+            
+            IJobDetail? apJob = null;
+            ITrigger? apTrigger = null;
 
-            if (actionId != null && jobGroup != null && stepId != null)
+            if (actionId != null) 
             {
-
-                //_scheduler.Scheduler.DeleteJob(new JobKey(actionId.Value, jobGroup.Value));
 
                 SendJobTraceMessage($"Creating and scheduling Action #{actionId.Value}");
 
-                var apjob = JobBuilder.Create<StepJob>().WithIdentity(actionId.Value, jobGroup.Value).Build();
+                var action = Data.GetAction(actionId.Value, ref result);
+                
+                apJob = JobBuilder.Create<StepJob>().WithIdentity(actionId.Value, "group3").Build();
 
-                var aptrigger = TriggerBuilder.Create().WithIdentity(actionId.Value, jobGroup.Value).StartNow().Build();
+                if (String.IsNullOrEmpty(action.CronSchedule))
+                {
+                    if(action.RepeatQuantity > 0)
+                    {
+                        //Simple, with intervaled repeat
+                        SendJobTraceMessage($"Configuring Action #{action.ActionID} to repeat {action.RepeatQuantity} times every {action.RepeatIntervalSeconds} seconds.");
+                        apTrigger = TriggerBuilder.Create().WithSimpleSchedule(t =>
+                        {
+                            t.WithRepeatCount(action.RepeatQuantity)
+                            .WithInterval(TimeSpan.FromSeconds(action.RepeatIntervalSeconds));
 
-                aptrigger.JobDataMap.Add("result", result); // Newtonsoft.Json.JsonConvert.SerializeObject(result));
+                        }).Build();
+                    }
+                    else
+                    {
+						//Simple, immediate
+						SendJobTraceMessage($"Configuring Action #{action.ActionID} for a single, immediate execution.");
+						apTrigger = TriggerBuilder.Create().WithIdentity(actionId.Value, "group3")
+                            .StartNow()
+                            .Build();
+                    }
+                }
+                else
+                {
+					//Use Cron
+					SendJobTraceMessage($"Configuring Action #{action.ActionID} with the Cron schedule:{action.CronSchedule}.");
+					apTrigger = TriggerBuilder.Create().WithIdentity(actionId.Value, "group3")
+                        .WithCronSchedule(action.CronSchedule)
+                        .Build();
+                }
 
-                //StdSchedulerFactory factory = new StdSchedulerFactory();
-                //IScheduler scheduler = _scheduler..NewJob().GetScheduler().Result;
+                if (apJob != null && apTrigger != null)
+                {
+                    apTrigger.JobDataMap.Add("result", result); //append data
+                    
+                    _scheduler.Scheduler.ScheduleJob(apJob, apTrigger);
 
-                _scheduler.Scheduler.ScheduleJob(apjob, aptrigger);
-                //_scheduler.Scheduler.ScheduleJob()
-                SendJobTraceMessage($"Action #{actionId.Value} (step #{stepId.Value}) created and scheduled.");
-
+                    SendJobTraceMessage($"Action #{actionId.Value} created and scheduled.");
+                }
+                else
+                    result.FailMessages.Add($"Either job or trigger was null for job #{actionId}");
             }
         }
         public static void SendJobTraceMessage(string message)
         {
             var messageResult = new Result();
-            messageResult.Params.Add(new Param { Name = "TracePushName", Value = "TestJob" });
+            messageResult.Params.Add(new Param { Name = "PushName", Value = "TestJob" });
             messageResult.Params.Add(new Param { Name = "RequestName", Value = "SendMessage" });
             messageResult.Message = message; // $"Starting to execute job {actionId}";
             PushHub.SendMessageByService(messageResult);

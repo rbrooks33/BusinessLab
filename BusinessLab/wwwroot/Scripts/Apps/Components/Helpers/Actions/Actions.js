@@ -91,7 +91,7 @@
         OpenMax: function () {
 
             let action = Me.SelectedAction; // JSON.parse(unescape(actionString));
-            let maxHtml = Me.UI.Templates.Admin_Editor_Actions_Max.HTML([action.ActionID, action.ActionName, action.ActionDescription, action.IsCustom, action.Sql == null ? '' :action.Sql, action.Code]);
+            let maxHtml = Me.UI.Templates.Admin_Editor_Actions_Max.HTML([action.ActionID, action.ActionName, action.ActionDescription, action.IsJob ? 'checked' : '', action.Sql == null ? '' :action.Sql, action.Code, action.IsJob ? '' : 'disabled']);
 
             $(document.body).append(maxHtml);
 
@@ -279,13 +279,14 @@
                     Code: csharpValue,
                     VariableDelimiter: $('#Admin_Editor_Actions_VariableDelimiter').val(),
                     UniqueID: $('#Admin_Editor_Actions_UniqueID').val(),
-                    EditorType: editorType
+                    EditorType: editorType,
+                    IsJob: $('#Actions_IsJob_Checkbox').prop('checked') ? 1 : 0
                 }
             };
             post.Refresh(args, [], function () {
 
                 if (post.Success) {
-                    Apps.Notify('success', 'Saved!');
+                    Apps.Notify('success', 'Saved! Please refresh actions until Rodney implements two-way binding :)');
                 }
                 else {
                     Apps.Components.Home.HandleError(post.Result);
@@ -296,23 +297,6 @@
         TestCode: function (actionid) {
 
             let post = Apps.Components.Home.Main;
-            let officeId = '12345abc';
-            let email = 'sdfssdfs';
-            let spuserid = 0;
-
-            if (Apps.Components.Auth && Apps.Components.Auth.SignedIn) {
-                officeId = Apps.Components.Auth.User.localAccountId;
-                email = Apps.Components.Auth.Email;
-                spuserid = Apps.Components.Auth.User.SPUserID;
-            }
-
-            //let myargs = {
-            //    Method: "TestCode",
-            //    iActionTypeID: actionid.toString(),
-            //    sCode: Me.CSharpEditor.getValue(),
-            //    OfficeID: officeId,
-            //    Email: email
-            //};
 
             let args = {
                 Params: [
@@ -334,10 +318,38 @@
                     Apps.Components.Home.HandleError(post.Result);
                 }
             });
-
-
         },
-        TestCodeResult: function (result) {
+        TestJob: function (actionid) {
+
+            let post = Apps.Components.Home.Main;
+
+            let args = {
+                "Params":
+                    [
+                        { "Name": "RequestName", "Value": "TriggerJob" },
+                        { "Name": "ActionID", "Value": actionid.toString() }
+                    ]
+            };
+
+            post.Refresh(args, [], function () {
+                //do nothing, async, multi-step process handles via push messages
+            });
+
+            //    if (post.Success) {
+            //        //Apps.Notify('success', 'Test Run Success!');
+            //        //$('#Admin_Editor_Actions_Output').val(post.Data);
+            //    }
+            //    else {
+            //        Apps.Components.Home.HandleError(post.Result);
+            //    }
+            //});
+
+            //push response handler
+            Apps.Components.Helpers.PushHub.Subscriber().Subscribe('TestJob', function (result) {
+                Me.TestJobResult(result);
+            });
+        },
+        TestJobResult: function (result) {
             let output = $('#Admin_Editor_Actions_Output').text();
             let message = result.message; //.replace(':', '='); //.replace('}', '}}');
             output = Apps.Util.Now() + ' ' + message + '\n' + output;
@@ -424,7 +436,6 @@
         },
         SwitchType: function (actionid, type) {
 
-
             Me.SelectedAction.sEditorType = type;
             $('.EditorRadioStyle').prop('checked', false);
             $("#Admin_Editor_Actions_Editor_SQL").hide();
@@ -444,7 +455,24 @@
             }
 
             //Me.Save(actionid); //Don't ever do this again
-        }
+        },
+    //    ToggleIsJob: function () {
+
+    //        let isJobChecked = $('#Actions_IsJob_Checkbox').prop('checked');
+
+    //        let post = Apps.Components.Home.Main;
+    //        let args = {
+    //            Params: [
+    //                { Name: 'RequestAction', Value: 'UpdateActionIsJob' },
+    //                { Name: 'IsJob', Value: isJobChecked.toString() }
+    //            ]
+    //        };
+
+    //        post.Refresh(args, [], function () {
+    //            if (!post.Success)
+    //                Apps.Components.Home.HandleError(post.Result);
+    //        });
+    //    }
     };
     return Me;
 });

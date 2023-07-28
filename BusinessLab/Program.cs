@@ -48,17 +48,22 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 
         var requestName = result.Params.Where(p => p.Name == "RequestName");
 
-        if(requestName.Count() == 1)
+        if (requestName.Count() == 1)
         {
             switch (requestName.Single().Value)
             {
-                case "TriggerStepJob":  business.TriggerStepJob(ref result); break;
+                case "TriggerJob": business.TriggerJob(ref result); break;
                 case "GetActions": Business.GetActions(ref result); break;
                 case "SaveAction": Business.SaveAction(ref result); break;
                 case "TestActionCode": Actions.TestCode(scheduler, ref result); break;
                 case "SendMessage": PushHub.SendMessage(hub, result, result.Message); break;
+
+                    default: result.FailMessages.Add("No handler for requestname value " + requestName.Single().Value); 
+                    break;
             }
         }
+        else
+            result.FailMessages.Add("RequestName param not found.");
     }
     catch (System.Exception ex)
     {
