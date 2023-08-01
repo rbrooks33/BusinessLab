@@ -1000,8 +1000,8 @@
             data: formData,
             async: false,
             cache: false,
-            contentType: 'application/pdf',
-            enctype: 'multipart/form-data',
+            //enctype: 'application/pdf',
+            contentType: 'multipart/form-data',
             processData: false,
             success: function (response) {
 

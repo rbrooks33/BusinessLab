@@ -15,7 +15,7 @@
                     {
                         text: 'Add Action',
                         actionclick: function () {
-                            Apps.Components.Helpers.Actions.ActionsTable.Add(arguments);
+                            Apps.Components.Helpers.Actions.ActionsTable.Add();
                         }
                     }
                 ],
@@ -80,12 +80,14 @@
         GetColumn: function (fieldname, text, formatFunction) {
             return { fieldname: fieldname, text: text, format : formatFunction };
         },
-        Add: function (args) {
+        Add: function () {
 
             let post = Apps.Components.Home.Main;
 
             let myargs = {
-                Method:"AddAction"
+                Params: [
+                    { Name: "RequestName", Value: "AddAction" }
+                ]
 
             };
 
@@ -122,6 +124,10 @@
             //        Apps.Components.Home.HandleError(post.Result);
             //    }
             //});
+
+            action.ActionName = Apps.Components.Helpers.Actions.SelectedAction.ActionName;
+            action.ActionDescription = Apps.Components.Helpers.Actions.SelectedAction.ActionDescription;
+            action.UniqueID = Apps.Components.Helpers.Actions.SelectedAction.UniqueID;
 
             let args = {
                 Params: [
