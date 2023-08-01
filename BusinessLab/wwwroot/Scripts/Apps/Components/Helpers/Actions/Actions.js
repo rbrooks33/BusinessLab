@@ -81,7 +81,7 @@
 
                 }
                 else
-                    Apps.Components.Main.HandleError(post.Result);
+                    Apps.Components.Home.HandleError(post.Result);
             });
         },
         Edit: function (args) {
@@ -89,6 +89,7 @@
             Me.OpenMax();
         },
         OpenMax: function () {
+
 
             let action = Me.SelectedAction; // JSON.parse(unescape(actionString));
             let maxHtml = Me.UI.Templates.Admin_Editor_Actions_Max.HTML([action.ActionID, action.ActionName, action.ActionDescription, action.IsJob ? 'checked' : '', action.Sql == null ? '' :action.Sql, action.Code, action.IsJob ? '' : 'disabled']);
@@ -109,7 +110,7 @@
             Me.InitializeEditors(action);
 
             $('#Admin_Editor_Actions_VariableDelimiter').val(action.VariableDelimiter)
-            $('#Admin_Editor_Actions_UniqueID').val(action.UniqueID)
+            //$('#Admin_Editor_Actions_UniqueID').val(action.UniqueID)
 
             if (action.EditorType) {
                 Me.SwitchType(action.ActionID, action.EditorType.trim());
@@ -149,6 +150,9 @@
                 $("#Admin_Editor_Actions_Editor_CSHARP").width('99%');
                 Me.Resize();
             }, 1000);
+
+            Apps.Bind.DataBindControls(Me.SelectedAction, 'Action', Apps.Components.Helpers.Controls);
+
         },
         CloseMax: function () {
             $('.Admin_Editor_Actions_Max_Container').hide(400);
@@ -269,20 +273,27 @@
             //    ]
             //}
 
+            let action = Me.SelectedAction;
+            action.Sql = sqlValue;
+            action.Code = csharpValue;
+            action.EditorType = editorType;
+
             let args = {
                 Params: [
                     { Name: 'RequestName', Value: 'SaveAction'}
                 ],
-                Data: {
-                    ActionID: actionid.toString(),
-                    Sql: sqlValue,
-                    Code: csharpValue,
-                    VariableDelimiter: $('#Admin_Editor_Actions_VariableDelimiter').val(),
-                    UniqueID: $('#Admin_Editor_Actions_UniqueID').val(),
-                    EditorType: editorType,
-                    IsJob: $('#Actions_IsJob_Checkbox').prop('checked') ? 1 : 0
-                }
+                Data: action
             };
+            //    Data: {
+            //        ActionID: actionid.toString(),
+
+            //        Sql: sqlValue,
+            //        Code: csharpValue,
+            //        VariableDelimiter: $('#Admin_Editor_Actions_VariableDelimiter').val(),
+            //        UniqueID: action.UniqueID, //$('#Admin_Editor_Actions_UniqueID').val(),
+            //        EditorType: editorType,
+            //        IsJob: $('#Actions_IsJob_Checkbox').prop('checked') ? 1 : 0
+            //    }
             post.Refresh(args, [], function () {
 
                 if (post.Success) {

@@ -18,16 +18,35 @@
         <p>{2}</p>
 
         <h4>Unique ID</h4>
-        <input type="text" id="Admin_Editor_Actions_UniqueID" class="form-control" />
+        <input type="text" 
+               id="Admin_Editor_Actions_UniqueID" 
+               data-bind-type="Action" 
+               data-bind-property="UniqueID" 
+               class="form-control" />
 
         <h4>Variable Delimiter</h4>
-        <input type="text" id="Admin_Editor_Actions_VariableDelimiter" class="form-control" />
+        <input type="text" 
+               id="Admin_Editor_Actions_VariableDelimiter" 
+               data-bind-type="Action" 
+               data-bind-property="VariableDelimiter" 
+               class="form-control" />
 
         <span>SQL</span>
-        <input type="radio" id="Admin_Editor_Action_SqlRadio" name="editortype" value="sql" checked style="transform: scale(2); margin: 10px; font-size: 20px; cursor:pointer;"
+        <input type="radio" 
+               id="Admin_Editor_Action_SqlRadio" 
+               name="editortype" 
+               data-bind-type="Action" 
+               data-bind-property="EditorType" 
+               value="sql" checked style="transform: scale(2); margin: 10px; font-size: 20px; cursor:pointer;"
                onclick="Apps.Components.Helpers.Actions.SwitchType({0},'sql');" />
         <span>C#</span>
-        <input type="radio" id="Admin_Editor_Action_CSharpRadio" name="editortype" value="csharp" style="transform: scale(2); margin: 10px; font-size: 20px; cursor:pointer;"
+        <input type="radio" 
+               id="Admin_Editor_Action_CSharpRadio" 
+               name="editortype" 
+               data-bind-type="Action" 
+               data-bind-property="EditorType" 
+               value="csharp" 
+               style="transform: scale(2); margin: 10px; font-size: 20px; cursor:pointer;"
                onclick="Apps.Components.Helpers.Actions.SwitchType({0},'csharp');" />
 
         <h4 id="Admin_Editor_Actions_EditorTypeLabel">SQL</h4> <!--switches in code-->
