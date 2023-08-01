@@ -19,12 +19,14 @@ namespace BusinessLab
         {
             string sql = "SELECT * FROM Areas";
             Data.Execute(sql, ref result);
+			result.Success = true;
         }
 
 		public static void GetActions(ref Result result)
 		{
 			string sql = "SELECT * FROM Actions";
 			Data.Execute(sql, ref result);
+            result.Success = true;
 		}
         
         public static void SaveAction(ref Result result)
@@ -53,10 +55,17 @@ namespace BusinessLab
                     ActionID = {action.ActionID}";
 
                 Data.Execute(sql, ref result);
+				result.Success = true;
             }
             else
                 result.FailMessages.Add("Data obj is null");
         }
+        public static void AddAction(ref Result result)
+        {
+            string sql = $"INSERT INTO Actions (ActionName) VALUES ('new action')";
+            Data.Execute(sql, ref result);
+			result.Success = true;
+		}
 
         //Trigger simple, start now
 		public void TriggerJob(ref Result result)
