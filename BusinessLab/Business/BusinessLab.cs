@@ -80,6 +80,10 @@ namespace BusinessLab
 
                 SendJobTraceMessage($"Creating and scheduling Action #{actionId.Value}");
 
+                string correlationId = Guid.NewGuid().ToString();
+
+                result.Params.Add(new Param {  Name = "CorrelationID", Value = correlationId });
+
                 var action = Data.GetAction(actionId.Value, ref result);
                 
                 apJob = JobBuilder.Create<StepJob>().WithIdentity(actionId.Value, "group3").Build();
