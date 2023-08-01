@@ -20,7 +20,7 @@ namespace BusinessLab
             string sql = "SELECT * FROM Areas";
             Data.Execute(sql, ref result);
 			result.Success = true;
-        }
+		}
 
 		public static void GetActions(ref Result result)
 		{
@@ -49,14 +49,14 @@ namespace BusinessLab
                     SuccessActionDescription = '{action.SuccessActionDescription}',
                     RepeatQuantity = {action.RepeatQuantity},
                     RepeatIntervalSeconds = {action.RepeatIntervalSeconds},
-                    CronSchedule = {action.CronSchedule}
+                    CronSchedule = '{action.CronSchedule}'
 
                 WHERE 
                     ActionID = {action.ActionID}";
 
                 Data.Execute(sql, ref result);
 				result.Success = true;
-            }
+			}
             else
                 result.FailMessages.Add("Data obj is null");
         }
@@ -86,7 +86,7 @@ namespace BusinessLab
 
                 var action = Data.GetAction(actionId.Value, ref result);
                 
-                apJob = JobBuilder.Create<StepJob>().WithIdentity(actionId.Value, "group3").Build();
+                apJob = JobBuilder.Create<StepJob>().WithIdentity(actionId.Value, correlationId).Build();
 
                 if (String.IsNullOrEmpty(action.CronSchedule))
                 {
@@ -105,7 +105,7 @@ namespace BusinessLab
                     {
 						//Simple, immediate
 						SendJobTraceMessage($"Configuring Action #{action.ActionID} for a single, immediate execution.");
-						apTrigger = TriggerBuilder.Create().WithIdentity(actionId.Value, "group3")
+						apTrigger = TriggerBuilder.Create().WithIdentity(actionId.Value, correlationId)
                             .StartNow()
                             .Build();
                     }
@@ -114,7 +114,7 @@ namespace BusinessLab
                 {
 					//Use Cron
 					SendJobTraceMessage($"Configuring Action #{action.ActionID} with the Cron schedule:{action.CronSchedule}.");
-					apTrigger = TriggerBuilder.Create().WithIdentity(actionId.Value, "group3")
+					apTrigger = TriggerBuilder.Create().WithIdentity(actionId.Value, correlationId)
                         .WithCronSchedule(action.CronSchedule)
                         .Build();
                 }
@@ -126,7 +126,9 @@ namespace BusinessLab
                     _scheduler.Scheduler.ScheduleJob(apJob, apTrigger);
 
                     SendJobTraceMessage($"Action #{actionId.Value} created and scheduled.");
-                }
+
+					result.Success = true;
+				}
                 else
                     result.FailMessages.Add($"Either job or trigger was null for job #{actionId}");
             }
@@ -136,7 +138,7 @@ namespace BusinessLab
             var messageResult = new Result();
             messageResult.Params.Add(new Param { Name = "PushName", Value = "TestJob" });
             messageResult.Params.Add(new Param { Name = "RequestName", Value = "SendMessage" });
-            messageResult.Message = message; // $"Starting to execute job {actionId}";
+			messageResult.Message = message; // $"Starting to execute job {actionId}";
             PushHub.SendMessageByService(messageResult);
 
         }

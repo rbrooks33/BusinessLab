@@ -84,7 +84,7 @@ namespace BusinessLab
 					dt.Load(reader);
 
 					result.Data = dt;
-					result.Success = true;
+					//result.Success = true;
 				}
 			}
 		}

@@ -1,5 +1,8 @@
 ﻿
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
+using BusinessLab;
 
 namespace BusinessLab
 {
@@ -24,9 +27,17 @@ namespace BusinessLab
             public int RepeatIntervalSeconds { get; set; }
             public string? CronSchedule { get; set; }
         }
+        public static string _myusings = @"
+            using BusinessLab;
+            using System.Linq;
+            using System.Collections.Generic;
+            using Newtonsoft.Json;
+        ";
         public static void RunAction(int actionId, ref Result result)
         {
-            result.Success = false; //reset
+			System.Collections.Generic.List<BusinessLab.Param> params2 = result.Params.Where(p => p.Name == "FirstName").ToList();
+
+			result.Success = false; //reset
 
             string actionName = "[no name]";
 
@@ -54,6 +65,8 @@ namespace BusinessLab
 
                                 dynamic script = CSScriptLib.CSScript.Evaluator.LoadMethod(
                                 $@"
+                                    {_myusings}
+
                                     public string Product(ref BusinessLab.Result result)
                                     {{
                                         {code}           
@@ -116,7 +129,8 @@ namespace BusinessLab
                 {
                     dynamic script = CSScriptLib.CSScript.Evaluator.LoadMethod(
                     $@"
-                    
+                    {_myusings}
+
                     public string Product(BusinessLab.Actions.Action action, BusinessLab.WorkflowScheduler scheduler, BusinessLab.Result result)
                     {{
                         {action.Code}           
