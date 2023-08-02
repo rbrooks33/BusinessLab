@@ -1551,6 +1551,50 @@ define(['./util.js'], function (Util) {
             };
 
             return result;
+        },
+        GetField: function (name, edittype) {
+
+            //var callback = objCallback;
+            //var save = null;
+            //if (callback) {
+            save = function () {
+                //let mycallback = callback;
+                arguments[1][arguments[5]] = $(arguments[2]).val(); //save to obj property
+                arguments[4](arguments[1]);
+            };
+            //}
+            return {
+                name: name,
+                editclick: function () { },
+                saveclick: save,
+                edittype: edittype ? edittype : 'text'
+            }
+        },
+        GetColumn: function (fieldname, text, formatFunction) {
+            return { fieldname: fieldname, text: text, format: formatFunction };
+        },
+        ShowChildren: function (childTableName, parentIdFieldName, parentNameFieldName, parent, parentRow, setDataFunction) {
+
+            //Look for row under Test Plan. If not there, create it. If there, detach it.
+            let childRowId = childTableName + '_Row_' + parent[parentIdFieldName]; //create a unique row id
+            let childRow = $('#' + childRowId);
+            let childCellId = childRowId + '_Cell'; //Where the html goes
+
+            //Insert row under parent if it's not there yet
+            if (childRow.length == 0) {
+
+                //insert child table below parent row (adjust col span as needed)
+                childRow = $('<tr id="' + childRowId + '" style="display:none;"><td id="' + childCellId + '" colspan="6"></td></tr>');
+                $(parentRow).after(childRow);
+            }
+
+            setDataFunction(parent, parentIdFieldName, parent[parentNameFieldName], childCellId);
+
+            if (childRow.css('display') == 'none' || childRow.css('display') == undefined)
+                childRow.show(500);
+            else
+                childRow.hide(500);
+
         }
 
     };
