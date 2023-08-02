@@ -97,7 +97,22 @@
                     "Name": "Plan",
                     "Load": true,
                     "UI": true,
-                    "Initialize": true
+                    "Initialize": true,
+                    "Components": [
+                        {
+                            "Name": "Areas",
+                            "Load": true
+                        },
+                        {
+                            "Name": "Workflows",
+                            "Load": true
+                        },
+                        {
+                            "Name": "Steps",
+                            "Load": true
+                        }
+
+                    ]
                 },
                 {
                     "Name": "Create",

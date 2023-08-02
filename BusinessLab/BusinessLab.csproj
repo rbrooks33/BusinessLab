@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\Scripts\Apps\Components\Home\Plan\AreasTable.js" />
+    <Content Remove="wwwroot\Scripts\Apps\Components\Home\Plan\Steps\Steps.js" />
+    <Content Remove="wwwroot\Scripts\Apps\Components\Home\Plan\Workflows\Workflows.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="START_ME_UP.bat" />
   </ItemGroup>
 
@@ -21,6 +27,9 @@
     <None Include="wwwroot\Scripts\Apps\Components\Helpers\Actions\Actions.js" />
     <None Include="wwwroot\Scripts\Apps\Components\Helpers\Actions\Controls\ActionsTable.js" />
     <None Include="wwwroot\Scripts\Apps\Components\Helpers\PushHub\PushHub.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Plan\Areas\Areas.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Plan\Steps\Steps.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Plan\Workflows\Workflows.js" />
   </ItemGroup>
 
   <ItemGroup>

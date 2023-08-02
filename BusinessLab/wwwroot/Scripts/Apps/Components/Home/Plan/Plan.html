@@ -1,7 +1,150 @@
 ﻿
-    <div class="Plan_Container Stage_Container">
+<div id="Plan_Container" class="Plan_Container Stage_Container">
+    <div class="Home_Stage_Title">Plan</div>
+    <div id="Plan_Area_Container"></div>
+</div>
 
-        <div class="Home_Stage_Title">Plan</div>
+<script id="Plan_Area_AccordionWrapper" type="text/template">
+
+    <!--
+
+        0 = Area html
+
+    -->
+    <div>
+
+        <div class="Plan_Areas_Table">
+            <div style="margin-left:5px;">
+                <h3>Areas</h3>
+            </div>
+            <div class="so-accordion-wrapper">
+                {0}
+            </div>
+        </div>
+        <!-- Accordion example
+        <div class="so-accordion-wrapper">
+            <div class="so-tab">
+                <input id="so-tab-1" type="checkbox" name="tabs"> <label for="so-tab-1">INGREDIENTS</label>
+                <div class="so-tab-content">
+                    <p>Yes</p>
+                </div>
+            </div>
+            <div class="so-tab">
+                <input id="so-tab-2" type="checkbox" name="tabs"> <label for="so-tab-2">PRECAUTION</label>
+                <div class="so-tab-content">
+                    <p>No</p>
+                </div>
+            </div>
+        </div>
+            -->
     </div>
-    
 
+</script>
+
+
+<script id="Plan_Area_Accordion" type="text/template">
+
+    <!--
+
+        0 = Area id
+        1 = area name
+        3 = area content
+    -->
+
+    <div class="so-tab">
+        <input id="so-tab-{0}" type="checkbox" name="tabs"> <label for="so-tab-{0}">#{0} {1}</label>
+        <div class="so-tab-content">
+            <p>{2}</p>
+        </div>
+    </div>
+
+</script>
+
+<script id="Plan_Area_Content" type="text/template">
+
+    <!--
+        0 = Area ID
+        1 = area name
+        2 = content
+        -->
+    <h5>{1} Workflows</h5>
+    {2}
+</script>
+
+
+<script id="Plan_Workflow_Thumbnail" type="text/template">
+
+    <!--
+        0 = workflow id
+        1 = workflow name
+        2 = thumbnail url
+        3 = app obj
+        4 = image display
+        5 = app description
+    -->
+
+    <div id="Plan_Workflow-Thumbnail_Container_{0}" class="Plan_Workflow_Thumbnail_Container">
+
+        <div class="dropdown" onmouseover="Apps.Components.Home.Plan.ShowMenu();" onmouseout="Apps.Components.Home.Plan.HideMenu();" style="position: relative; right: -9px; top: -17px;">
+            <i class="fa-solid fa-ellipsis"></i>
+            <!--<div class="dropdown-content">
+                <a href="#" onclick="Apps.Components.ATEC.IT.MySpecialty.Max('{3}');">Open</a>
+                <a href="#" onclick="Apps.Components.ATEC.IT.MySpecialty.ShowSettings('{3}',0);">Settings</a>
+                <a href="#" onclick="Apps.Components.ATEC.IT.MySpecialty.Icon('{3}');">Pin Icon</a>
+                <a href="#" onclick="Apps.Components.ATEC.IT.MySpecialty.Mid('{3}');">Pin Medium View</a>
+            </div>-->
+        </div>
+
+
+
+        <div style="font-size:15px; font-weight:lighter;">#{0} {1}</div>
+        <!--<div style="font-size:x-small;">{5}</div>-->
+        <!--<img id="MySpecialty_Thumbnail_Image_{1}" src="{2}" title="{0} Thumbnail" style="display:{4}; width: 10vw; height: 10vh;" />-->
+        <div id="MySpecialty_MiniAppStatus_Container_{1}" style="display:none;position:absolute;bottom:5px;">
+            <div id="MySpecialty_MiniAppStatus_Good_{1}"
+                 class="MySpecialty_MiniStatus"
+                 style="background: #1961AE;"
+                 onclick="Apps.Components.ATEC.IT.MySpecialty.ShowSettings('{3}', 0);"></div>
+
+            <div id="MySpecialty_MiniAppStatus_Bad_{1}"
+                 class="MySpecialty_MiniStatus"
+                 style="background:red;"
+                 onclick="Apps.Components.ATEC.IT.MySpecialty.ShowSettings('{3}', 1);"></div>
+
+            <div id="MySpecialty_MiniAppStatus_Ugly_{1}"
+                 class="MySpecialty_MiniStatus" style="background:yellow;"
+                 onclick="Apps.Components.ATEC.IT.MySpecialty.ShowSettings('{3}', 2);"></div>
+
+            <div id="MySpecialty_MiniAppStatus_Info_{1}"
+                 class="MySpecialty_MiniStatus"
+                 style="background:white;"
+                 onclick="Apps.Components.ATEC.IT.MySpecialty.ShowSettings('{3}', 3);"></div>
+
+            <div id="MySpecialty_MiniAppStatus_Issue_{1}" class="MySpecialty_MiniStatus" style="background:blue;"></div>
+        </div>
+    </div>
+
+    <!--<div id="MySpecialty_ThumbnailMenu_{1}" class="MySpecialty_Thumbnail">
+
+        <div>
+            <div style="border: 1px solid black; padding: 3px">Pin To Featured</div>
+            <div style="border: 1px solid black; padding: 3px">Pin To Favorites</div>
+        </div>
+
+    </div>-->
+
+</script>
+
+<script id="Plan_Workflow_Thumbnail_Menu" type="text/template">
+
+    <div class="dropdown2 bodydropdown" >
+        <i class="fa-solid fa-ellipsis"></i>
+        <div class="dropdown-content bodydropdown">
+            <a href="#" onclick="Apps.Components.ATEC.IT.MySpecialty.Max('{3}');">Open</a>
+            <a href="#" onclick="Apps.Components.ATEC.IT.MySpecialty.ShowSettings('{3}',0);">Settings</a>
+            <a href="#" onclick="Apps.Components.ATEC.IT.MySpecialty.Icon('{3}');">Pin Icon</a>
+            <a href="#" onclick="Apps.Components.ATEC.IT.MySpecialty.Mid('{3}');">Pin Medium View</a>
+        </div>
+    </div>
+
+</script>

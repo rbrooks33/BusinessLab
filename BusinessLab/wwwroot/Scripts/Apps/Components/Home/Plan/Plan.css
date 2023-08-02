@@ -1,1 +1,106 @@
-﻿
+﻿.Plan_Areas_Table {
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    max-width: 820px;
+}
+.Plan_Workflow_Thumbnail {
+    font-size: 12px;
+    border: 1px black solid;
+    width: 200px;
+    text-align: center;
+    cursor:pointer;
+    
+}
+.Plan_Workflow_Thumbnail :hover {
+    background:gray;
+}
+.Plan_Workflow_Thumbnail_Container {
+    border: 1px solid #eaeaea;
+    padding: 10px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    width: 196px;
+    height: 50px;
+    position: relative;
+}
+
+    .so-accordion-wrapper {
+    padding-top: 0.5rem;
+    overflow: visible;
+    border-bottom: 1px solid #eaeaea;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    max-width: 820px;
+}
+
+.so-tab {
+    position: relative;
+    width: 100%;
+    border-top: 1px solid #eaeaea;
+    overflow: hidden;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+    .so-tab label {
+        position: relative;
+        display: block;
+        padding: 0 25px 0 0;
+        margin-bottom: 15px;
+        margin-top: 15px;
+        line-height: normal;
+        cursor: pointer;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        font-size: 29px;
+    }
+
+    .so-tab input {
+        position: absolute;
+        opacity: 0;
+        z-index: -1;
+    }
+
+.so-tab-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 1s;
+}
+
+/* :checked */
+.so-tab input:checked ~ .so-tab-content {
+    max-height: 300px;
+}
+
+/* Icon */
+.so-tab label::after {
+    position: absolute;
+    right: 0;
+    top: -5px;
+    font-size: 1.5em;
+    color: #959595;
+    display: block;
+    -webkit-transition: all 0.50s ease;
+    -moz-transition: all 0.50s ease;
+    -o-transition: all 0.50s ease;
+    transition: all 0.50s ease;
+    display: none;
+}
+
+.so-tab input[type=checkbox] + label::after {
+    content: "+";
+}
+
+.so-tab input[type=radio] + label::after {
+    content: "\25BC";
+}
+
+.so-tab input[type=checkbox]:checked + label::after {
+    transform: rotate(315deg);
+}
+
+.so-tab input[type=radio]:checked + label::after {
+    transform: rotateX(180deg);
+}

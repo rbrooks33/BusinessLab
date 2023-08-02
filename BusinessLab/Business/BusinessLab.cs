@@ -22,6 +22,19 @@ namespace BusinessLab
 			result.Success = true;
 		}
 
+		public static void GetWorkflows(ref Result result)
+		{
+			string sql = "SELECT * FROM Workflows";
+			Data.Execute(sql, ref result);
+			result.Success = true;
+		}
+		public static void GetSteps(ref Result result)
+		{
+			string sql = "SELECT * FROM Steps";
+			Data.Execute(sql, ref result);
+			result.Success = true;
+		}
+
 		public static void GetActions(ref Result result)
 		{
 			string sql = "SELECT * FROM Actions";
@@ -60,14 +73,79 @@ namespace BusinessLab
             else
                 result.FailMessages.Add("Data obj is null");
         }
-        public static void AddAction(ref Result result)
+		public static void SaveWorkflow(ref Result result)
+		{
+			if (result.Data != null)
+			{
+				var workflow = JsonConvert.DeserializeObject<dynamic>(result.Data.ToString());
+
+				string sql = @$"
+                
+                UPDATE Workflows SET 
+                    WorkflowName = '{workflow.WorkflowName.Value}'
+                WHERE 
+                    WorkflowID = {workflow.WorkflowID.Value}";
+
+				Data.Execute(sql, ref result);
+				result.Success = true;
+			}
+			else
+				result.FailMessages.Add("Data obj is null");
+		}
+        /// <summary>
+        /// df sdf sdf sdfsdf
+        /// <para name="result"></para>
+        /// <see href="https://www.google.com">google</see>
+        /// </summary>
+        /// 
+		public static void SaveStep(ref Result result)
+		{
+			if (result.Data != null)
+			{
+				var step = JsonConvert.DeserializeObject<dynamic>(result.Data.ToString());
+
+				string sql = @$"
+                
+                UPDATE Steps SET 
+                    StepName = '{step.StepName.Value}',
+                    StepDescription = '{step.StepDescription.Value}'
+                WHERE 
+                    StepID = {step.StepID.Value}";
+
+				Data.Execute(sql, ref result);
+				result.Success = true;
+			}
+			else
+				result.FailMessages.Add("Data obj is null");
+		}
+
+		public static void AddAction(ref Result result)
         {
             string sql = $"INSERT INTO Actions (ActionName) VALUES ('new action')";
             Data.Execute(sql, ref result);
 			result.Success = true;
 		}
 
-        //Trigger simple, start now
+		public static void AddWorkflow(ref Result result)
+		{
+			string sql = $"INSERT INTO Workflows (WorkflowName) VALUES ('new workflow')";
+			Data.Execute(sql, ref result);
+			result.Success = true;
+		}
+		public static void AddStep(ref Result result)
+		{
+            var workflowId = result.Params.Where(p => p.Name == "WorkflowID").SingleOrDefault();
+
+            if (workflowId != null)
+            {
+                string sql = $"INSERT INTO Steps (StepName, WorkflowID) VALUES ('new step', {workflowId.Value})";
+                Data.Execute(sql, ref result);
+                result.Success = true;
+            }
+            else
+                result.FailMessages.Add("No workflow id provided.");
+		}
+		//Trigger simple, start now
 		public void TriggerJob(ref Result result)
         {
             var actionId = result.Params.Where(p => p.Name == "ActionID").SingleOrDefault();
