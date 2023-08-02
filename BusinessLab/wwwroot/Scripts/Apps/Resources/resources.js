@@ -21,7 +21,7 @@
     },
     {
       "Name": "JQTE CSS",
-      "Enabled": false,
+      "Enabled": true,
       "LoadFirst": false,
       "Order": 1,
       "ModuleType": "style",

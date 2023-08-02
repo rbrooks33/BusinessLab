@@ -760,6 +760,13 @@ define(['./util.js'], function (Util) {
                 //    //aceEdit.setValue(fieldValue ? fieldValue : '');
                 //}
 
+                if (editcontrol.hasClass('editor')) {
+
+
+                    editcontrol.jqte();
+                    //editcontrol.jqteVal(editcontrol.html());
+                }
+
                 $(editcontrol).select();
                 var rowdata = unescape(td.parent().attr("rowdata"));
                 var rowdataobj = JSON.parse(rowdata);
