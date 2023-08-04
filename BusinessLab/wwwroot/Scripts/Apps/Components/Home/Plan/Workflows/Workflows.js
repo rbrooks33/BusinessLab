@@ -1,5 +1,6 @@
 ﻿define([], function () {
     var Me = {
+        SelectedWorkflow: null,
         ParentName: '',
         Data: null,
         Selector: null,
@@ -42,10 +43,12 @@
                     }
                 ],
                 fields: [
-                    Apps.Grids.GetField('WorkflowName')
+                    Apps.Grids.GetField('WorkflowName'),
+                    Apps.Grids.GetField('WorkflowDescription', 'editor')
                 ],
                 columns: [
-                    Apps.Grids.GetColumn("WorkflowName", "Workflow")
+                    Apps.Grids.GetColumn("WorkflowName", "Workflow"),
+                    Apps.Grids.GetColumn("WorkflowDescription", "Description")
                 ]
             };
 
