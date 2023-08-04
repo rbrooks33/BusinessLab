@@ -40,11 +40,11 @@
         Apps['ActiveDeployment'] = {
             "Active": true,
             "Version": 1, //new Date().toLocaleTimeString(), 
-            "WebRoot": "https://myminiapps.azurewebsites.net",
+            "WebRoot": "https://atec-it.azurewebsites.net",
             "VirtualFolder": "",
             "Port": null,
             "AppsRoot": "Scripts/Apps",
-            "Debug": true,
+            "Debug": false,
             "Test": false,
             "Authenticated": false,
             "AgencyID": null
