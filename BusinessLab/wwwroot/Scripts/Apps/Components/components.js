@@ -109,7 +109,9 @@
                         },
                         {
                             "Name": "Steps",
-                            "Load": true
+                            "Load": true,
+                            "Initialize": true,
+                            "UI":true
                         }
 
                     ]

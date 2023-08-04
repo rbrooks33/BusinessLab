@@ -4,6 +4,30 @@
         ParentName: '',
         Data: null,
         Selector: null,
+        SelectedStep: null,
+        Initialize: function (callback) {
+
+            Apps.Components.Helpers.Dialogs.Register('Home_Plan_FunctionalSpecs_Dialog', {
+                title: 'Step Functional Specifications',
+                size: 'full-width',
+                templateid: 'templateMyDialog1',
+                buttons: [
+                    {
+                        id: 'Home_Plan_FunctionalSpecs_Dialog_Save',
+                        text: 'Save &amp; Close',
+                        action: 'Apps.Components.Home.Plan.Steps.SaveFunctionalSpecs()'
+                    },
+                    {
+                        id: 'Home_Plan_FunctionalSpecs_Dialog_Cancel',
+                        text: 'Cancel',
+                        action: 'Apps.Components.Helpers.Dialogs.Close(\'Home_Plan_FunctionalSpecs_Dialog\')'
+                    }
+
+                ]
+            });
+
+            callback();
+        },
         SetHTML: function (parentNameFieldName, data, selector) {
 
             selector.html(Me.GetHTML(parentNameFieldName, data));
@@ -34,14 +58,14 @@
                         }
                     }
                 ],
-                //rowbuttons: [
-                //    {
-                //        text: 'Steps',
-                //        buttonclick: function () {
-                //            Apps.Components.Helpers.Actions.Edit(arguments);
-                //        }
-                //    }
-                //],
+                rowbuttons: [
+                    {
+                        text: 'Functional Specs',
+                        buttonclick: function () {
+                            Apps.Components.Home.Plan.Steps.ShowFunctionalSpecs(arguments);
+                        }
+                    }
+                ],
                 fields: [
                     Apps.Grids.GetField('StepID'),
                     Apps.Grids.GetField('StepName'),
@@ -109,7 +133,24 @@
                 }
             });
         },
+        ShowFunctionalSpecs: function (args) {
 
+            Me.SelectedStep = args[1];
+
+            let specs = Me.UI.Templates.FunctionalSpecs.HTML([Me.SelectedStep.FunctionalSpecs]);
+            Apps.Components.Helpers.Dialogs.Content('Home_Plan_FunctionalSpecs_Dialog', specs);
+            Apps.Components.Helpers.Dialogs.Open('Home_Plan_FunctionalSpecs_Dialog');
+
+            $('#Home_Plan_Steps_FunctionalSpec_Editor').jqte();
+
+            //HACKZILLA: Make dialogs more configurable
+            let dialogTitle = $('#myDialog_Home_Plan_FunctionalSpecs_Dialog > div > div > div.dialog-header > table > tbody > tr:nth-child(1) > td:nth-child(1) > h5');
+            dialogTitle.text(Me.SelectedStep.StepName + ' Functional Specs');
+        },
+        SaveFunctionalSpecs: function (args) {
+            Me.SelectedStep.FunctionalSpecs = $('#Home_Plan_Steps_FunctionalSpec_Editor').val();
+            Me.Save(Me.SelectedStep);
+        }
     };
     return Me;
 })

@@ -108,7 +108,8 @@ namespace BusinessLab
                 
                 UPDATE Steps SET 
                     StepName = '{step.StepName.Value}',
-                    StepDescription = '{step.StepDescription.Value}'
+                    StepDescription = '{step.StepDescription.Value}',
+                    FunctionalSpecs = '{step.FunctionalSpecs}'
                 WHERE 
                     StepID = {step.StepID.Value}";
 
