@@ -6,12 +6,12 @@
 }
 .Home_Stage_Title {
     font-size: 4rem;
-    color: #6c757d
+    color: #1961AE
 }
 .HeaderContainer_DivStyle {
     width: 100%;
     height: 51px;
-    background-color: cornflowerblue;
+    background-color: #1961AE;
     padding: 6px;
 }
 .HeadsUp_StageButtons {
@@ -34,6 +34,7 @@
     z-index: 100;
 /*    display: none;
 */    padding: 35px;
+      padding-top:0px;
     overflow: auto;
 }
 

@@ -32,7 +32,8 @@
             $('.Stage_Container').css('z-index', '100');
 
             $('.HomeContent_Container').css('z-index', '200');
-
+            $('.HeadsUp_StageButtons').children().removeClass('active');
+            $('.StageButtons_Home').addClass('active');
         },
         HandleError: function (result) {
 

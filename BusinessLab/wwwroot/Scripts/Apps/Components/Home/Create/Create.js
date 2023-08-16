@@ -19,8 +19,11 @@
             Apps.Components.Helpers.Actions.GetActions($('#templateTabActionsContent'));
         },
         PutOnTop: function () {
+
             $('.Stage_Container').css('z-index', '100');
             $('.Create_Container').css('z-index', '200');
+            let stageButtons = $('.HeadsUp_StageButtons').children().removeClass('active');
+            $('.StageButtons_Create').addClass('active');
         }
 
     };

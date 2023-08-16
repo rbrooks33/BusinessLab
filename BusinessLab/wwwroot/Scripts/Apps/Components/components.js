@@ -121,6 +121,24 @@
                     "Load": true,
                     "UI": true,
                     "Initialize": true
+                },
+                {
+                    "Name": "Test",
+                    "Load": true,
+                    "UI": true,
+                    "Initialize": true
+                },
+                {
+                    "Name": "Publish",
+                    "Load": true,
+                    "UI": true,
+                    "Initialize": true
+                },
+                {
+                    "Name": "Track",
+                    "Load": true,
+                    "UI": true,
+                    "Initialize": true
                 }
 
             ]
