@@ -1,5 +1,6 @@
 ﻿define([], function () {
     var Me = {
+        SelectedAreaID: 0,
         Create: function () {
 
             var settings =
@@ -120,6 +121,7 @@
         SetWorkflows: function (parent, parentIdFieldName, parentNameFieldName, childCellId) {
 
             //CUSTOM CODE TO SET DATA TO CHILD CELL:
+            Me.SelectedAreaID = parent[parentIdFieldName];
 
             let data = Enumerable.From(Me.Parent.WorkflowList).Where(w => w.AreaID == parent[parentIdFieldName]).ToArray();
 

@@ -30,7 +30,7 @@
                     {
                         text: 'Add Workflow',
                         actionclick: function () {
-                            Apps.Components.Helpers.Actions.ActionsTable.Add();
+                            Apps.Components.Home.Plan.Workflows.Add();
                         }
                     }
                 ],
@@ -57,6 +57,29 @@
         Refresh: function () {
             //TODO: Depends on having called "Set"
             Me.SetHTML(Me.ParentName, Me.Data, Me.Selector);
+        },
+        Add: function () {
+                let post = Apps.Components.Home.Main;
+
+                let myargs = {
+                    Params: [
+                        { Name: "RequestName", Value: "AddWorkflow" },
+                        { Name: "AreaID", Value: Me.Parent.Areas.SelectedAreaID.toString() }
+                    ]
+
+                };
+
+                post.Refresh(myargs, [], function () {
+
+                    if (post.Success) {
+                        //Apps.Components.Helpers.Actions.GetActions();
+                        Apps.Notify('success', 'Workflow added!');
+                    }
+                    else {
+                        Apps.Components.Home.HandleError(post.Result);
+                    }
+                });
+
         },
         Save: function (workflow) {
 

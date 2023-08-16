@@ -129,9 +129,16 @@ namespace BusinessLab
 
 		public static void AddWorkflow(ref Result result)
 		{
-			string sql = $"INSERT INTO Workflows (WorkflowName) VALUES ('new workflow')";
+			var areaIdParam = result.Params.Where(p => p.Name == "AreaID").SingleOrDefault();
+
+            if (areaIdParam != null)
+            {
+                string sql = $"INSERT INTO Workflows (WorkflowName, WorkflowDescription, AreaID) VALUES ('new workflow', '@nbsp;@nbsp;@nbsp;', {areaIdParam.Value})";
 			Data.Execute(sql, ref result);
 			result.Success = true;
+		}
+            else
+                result.FailMessages.Add("AreaID was not included in parasm.");
 		}
 		public static void AddStep(ref Result result)
 		{
