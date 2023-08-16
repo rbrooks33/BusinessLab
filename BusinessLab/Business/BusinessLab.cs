@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.FileProviders.Composite;
 using Newtonsoft.Json;
 using Quartz;
 using Quartz.Impl;
@@ -142,9 +143,9 @@ namespace BusinessLab
             if (areaIdParam != null)
             {
                 string sql = $"INSERT INTO Workflows (WorkflowName, WorkflowDescription, AreaID) VALUES ('new workflow', '@nbsp;@nbsp;@nbsp;', {areaIdParam.Value})";
-			Data.Execute(sql, ref result);
-			result.Success = true;
-		}
+                Data.Execute(sql, ref result);
+                result.Success = true;
+            }
             else
                 result.FailMessages.Add("AreaID was not included in parasm.");
 		}
@@ -234,7 +235,21 @@ namespace BusinessLab
             messageResult.Params.Add(new Param { Name = "RequestName", Value = "SendMessage" });
 			messageResult.Message = message; // $"Starting to execute job {actionId}";
             PushHub.SendMessageByService(messageResult);
-
+           
         }
+        public static async Task<string> PostATECApi(Result result)
+        {
+			string myJson = JsonConvert.SerializeObject(result);
+
+			using (var client = new System.Net.Http.HttpClient())
+			{
+				//log
+				var response = await client.PostAsync("https://crm2016uat.atecorp.com:8099/api/main", new System.Net.Http.StringContent(myJson, System.Text.Encoding.UTF8, "application/json"));
+                var contents = await response.Content.ReadAsStringAsync();
+                
+                return contents;
+			}
+            
+		}
     }
 }
