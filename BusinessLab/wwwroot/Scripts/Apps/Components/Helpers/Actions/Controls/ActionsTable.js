@@ -125,9 +125,12 @@
             //    }
             //});
 
-            action.ActionName = Apps.Components.Helpers.Actions.SelectedAction.ActionName;
-            action.ActionDescription = Apps.Components.Helpers.Actions.SelectedAction.ActionDescription;
-            action.UniqueID = Apps.Components.Helpers.Actions.SelectedAction.UniqueID;
+            if (Me.SelectedAction) {
+                //coming from edit screen
+                action.ActionName = Apps.Components.Helpers.Actions.SelectedAction.ActionName;
+                action.ActionDescription = Apps.Components.Helpers.Actions.SelectedAction.ActionDescription;
+                action.UniqueID = Apps.Components.Helpers.Actions.SelectedAction.UniqueID;
+            }
 
             let args = {
                 Params: [

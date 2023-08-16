@@ -48,21 +48,29 @@ namespace BusinessLab
             {
                 var action = JsonConvert.DeserializeObject<Actions.Action>(result.Data.ToString());
 
+                if (action.Sql != null)
+                    action.Sql = action.Sql.Replace("'", "''");
+
+                if (action.Code != null)
+                    action.Code = action.Code.Replace("'", "''");
+
                 string sql = @$"
                 
+
+
                 UPDATE Actions SET 
-                    ActionName = '{action.ActionName}',
-                    ActionDescription = '{action.ActionDescription}',
-                    Sql = '{action.Sql.Replace("'", "''")}', 
-                    Code = '{action.Code.Replace("'", "''")}', 
-                    VariableDelimiter = '{action.VariableDelimiter}', 
-                    UniqueID = '{action.UniqueID}', 
-                    EditorType = '{action.EditorType}',
-                    FailActionDescription = '{action.FailActionDescription}',
-                    SuccessActionDescription = '{action.SuccessActionDescription}',
+                    ActionName = '{action.ActionName ?? ""}',
+                    ActionDescription = '{action.ActionDescription ?? ""}',
+                    Sql = '{action.Sql}', 
+                    Code = '{action.Code}', 
+                    VariableDelimiter = '{action.VariableDelimiter ?? ""}', 
+                    UniqueID = '{action.UniqueID} ?? ""', 
+                    EditorType = '{action.EditorType} ?? ""',
+                    FailActionDescription = '{action.FailActionDescription ?? ""}',
+                    SuccessActionDescription = '{action.SuccessActionDescription ?? ""}',
                     RepeatQuantity = {action.RepeatQuantity},
                     RepeatIntervalSeconds = {action.RepeatIntervalSeconds},
-                    CronSchedule = '{action.CronSchedule}'
+                    CronSchedule = '{action.CronSchedule ?? ""}'
 
                 WHERE 
                     ActionID = {action.ActionID}";

@@ -77,7 +77,8 @@
                     var actionsTable = Me.ActionsTable.Create(actions);
 
                     //Drop
-                    selector.html(actionsTable);
+                    if(selector)
+                        selector.html(actionsTable);
 
                 }
                 else

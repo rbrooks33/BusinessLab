@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using BusinessLab;
+using System.Text;
 
 namespace BusinessLab
 {
@@ -10,22 +11,22 @@ namespace BusinessLab
     {
         public class Action
         {
-            public string? ActionName { get; set; }
-            public string? ActionDescription { get; set; }
+            public string ActionName { get; set; } = string.Empty;
+            public string ActionDescription { get; set; } = "&nbsp;&nbsp;&nbsp;";
             public int ActionID { get; set; }
-            public string? EditorType { get; set; }
-            public string? Code { get; set; }
-            public string? VariableDelimiter { get; set; }
-            public string? Sql { get ; set; }
-            public string? UniqueID { get; set; }
+            public string EditorType { get; set; } = string.Empty;
+            public string Code { get; set; } = String.Empty;
+            public string VariableDelimiter { get; set; } = string.Empty;
+            public string Sql { get; set; } = string.Empty;
+            public string UniqueID { get; set; } = string.Empty;
             public bool IsJob { get; set; }
             public int SuccessActionID { get; set; }
             public int FailActionID { get; set;}
-            public string? SuccessActionDescription { get; set; }
-            public string? FailActionDescription { get;set; }
+            public string SuccessActionDescription { get; set; } = string.Empty;
+            public string FailActionDescription { get; set; } = string.Empty;
             public int RepeatQuantity { get; set; }
             public int RepeatIntervalSeconds { get; set; }
-            public string? CronSchedule { get; set; }
+            public string CronSchedule { get; set; } = string.Empty;
         }
         public static string _myusings = @"
             using BusinessLab;
@@ -119,7 +120,7 @@ namespace BusinessLab
                 result.FailMessages.Add("Getting action from db failed.");
         }
 
-        public static void TestCode(WorkflowScheduler scheduler, ref Result result)
+		public static void TestCode(WorkflowScheduler scheduler, ref Result result)
         {
             if (result.Data != null)
             {
@@ -229,140 +230,140 @@ namespace BusinessLab
                 result.Success = true;
             }
         }
-        //public static void RunAction(string actionUniqueId, MiniApps.Models.Action action, MiniAppsContext db, ref Result result)
-        //{
-        //    result.Success = false; //reset
+			//public static void RunAction(string actionUniqueId, MiniApps.Models.Action action, MiniAppsContext db, ref Result result)
+			//{
+			//    result.Success = false; //reset
 
-        //    //Get action type id
-        //    var actionType = db.Actions.Where(at => at.UniqueID == actionUniqueId).SingleOrDefault();
+			//    //Get action type id
+			//    var actionType = db.Actions.Where(at => at.UniqueID == actionUniqueId).SingleOrDefault();
 
-        //    if (actionType != null)
-        //    {
-        //        //action.Args.AddRange(new List<ActionArgValue>()
-        //        //{
-        //        //    new ActionArgValue() { Value = new ActionArg() { ArgName = "iActionTypeID", ArgValue = actionType.ActionTypeID.ToString() } },
-        //        //    new ActionArgValue() { Value = new ActionArg() { ArgName = "Email", ArgValue = "sdfsdf" } },
-        //        //    new ActionArgValue() { Value = new ActionArg() { ArgName = "OfficeID", ArgValue = "sdfeeeef" } }
-        //        //});
+			//    if (actionType != null)
+			//    {
+			//        //action.Args.AddRange(new List<ActionArgValue>()
+			//        //{
+			//        //    new ActionArgValue() { Value = new ActionArg() { ArgName = "iActionTypeID", ArgValue = actionType.ActionTypeID.ToString() } },
+			//        //    new ActionArgValue() { Value = new ActionArg() { ArgName = "Email", ArgValue = "sdfsdf" } },
+			//        //    new ActionArgValue() { Value = new ActionArg() { ArgName = "OfficeID", ArgValue = "sdfeeeef" } }
+			//        //});
 
-        //        //RunAction(action, db, ref result);
-        //    }
-        //    else
-        //    {
-        //        result.FailMessages.Add($"Action type unique id '{actionUniqueId}' not found in action types.");
-        //    }
+			//        //RunAction(action, db, ref result);
+			//    }
+			//    else
+			//    {
+			//        result.FailMessages.Add($"Action type unique id '{actionUniqueId}' not found in action types.");
+			//    }
 
-        //    //var severity = result.FailMessages.Count > 0 ? LogSeverities.Exception : LogSeverities.Information;
+			//    //var severity = result.FailMessages.Count > 0 ? LogSeverities.Exception : LogSeverities.Information;
 
-        //    //common.AddLog(29, severity, "11111111-1111-1111-1111-111111111111", "RunAction by action id result", "RunActionByUniqueID", hub);
-        //}
-        //public static void RunAction(MiniApps.Models.Action action, MiniAppsContext db, ref Result result)
-        //{
-
-
-        //    //If provided, associate with a log app
-        //    int.TryParse(Main.GetArgValue(action, "LogAppID", ref result), out int iLogAppId);
-        //    //string officeId = common.ArgValue(action, "OfficeID", ref result);  
-        //    //string email = common.ArgValue(action, "Email", ref result);
-
-        //    //var user = common.GetUserFromOfficeID(officeId, ref result);
-
-        //    if (int.TryParse(Main.GetArgValue(action, "ActionTypeID", ref result), out int actiontypeid))
-        //    {
-        //        var actionType = db.Actions.Where(at => at.ActionID == actiontypeid).SingleOrDefault();
-        //        if (actionType != null)
-        //        {
-        //            string editorType = actionType.EditorType.Trim().ToLower();
-
-        //            if (editorType == "csharp")
-        //            {
-        //                if (!String.IsNullOrEmpty(actionType.Code.Trim())
-        //                    && !String.IsNullOrEmpty(actionType.VariableDelimiter.Trim()))
-        //                {
-        //                    string code = actionType.Code;
-
-        //                    //foreach (var arg in action.Args)
-        //                    //{
-        //                    //    if (arg.Value.ArgName.ToLower() != "method"
-        //                    //        && arg.Value.ArgName.ToLower() != "actiontypeid"
-        //                    //        && arg.Value.ArgName.ToLower() != "email"
-        //                    //        && arg.Value.ArgName.ToLower() != "officeid")
-        //                    //    {
-        //                    //        code = code.Replace(actionType.VariableDelimiter.Trim() + arg.Value.ArgName, arg.Value.ArgValue);
-        //                    //    }
-        //                    //}
-
-        //                    try
-        //                    {
-
-        //                        dynamic script = CSScriptLib.CSScript.Evaluator.LoadMethod(
-        //                        $@"
-        //                            public string Product(WebApplication1.Classes.BBContext db, WebApplication1.Models.Action action, ref CommonClassLib.Models.Common.Result result)
-        //                            {{
-        //                                {code}           
-        //                            }}      
-        //                        ");
-
-        //                        result.Data = script.Product(db, action, ref result);
-        //                        result.SuccessMessages.Add($"Action run success for #{actiontypeid}. Result: {Newtonsoft.Json.JsonConvert.SerializeObject(result)}");
-        //                        //common.AddLog(iLogAppId, LogSeverities.Information, officeId, $"Action run success for #{actiontypeid}. Result: {Newtonsoft.Json.JsonConvert.SerializeObject(result)} code: " + code, "", hub);
-        //                        result.Success = true;
-        //                    }
-        //                    catch (Exception ex)
-        //                    {
-        //                        result.FailMessages.Add($"Action run for #{actiontypeid} exception: {ex.ToString()}");
-        //                        //common.AddLog(iLogAppId, LogSeverities.Exception, officeId, $"Action run exception for #{actiontypeid}: {ex.ToString()}", "", hub);
-        //                    }
-        //                }
-        //                else result.FailMessages.Add("Arg sCode null or empty.");
-        //            }
-        //            else if (editorType == "sql")
-        //            {
-        //                if (!String.IsNullOrEmpty(actionType.Sql.Trim())
-        //                    && !String.IsNullOrEmpty(actionType.VariableDelimiter.Trim()))
-        //                {
-        //                    string sql = actionType.Sql;
-
-        //                    var parameters = new List<Microsoft.Data.SqlClient.SqlParameter>();
-
-        //                    //foreach (var arg in action.Args)
-        //                    //{
-        //                    //    if (arg.Value.ArgName.ToLower() != "method")
-        //                    //    {
-        //                    //        var param = new Microsoft.Data.SqlClient.SqlParameter("@" + arg.Value.ArgName, arg.Value.ArgValue);
-        //                    //        parameters.Add(param);
-        //                    //    }
-        //                    //}
-
-        //                    sql = (String.IsNullOrEmpty(sql) ? "select 'empty sql'" : sql);
-        //                    result.Data = DB.Execute(sql, db, parameters.ToArray());
-        //                    result.Success = true;
-        //                }
-        //                else result.FailMessages.Add("Arg sCode null or empty.");
-
-        //            }
-        //            else
-        //                result.FailMessages.Add("action type " + actionType.ActionName + " has no handler.");
-
-        //            //common.AddLog(iLogAppId, LogSeverities.Information, officeId, "Action:" + actionType.sActionType + ": " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "SuccessfullActionTest", hub);
-
-        //        }
-        //        else
-        //            result.FailMessages.Add("ActionType not found for id " + actiontypeid.ToString());
-
-        //    }
-        //    else
-        //        result.FailMessages.Add("iActionTypeID not found in args.");
-
-        //    if (result.FailMessages.Count > 0)
-        //    {
-        //        //if (result.Success)
-        //        //    common.AddLog(iLogAppId, LogSeverities.Warning, officeId, "Action Fails: " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "ActionSuccessWithFails", hub);
-        //        //else
-        //        //    common.AddLog(iLogAppId, LogSeverities.Exception, officeId, "Action Fails: " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "ActionFail", hub);
-        //    }
-        //}
+			//    //common.AddLog(29, severity, "11111111-1111-1111-1111-111111111111", "RunAction by action id result", "RunActionByUniqueID", hub);
+			//}
+			//public static void RunAction(MiniApps.Models.Action action, MiniAppsContext db, ref Result result)
+			//{
 
 
-    }
+			//    //If provided, associate with a log app
+			//    int.TryParse(Main.GetArgValue(action, "LogAppID", ref result), out int iLogAppId);
+			//    //string officeId = common.ArgValue(action, "OfficeID", ref result);  
+			//    //string email = common.ArgValue(action, "Email", ref result);
+
+			//    //var user = common.GetUserFromOfficeID(officeId, ref result);
+
+			//    if (int.TryParse(Main.GetArgValue(action, "ActionTypeID", ref result), out int actiontypeid))
+			//    {
+			//        var actionType = db.Actions.Where(at => at.ActionID == actiontypeid).SingleOrDefault();
+			//        if (actionType != null)
+			//        {
+			//            string editorType = actionType.EditorType.Trim().ToLower();
+
+			//            if (editorType == "csharp")
+			//            {
+			//                if (!String.IsNullOrEmpty(actionType.Code.Trim())
+			//                    && !String.IsNullOrEmpty(actionType.VariableDelimiter.Trim()))
+			//                {
+			//                    string code = actionType.Code;
+
+			//                    //foreach (var arg in action.Args)
+			//                    //{
+			//                    //    if (arg.Value.ArgName.ToLower() != "method"
+			//                    //        && arg.Value.ArgName.ToLower() != "actiontypeid"
+			//                    //        && arg.Value.ArgName.ToLower() != "email"
+			//                    //        && arg.Value.ArgName.ToLower() != "officeid")
+			//                    //    {
+			//                    //        code = code.Replace(actionType.VariableDelimiter.Trim() + arg.Value.ArgName, arg.Value.ArgValue);
+			//                    //    }
+			//                    //}
+
+			//                    try
+			//                    {
+
+			//                        dynamic script = CSScriptLib.CSScript.Evaluator.LoadMethod(
+			//                        $@"
+			//                            public string Product(WebApplication1.Classes.BBContext db, WebApplication1.Models.Action action, ref CommonClassLib.Models.Common.Result result)
+			//                            {{
+			//                                {code}           
+			//                            }}      
+			//                        ");
+
+			//                        result.Data = script.Product(db, action, ref result);
+			//                        result.SuccessMessages.Add($"Action run success for #{actiontypeid}. Result: {Newtonsoft.Json.JsonConvert.SerializeObject(result)}");
+			//                        //common.AddLog(iLogAppId, LogSeverities.Information, officeId, $"Action run success for #{actiontypeid}. Result: {Newtonsoft.Json.JsonConvert.SerializeObject(result)} code: " + code, "", hub);
+			//                        result.Success = true;
+			//                    }
+			//                    catch (Exception ex)
+			//                    {
+			//                        result.FailMessages.Add($"Action run for #{actiontypeid} exception: {ex.ToString()}");
+			//                        //common.AddLog(iLogAppId, LogSeverities.Exception, officeId, $"Action run exception for #{actiontypeid}: {ex.ToString()}", "", hub);
+			//                    }
+			//                }
+			//                else result.FailMessages.Add("Arg sCode null or empty.");
+			//            }
+			//            else if (editorType == "sql")
+			//            {
+			//                if (!String.IsNullOrEmpty(actionType.Sql.Trim())
+			//                    && !String.IsNullOrEmpty(actionType.VariableDelimiter.Trim()))
+			//                {
+			//                    string sql = actionType.Sql;
+
+			//                    var parameters = new List<Microsoft.Data.SqlClient.SqlParameter>();
+
+			//                    //foreach (var arg in action.Args)
+			//                    //{
+			//                    //    if (arg.Value.ArgName.ToLower() != "method")
+			//                    //    {
+			//                    //        var param = new Microsoft.Data.SqlClient.SqlParameter("@" + arg.Value.ArgName, arg.Value.ArgValue);
+			//                    //        parameters.Add(param);
+			//                    //    }
+			//                    //}
+
+			//                    sql = (String.IsNullOrEmpty(sql) ? "select 'empty sql'" : sql);
+			//                    result.Data = DB.Execute(sql, db, parameters.ToArray());
+			//                    result.Success = true;
+			//                }
+			//                else result.FailMessages.Add("Arg sCode null or empty.");
+
+			//            }
+			//            else
+			//                result.FailMessages.Add("action type " + actionType.ActionName + " has no handler.");
+
+			//            //common.AddLog(iLogAppId, LogSeverities.Information, officeId, "Action:" + actionType.sActionType + ": " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "SuccessfullActionTest", hub);
+
+			//        }
+			//        else
+			//            result.FailMessages.Add("ActionType not found for id " + actiontypeid.ToString());
+
+			//    }
+			//    else
+			//        result.FailMessages.Add("iActionTypeID not found in args.");
+
+			//    if (result.FailMessages.Count > 0)
+			//    {
+			//        //if (result.Success)
+			//        //    common.AddLog(iLogAppId, LogSeverities.Warning, officeId, "Action Fails: " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "ActionSuccessWithFails", hub);
+			//        //else
+			//        //    common.AddLog(iLogAppId, LogSeverities.Exception, officeId, "Action Fails: " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "ActionFail", hub);
+			//    }
+			//}
+
+
+		}
 }
