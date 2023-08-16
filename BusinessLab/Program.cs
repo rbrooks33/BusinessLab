@@ -50,14 +50,13 @@ app.UseStaticFiles();
 app.MapHub<PushHub>("/pushhub");
 app.UseCors(MyAllowSpecificOrigins);
 
-//app.Urls.Add("https://localhost:54322/");
+app.Urls.Add("https://localhost:54322/");
 
 
 app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]IHubContext <PushHub> hub, [FromBody] Result result) =>
 {
     try
     {
-        
         //hub.Clients.All.SendAsync(JsonConvert.SerializeObject(result));
         //PushHub.SendMessage(hub, result);
 

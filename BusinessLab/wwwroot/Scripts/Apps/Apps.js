@@ -44,7 +44,7 @@
             "VirtualFolder": "",
             "Port": null,
             "AppsRoot": "Scripts/Apps",
-            "Debug": false,
+            "Debug": true,
             "Test": false,
             "Authenticated": false,
             "AgencyID": null

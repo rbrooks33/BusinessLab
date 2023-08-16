@@ -23,8 +23,7 @@
         PutWithData: function (url, dataString, callback) {
             Me.Ajax('PUT', url, dataString, callback, false);
         },
-        Delete: function (url, callback)
-        {
+        Delete: function (url, callback) {
             Me.Ajax('DELETE', url, null, callback, false);
         },
         Guid: function () {
@@ -50,8 +49,7 @@
             }
         },
 
-        ApplyObjectFromStringExtension: function ()
-        {
+        ApplyObjectFromStringExtension: function () {
             Object.FromString = function (o, s) {
                 s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
                 s = s.replace(/^\./, '');           // strip a leading dot
@@ -98,8 +96,7 @@
             });
 
         },
-        LoadAndDropTemplate: function(templateId, templatePath, callback, targetId, argsArray)
-        {
+        LoadAndDropTemplate: function (templateId, templatePath, callback, targetId, argsArray) {
             Apps.Util.LoadTemplate2(templateId, templatePath, function () {
                 Apps.Util.DropTemplate(templateId, targetId, argsArray);
                 if (callback)
@@ -145,9 +142,9 @@
                 var args = arguments;
                 return this.replace(/{(\d+)}/g, function (match, number) {
                     return typeof args[number] !== 'undefined'
-                      ? args[number]
-                      : match
-                    ;
+                        ? args[number]
+                        : match
+                        ;
                 });
             }
         },
@@ -161,7 +158,7 @@
                 else
                     var dothis = "now";
             }
-            return content; 
+            return content;
         },
         GetHTMLFromTemplate: function (templateId, templateFilePath, argsArray, callback) {
 
@@ -192,7 +189,7 @@
         DropTemplate: function (templateId, targetElementId, argsArray) {
             var result = null;
             var content = $("#" + templateId).html();
-            if(argsArray)
+            if (argsArray)
                 content = content.SearchAndReplace.apply(content, argsArray);
 
             //if ($(content).length === 0)
@@ -235,14 +232,12 @@
             $("#" + targetId).html(newContent);
             return $("#" + targetId);
         },
-        AddHTML: function (targetId, content, argsArray)
-        {
+        AddHTML: function (targetId, content, argsArray) {
             var newContent = content.SearchAndReplace.apply(content, argsArray);
             $("#" + targetId).html(newContent);
             return $("#" + targetId);
         },
-        CenteredLeft: function(width)
-        {
+        CenteredLeft: function (width) {
             var screenWidth = $(window).width();
             var centeredWidth = (screenWidth - width) / 2;
             return centeredWidth;
@@ -362,7 +357,7 @@
                 }
             });
 
-            if(clickcallback)
+            if (clickcallback)
                 $(document).on("change", "#" + cboID, clickcallback);
         },
         RefreshCombobox2: function (collection, cboID, selectedValue, selectText, idFieldName, textFieldName, returnOptionsCallback) {
@@ -381,7 +376,7 @@
                 }
                 options += '<option value="' + id + '"' + selected + '>' + name + '</option>'; //).appendTo($('#' + cboID));
 
-                
+
             });
 
             if (returnOptionsCallback)
@@ -600,7 +595,7 @@
         //MM-dd-yyyy (american)
         FormatDatePickerDate: function (date) {
             if (date)
-                return String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2,'0') + "-" +date.getUTCFullYear();
+                return String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0') + "-" + date.getUTCFullYear();
             else
                 return "";
         },
@@ -627,15 +622,14 @@
 
                 message = `${diff.days}d ${diff.hours}h ${diff.minutes}m ${diff.seconds}s ago`;
                 //message = message.replace(/(?:0. )+/, '');
-                
+
             }
             else {
                 Apps.Notify('info', 'Elapsed time lesser than 0, i.e. specified datetime is still in the future.');
             }
             return message;
         },
-        Middle: function (selector)
-        {
+        Middle: function (selector) {
             var result = { left: 0, top: 0 };
             var screenWidth = $(window).width();
             var screenHeight = $(window).height();
@@ -698,7 +692,7 @@
             var result = { left: 0, top: 0 };
             var screenWidth = $(window).width();
             var screenHeight = $(window).height();
-           // result.left = (screenWidth - selector.width()) / 2;
+            // result.left = (screenWidth - selector.width()) / 2;
             result.top = (screenHeight - selector.height()) / 2;
 
             //selector.css('left', result.left + 'px');
@@ -708,22 +702,19 @@
             return result;
         },
 
-        FullHeight: function (selector)
-        {
+        FullHeight: function (selector) {
             selector.height($(window).height());
 
         },
-        D:function(msg)
-    {
-        console.debug(msg);
-    },
-    W: function (msg) {
-        console.warn(msg);
-    },
-    E:function(msg)
-    {
-        console.error(msg);
-    },
+        D: function (msg) {
+            console.debug(msg);
+        },
+        W: function (msg) {
+            console.warn(msg);
+        },
+        E: function (msg) {
+            console.error(msg);
+        }
 
     }
 
