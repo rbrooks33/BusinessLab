@@ -448,7 +448,7 @@
         },
         SwitchType: function (actionid, type) {
 
-            Me.SelectedAction.sEditorType = type;
+            Me.SelectedAction.EditorType = type;
             $('.EditorRadioStyle').prop('checked', false);
             $("#Admin_Editor_Actions_Editor_SQL").hide();
             $("#Admin_Editor_Actions_Editor_CSHARP").hide();

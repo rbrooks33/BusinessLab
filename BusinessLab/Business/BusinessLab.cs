@@ -60,18 +60,18 @@ namespace BusinessLab
 
 
                 UPDATE Actions SET 
-                    ActionName = '{action.ActionName ?? ""}',
-                    ActionDescription = '{action.ActionDescription ?? ""}',
+                    ActionName = '{action.ActionName}',
+                    ActionDescription = '{action.ActionDescription}',
                     Sql = '{action.Sql}', 
                     Code = '{action.Code}', 
-                    VariableDelimiter = '{action.VariableDelimiter ?? ""}', 
-                    UniqueID = '{action.UniqueID} ?? ""', 
-                    EditorType = '{action.EditorType} ?? ""',
-                    FailActionDescription = '{action.FailActionDescription ?? ""}',
-                    SuccessActionDescription = '{action.SuccessActionDescription ?? ""}',
+                    VariableDelimiter = '{action.VariableDelimiter}', 
+                    UniqueID = '{action.UniqueID}', 
+                    EditorType = '{action.EditorType}',
+                    FailActionDescription = '{action.FailActionDescription}',
+                    SuccessActionDescription = '{action.SuccessActionDescription}',
                     RepeatQuantity = {action.RepeatQuantity},
                     RepeatIntervalSeconds = {action.RepeatIntervalSeconds},
-                    CronSchedule = '{action.CronSchedule ?? ""}'
+                    CronSchedule = '{action.CronSchedule}'
 
                 WHERE 
                     ActionID = {action.ActionID}";
