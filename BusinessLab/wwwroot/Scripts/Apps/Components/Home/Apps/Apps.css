@@ -1,0 +1,106 @@
+﻿.Apps_Thumbnail_MiniStatus {
+    width: 35px;
+    height: 14px;
+    font-size: 10px;
+    text-align: center;
+    /*    display: none;
+*/
+}
+
+.MySpecialty_Max_Container {
+    height: 100vh;
+    width: 100%;
+    border: 3px solid #1961AE;
+    position: absolute;
+    border-radius: 10px;
+    background: white;
+    z-index: 200;
+    display: none;
+    padding: 50px;
+    overflow: auto;
+}
+
+.ShowApp_CloseButton {
+    float: right;
+    margin-right: -19px;
+    margin-top: -51px;
+    color: #1961AE;
+    font-weight: 200;
+    cursor: pointer;
+    font-size: 4rem;
+}
+
+#templateTabGoodContent {
+    margin-left: 14px;
+}
+
+#templateTabBadContent {
+    margin-left: -74px;
+}
+
+#templateTabUglyContent {
+    margin-left: -134px;
+}
+
+#templateTabInfoContent {
+    margin-left: -216px;
+}
+
+#templateTabIssuesContent {
+    margin-left: -216px;
+}
+
+
+
+/* Dropdown Button */
+
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    border: none;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+    float: right;
+    margin-right: 4px;
+    margin-top: 2px;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: -5px;
+    left: -3px;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+    /* Links inside the dropdown */
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {
+    background-color: #3e8e41;
+}
