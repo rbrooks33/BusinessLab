@@ -42,6 +42,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BusinessLabClassLib\BusinessLabClassLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="businesslab.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
