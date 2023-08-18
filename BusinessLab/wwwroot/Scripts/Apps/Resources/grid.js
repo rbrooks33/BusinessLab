@@ -1196,7 +1196,10 @@ define(['./util.js'], function (Util) {
 
                                     case 'text':
 
-                                        viewSpan = '<span class="grid_view_span" title="' + tooltip(Me.RowData) + '" ' + editclick + '>' + fieldValue + '</span>';
+                                        if (fieldValue.length == 0)
+                                            fieldValue = '[edit]';
+
+                                        viewSpan = '<span class="grid_view_span" title="' + tooltip(Me.RowData) + '" ' + editclick + '>' + fieldValue  + '</span>';
                                         break;
 
                                     case 'date':
