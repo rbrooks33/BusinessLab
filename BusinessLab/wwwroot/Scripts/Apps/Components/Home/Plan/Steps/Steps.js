@@ -69,12 +69,16 @@
                 fields: [
                     Apps.Grids.GetField('StepID'),
                     Apps.Grids.GetField('StepName'),
-                    Apps.Grids.GetField('StepDescription', 'editor')
+                    Apps.Grids.GetField('StepDescription', 'editor'),
+                    Apps.Grids.GetField('FunctionalSpecs', 'editor'),
+                    Apps.Grids.GetField('StepOrder')
                 ],
                 columns: [
                     Apps.Grids.GetColumn("StepID", "ID"),
                     Apps.Grids.GetColumn("StepName", "Step"),
-                    Apps.Grids.GetColumn("StepDescription", "Description")
+                    Apps.Grids.GetColumn("StepDescription", "Description"),
+                    Apps.Grids.GetColumn('FunctionalSpecs', 'Functional Specifications'),
+                    Apps.Grids.GetColumn('StepOrder', 'Order')
                 ]
             };
 

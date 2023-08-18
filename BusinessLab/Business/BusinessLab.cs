@@ -31,7 +31,7 @@ namespace BusinessLab
 		}
 		public static void GetSteps(ref Result result)
 		{
-			string sql = "SELECT * FROM Steps";
+			string sql = "SELECT * FROM Steps ORDER BY StepOrder";
 			Data.Execute(sql, ref result);
 			result.Success = true;
 		}
@@ -91,7 +91,8 @@ namespace BusinessLab
 				string sql = @$"
                 
                 UPDATE Workflows SET 
-                    WorkflowName = '{workflow.WorkflowName.Value}'
+                    WorkflowName = '{workflow.WorkflowName.Value}',
+                    WorkflowDescription = '{workflow.WorkflowDescription.Value}'
                 WHERE 
                     WorkflowID = {workflow.WorkflowID.Value}";
 
@@ -113,12 +114,16 @@ namespace BusinessLab
 			{
 				var step = JsonConvert.DeserializeObject<dynamic>(result.Data.ToString());
 
+                int stepOrder = 1;
+                int.TryParse(step.StepOrder.ToString(), out stepOrder);
+
 				string sql = @$"
                 
                 UPDATE Steps SET 
                     StepName = '{step.StepName.Value}',
                     StepDescription = '{step.StepDescription.Value}',
-                    FunctionalSpecs = '{step.FunctionalSpecs}'
+                    FunctionalSpecs = '{step.FunctionalSpecs}',
+                    StepOrder = '{stepOrder.ToString()}'
                 WHERE 
                     StepID = {step.StepID.Value}";
 
