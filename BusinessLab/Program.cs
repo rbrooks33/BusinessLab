@@ -68,18 +68,20 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
         {
             switch (requestName.Single().Value)
             {
-                case "TriggerJob": business.TriggerJob(ref result); break;
+				//Actions
                 case "GetActions": Business.GetActions(ref result); break;
+				case "SaveAction": Business.SaveAction(ref result); break;
+				case "AddAction": Business.AddAction(ref result); break;
+				case "TestActionCode": Actions.TestCode(scheduler, ref result); break;
+
+                case "TriggerJob": business.TriggerJob(ref result); break;
 				case "GetAreas": Business.GetAreas(ref result); break;
 				case "GetWorkflows": Business.GetWorkflows(ref result); break;
 				case "GetSteps": Business.GetSteps(ref result); break;
-				case "SaveAction": Business.SaveAction(ref result); break;
 				case "SaveWorkflow": Business.SaveWorkflow(ref result); break;
 				case "SaveStep": Business.SaveStep(ref result); break;
-				case "AddAction": Business.AddAction(ref result); break;
 				case "AddStep": Business.AddStep(ref result); break;
 				case "AddWorkflow": Business.AddWorkflow(ref result); break;
-				case "TestActionCode": Actions.TestCode(scheduler, ref result); break;
                 case "SendMessage": PushHub.SendMessage(hub, result, result.Message); break;
 
                     default: result.FailMessages.Add("No handler for requestname value " + requestName.Single().Value); 
