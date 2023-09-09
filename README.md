@@ -1,2 +1,2 @@
 # BusinessLab
-### Business Software Factory
+## Business Software Factory for Citizen Developers
