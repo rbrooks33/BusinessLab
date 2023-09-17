@@ -22,8 +22,14 @@ namespace BusinessLab
             Data.Execute(sql, ref result);
 			result.Success = true;
 		}
+        public static void GetTemplates(ref Result result)
+        {
+            string sql = "SELECT * FROM Templates";
+            Data.Execute(sql, ref result);
+            result.Success = true;
+        }
 
-		public static void GetWorkflows(ref Result result)
+        public static void GetWorkflows(ref Result result)
 		{
 			string sql = "SELECT * FROM Workflows";
 			Data.Execute(sql, ref result);

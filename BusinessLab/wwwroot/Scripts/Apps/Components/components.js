@@ -120,7 +120,15 @@
                     "Name": "Create",
                     "Load": true,
                     "UI": true,
-                    "Initialize": true
+                    "Initialize": true,
+                    "Components": [
+                        {
+                            "Name": "Templates",
+                            "Load": true,
+                            "Initialize": true,
+                            "UI":true
+                        }
+                    ]
                 },
                 {
                     "Name": "Test",
