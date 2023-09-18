@@ -84,7 +84,10 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 				case "AddWorkflow": Business.AddWorkflow(ref result); break;
                 case "SendMessage": PushHub.SendMessage(hub, result, result.Message); break;
 
-                    default: result.FailMessages.Add("No handler for requestname value " + requestName.Single().Value); 
+				case "GetTemplates": Business.GetTemplates(ref result); break;
+				case "GetTemplate": Business.GetTemplates(ref result); break;
+
+				default: result.FailMessages.Add("No handler for requestname value " + requestName.Single().Value); 
                     break;
             }
         }

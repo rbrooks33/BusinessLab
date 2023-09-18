@@ -15,7 +15,21 @@ namespace BusinessLab
 		public Business(WorkflowScheduler scheduler) {
             _scheduler = scheduler;
         }
+		public static void GetTemplates(ref Result result)
+		{
+			result.Data = Data.Execute($"SELECT * FROM Templates");
+			result.Success = true;
+		}
+        public static void GetTemplate(ref Result result)
+        {
+            if (result.ParamExists("TemplateID"))
+            {
+                result.Data = Data.Execute($"SELECT * FROM Templates WHERE TemplateID = {result.GetParam("TemplateID")}");
+                result.Success = true;
+            }
         
+        }
+
         public static void GetAreas(ref Result result)
         {
             string sql = "SELECT * FROM Areas";

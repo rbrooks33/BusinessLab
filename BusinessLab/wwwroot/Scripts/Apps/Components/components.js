@@ -17,6 +17,13 @@
                 },
                 {
 
+                    "Name": "UserSettings",
+                    "Load": true,
+                    "UI": false,
+                    "Initialize": true
+                },
+               {
+
                     "Name": "Actions",
                     "Load": true,
                     "UI": true,
@@ -120,7 +127,15 @@
                     "Name": "Create",
                     "Load": true,
                     "UI": true,
-                    "Initialize": true
+                    "Initialize": true,
+                    "Components": [
+                        {
+                            "Name": "Templates",
+                            "Load": true,
+                            "Initialize": true,
+                            "UI":true
+                        }
+                    ]
                 },
                 {
                     "Name": "Test",
