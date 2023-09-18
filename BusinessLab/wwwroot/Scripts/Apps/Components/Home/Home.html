@@ -8,10 +8,10 @@
 
         <div class="dropdown">
             <div class="btn btn-warning" style="margin-top: -2px;">Tools</div>
-            <div class="dropdown-content">
+            <div class="dropdown-content" style="z-index:999;">
                 <a href="#" onclick="Apps.Components.Apps.Tools.Common.Show();">Common Tools</a>
                 <a href="#" onclick="Apps.Components.Apps.Publish.Tools.Show();">Permissions</a>
-                <a href="#" onclick="Apps.Components.Apps.Create.Templates.Show();">Templates</a>
+                <a href="#" onclick="Apps.Components.Home.Create.Templates.Show();">Templates</a>
                 <a href="#" onclick="Apps.Components.Helpers.Docs.Show();">Docs</a>
                 <a href="#" onclick="Apps.Components.Helpers.Login.Show();">Login</a>
                 <a href="#" onclick="Apps.Components.Journal.Show();">Journal</a>
@@ -26,7 +26,7 @@
         <div class="dropdown">
             <div class="btn btn-warning" style="margin-top: -2px;">New</div>
             <div class="dropdown-content" style="z-index:999">
-                <a href="#" onclick="Apps.Components.Apps.Create.List('software');">Software</a>
+                <a href="#" onclick="Apps.Components.Home.Create.List('software');">Software</a>
                 <a href="#" onclick="Apps.Components.Apps.New('system');">New System</a>
                 <a href="#" onclick="Apps.Components.Apps.New('app');">New App</a>
                 <!--<a href="#" onclick="Apps.Components.Plan.Apps.Stories.New('story');">New Story</a>-->
