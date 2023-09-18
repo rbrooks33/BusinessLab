@@ -1,4 +1,6 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.DependencyModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Data;
@@ -38,7 +40,7 @@ namespace BusinessLab
             result.Success = false;
             T returnObj = default(T);
 
-            using (var db = new SqliteConnection("Data Source=businesslab.db"))
+            using (var db = new SqliteConnection(Resource.SqliteConnectionString))
             {
                 db.Open();
                 var command = db.CreateCommand();
@@ -62,31 +64,38 @@ namespace BusinessLab
 			}
             return returnObj;
 		}
-		public static void Execute(string sql, ref Result result, SqliteParameter[]? parameters = null)
+		public static DataTable Execute(FormattableString sql)
 		{
-			result.Success = false;
+			string sqlString = sql.Format;
 
-			using (var db = new SqliteConnection("Data Source=businesslab.db"))
+			var parameters = new List<SqliteParameter>();
+			var args = sql.GetArguments();
+
+			for (int x = 0; x < args.Count(); x++)
 			{
-				db.Open();
-				var command = db.CreateCommand();
-				command.CommandText = sql;
+				sqlString = sqlString.Replace($"{{{x}}}", $"@arg{x}");
+				parameters.Add(new SqliteParameter($"@arg{x}", args[x]));
+			}
+
+			return Execute(sqlString, parameters.ToArray());
+		}
+		private static DataTable Execute(string sql, SqliteParameter[]? parameters)
+		{
+			var dt = new DataTable();
+			using (var conn = new SqliteConnection(Resource.SqliteConnectionString))
+			{
+				conn.Open();
+				var cmd = new SqliteCommand(sql, conn);
 
 				if (parameters != null)
-				{
-					command.Parameters.AddRange(parameters);
-				}
-				//command.Parameters.AddWithValue("$id", id);
+					cmd.Parameters.AddRange(parameters);
 
-				using (var reader = command.ExecuteReader())
-				{
-					var dt = new DataTable();
-					dt.Load(reader);
-
-					result.Data = dt;
-					//result.Success = true;
-				}
+				var reader = cmd.ExecuteReader();
+				dt.Load(reader);
+				conn.Close();
 			}
+
+			return dt;
 		}
 	}
 }

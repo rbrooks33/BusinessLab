@@ -14,10 +14,12 @@
 		{
 			try
 			{
-				string sql = "INSERT INTO Logs (StepID, Title, Description, LogSeverity, UniqueID) VALUES ";
-				sql += $"({stepId}, '{title.Replace("'", "''")}', '{description.Replace("'", "''")}', {(int)severity}, '{uniqueId.Replace("'", "''")}')";
+				FormattableString sql = $@"
 
-				Data.Execute(sql, ref result);
+					INSERT INTO Logs (StepID, Title, Description, LogSeverity, UniqueID) 
+					VALUES ({stepId}, '{title.Replace("'", "''")}', '{description.Replace("'", "''")}', {(int)severity}, '{uniqueId.Replace("'", "''")}')";
+
+				Data.Execute(sql);
 			}
 			catch (Exception ex) { 
 				result.FailMessages.Add(ex.ToString());
