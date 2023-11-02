@@ -2,10 +2,10 @@
 
     <div id="divDebug" class="debugContainerStyle">
         <div class="btn-group debugbuttongroup">
-            <div class="btn btn-primary" onclick="Apps.Components.Debug.ShowComponents();">Components</div>
-            <div class="btn btn-success" onclick="Apps.Components.Debug.ShowHTML();">HTML</div>
-            <div class="btn btn-warning" onclick="Apps.Components.Debug.ShowData();">Data</div>
-            <div class="btn btn-primary" onclick="Apps.Components.Debug.ShowTopology();">Topology</div>
+            <!--<div class="btn btn-primary" onclick="Apps.Components.Debug.ShowComponents();">Components</div>-->
+            <div class="btn btn-success" onclick="Apps.Components.Helpers.Debug.Event('design');">Trace</div>
+            <div class="btn btn-warning" onclick="Apps.Components.Kentico.Sales.SalesWizard.Test();">Test</div>
+            <!--<div class="btn btn-primary" onclick="Apps.Components.Debug.ShowTopology();">Topology</div>-->
         </div>
     </div>
 </script>
@@ -16,7 +16,7 @@
 
     <!--
         0 = Component tree html
-        1 = Component detail 
+        1 = Component detail
         2 = Preview
     -->
     <table>
@@ -31,7 +31,7 @@
 
 <script id="Preview" type="text/template">
     <!--
-        0 = iFrame source    
+        0 = iFrame source
     -->
     <div id="debug_PreviewIframe">
         <iframe src="{0}" style="width: 850px; height: 600px;"></iframe>
@@ -83,7 +83,7 @@
 <script id="Debug_HTMLEditor" type="text/template">
 
     <!--
-        0= templates    
+        0= templates
     -->
     <div style="display:flex; flex-flow:row">
         <div>left {0}</div>
@@ -92,3 +92,9 @@
     </div>
 
 </script>
+
+<!--<script id="Debug_ShowBar_Hoveree" type="text/template">
+
+    <div style="position:absolute; top:0px; left:0px; width:10px; height:10px" onmouseover="$('#divDebug').show();" onmouseout=""></div>
+
+</script>-->

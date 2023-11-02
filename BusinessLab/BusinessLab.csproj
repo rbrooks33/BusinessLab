@@ -30,6 +30,26 @@
     <None Include="wwwroot\Scripts\Apps\Components\Home\Plan\Areas\Areas.js" />
     <None Include="wwwroot\Scripts\Apps\Components\Home\Plan\Steps\Steps.js" />
     <None Include="wwwroot\Scripts\Apps\Components\Home\Plan\Workflows\Workflows.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\Runs\Runs.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\ResultsInterval\ResultsInterval.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\TestPlans.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\Tests\Steps\EditTest\EditTest.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\Tests\Steps\Steps.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\Tests\TestGrid\TestGrid.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\Tests\Tests.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\Test538\Test538.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\TestManager\TestManager.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\TestManager\TestManagerFuncSpecs\TestManagerFuncSpecs.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\TestManager\TestManagerRequirements\TestManagerRequirements.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\TestManager\TestManagerSoftware\TestManagerSoftware.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\TestManager\TestManagerSoftware\ViewConfigs\ViewConfigs.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\TestManager\TestManagerSoftware\ViewShopRunnerProducts\ViewShopRunnerProducts.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\TestManager\TestManagerTestPlans\TestManagerTestPlans.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\TestManager\TestManagerTestSteps\TestManagerTestSteps.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\TestManager\TestManagerTests\TestManagerTests.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\TestManager\TestManagerTests\TestManagerTests_History\TestManagerTests_History.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\TestSUT\TestSUT.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\VitaTest.js" />
   </ItemGroup>
 
   <ItemGroup>

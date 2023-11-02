@@ -1,8 +1,11 @@
 ﻿define([], function () {
     var Me = {
+        Name: 'Home',
+        Color: '#1961AE',
         Reports: null,
         Controls: null,
         Initialize: function (callback) {
+
 
             //Main: Used for internal methods
             Apps.Data.RegisterMyPOST(Me, 'Main', Apps.ActiveDeployment.WebRoot + '/api', [], true);
@@ -20,14 +23,20 @@
             Me.Controls = Apps.Components.Helpers.Controls;
             Me.Files = Me.Data.Posts.Files;
 
+
             callback();
+
         },
         Show: function () {
+
+            Apps.Components.Helpers.Debug.Trace(this);
 
             Me.UI.Show();
             Me.PutOnTop();
         },
         PutOnTop: function () {
+
+            Apps.Components.Helpers.Debug.Trace(this);
 
             $('.Stage_Container').css('z-index', '100');
 
@@ -36,6 +45,8 @@
             $('.StageButtons_Home').addClass('active');
         },
         HandleError: function (result) {
+
+            Apps.Components.Helpers.Debug.Trace(this, JSON.stringify(result));
 
             vNotify.error({ text: 'A problem ocurred on the server.', title: 'Server Error', sticky: false, showClose: true });
             let textDiv = $('body > div.vnotify-container.vn-top-right > div > div.vnotify-text');
@@ -46,9 +57,15 @@
 
         },
         ShowBackground: function () {
+
+            Apps.Components.Helpers.Debug.Trace(this);
+
             $('#Main_Modal_Background').show();
         },
         HideBackground: function () {
+
+            Apps.Components.Helpers.Debug.Trace(this);
+
             $('#Main_Modal_Background').hide();
         }
 

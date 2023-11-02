@@ -1,0 +1,57 @@
+﻿<script id="Test_Runs_Template" type="text/template">
+
+    <div class="Test_Runs_Style">
+
+        <div class="btn btn-warning"
+             style="position:absolute;right:10px;cursor:pointer;margin:10px;margin-right:25px;z-index:300;"
+             onclick="Apps.Components.Apps.Test.Runs.Close();">Close</div>
+
+        <table>
+            <tr>
+                <td style="vertical-align:top;"><div id="divTestRunInstances"></div></td>
+                <td style="vertical-align:top;"><div id="divTestRunInstanceDetail"></div></td>
+            </tr>
+        </table>
+        
+    </div>
+
+</script>
+
+<script id="Test_Runs_TestRunInstances_Template" type="text/template">
+
+    <!--
+        0=table of instances    
+    -->
+    <div style="margin:10px;">
+        <h2 style="color:lightgray;">Test Run Instances</h2>
+        {0}
+    </div>
+
+</script>
+
+<script id="Test_Runs_TestRunInstanceRuns_Template" type="text/template">
+
+    <!--
+        0=table 
+    -->
+    <div style="margin:10px;">
+        <h2 style="color:lightgray;">Test Run Instance Runs</h2>
+        {0}
+    </div>
+    <div class="btn btn-success" onclick="Apps.Components.Apps.Test.Runs.CreateRunInstance();">Submit</div>
+</script>
+
+<script id="Test_Runs_NewTestRunInstance_Template" type="text/template">
+
+    <!--
+        0=table
+        1=newRunInstanceTypeId
+        2=uniqueId
+    -->
+    <div style="margin:10px;">
+        <h2 style="color:lightgray;">New Test Run</h2>
+        {0}
+    </div>
+    <div class="btn btn-success" onclick="Apps.Components.Apps.Test.Runs.CreateRunInstance({1}, {2});">Submit</div>
+
+</script>
