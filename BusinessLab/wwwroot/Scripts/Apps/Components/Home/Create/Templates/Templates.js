@@ -48,7 +48,13 @@
             //    }
             //});
 
-            callback();
+                        if (callback)
+                            callback();
+                    }
+                    else {
+                        Apps.Notify('warning', 'Problem getting templates.');
+                    }
+                });
         },
         Show: function () {
 
@@ -89,6 +95,7 @@
                     Apps.Components.Helpers.Dialogs.Content('Templates_Dialog', pageHtml);
                     Apps.Components.Helpers.Dialogs.Open('Templates_Dialog');
 
+                    $('#Create_Templates_Menu_Container_Div').html(html);
                 }
                 else
                     Apps.Components.Home.HandleError(post.Result);

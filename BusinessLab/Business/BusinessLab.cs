@@ -35,8 +35,14 @@ namespace BusinessLab
 			result.Data = Data.Execute($"SELECT * FROM Areas");
 			result.Success = true;
 		}
+        public static void GetTemplates(ref Result result)
+        {
+            string sql = "SELECT * FROM Templates";
+            Data.Execute(sql, ref result);
+            result.Success = true;
+        }
 
-		public static void GetWorkflows(ref Result result)
+        public static void GetWorkflows(ref Result result)
 		{
 			result.Data = Data.Execute($"SELECT * FROM Workflows");
 			result.Success = true;
