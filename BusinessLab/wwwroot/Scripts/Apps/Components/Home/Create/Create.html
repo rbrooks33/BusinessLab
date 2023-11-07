@@ -2,7 +2,12 @@
 <div class="Create_Container Stage_Container">
 
     <div class="Home_Stage_Title">Create</div>
+    <div data-bind-component="Apps.Home.Create.Fund1()">
 
+    </div>
+    <div data-bind-component="Apps.Home.Create.Prop1">
+
+    </div>
     <div id="tabstripCreateStage" data-type="tabstrip">
         <div data-tabstrip-tabtitle="Actions" data-tabstrip-templateid="templateTabActions"></div>
         <div data-tabstrip-tabtitle="Workflows" data-tabstrip-templateid="templateTabWorkflows"></div>
@@ -13,3 +18,17 @@
 </div>
     
 
+<script id="createtemplate" type="text/template">
+
+    <div>
+        <div data-bind-component="Apps.Components.Home.Create.Model.Func1()">
+
+        </div>
+        <div data-bind-component="Apps.Components.Home.Create.Model.Prop1">
+
+        </div>
+
+        <input type="text" data-bind-component="Apps.Components.Home.Create.Model.Prop1" value="hi" />
+    </div>
+
+</script>

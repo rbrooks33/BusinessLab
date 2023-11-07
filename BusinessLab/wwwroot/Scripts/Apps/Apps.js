@@ -1782,17 +1782,17 @@ Apps.ComponentTemplate = function (settings) {
             //$(templateNode).append(currentHtml);
             this.Selector.append(currentHtml);
 
-            //Execute referenced methods
-            let bindElements = this.Selector.find('[data-template-load]');
+            ////Execute referenced methods
+            //let bindElements = this.Selector.find('[data-template-load]');
 
-            $.each(bindElements, function (index, element) {
-                let elementSelector = $(element);
+            //$.each(bindElements, function (index, element) {
+            //    let elementSelector = $(element);
 
-                //Put referenced html below element
-                let content = eval(elementSelector.attr('data-template-load'));
-                elementSelector.html(content);
+            //    //Put referenced html below element
+            //    let content = eval(elementSelector.attr('data-template-load'));
+            //    elementSelector.html(content);
 
-            });
+            //});
 
             //Execute referenced methods on drop
             //this.Execute('data-template-ondrop');
@@ -1852,7 +1852,22 @@ Apps.ComponentTemplate = function (settings) {
         }
         //currentHtml = this.Selector.html();
         //}
-        return currentHtml;
+        let current = $(currentHtml);
+        let componentBinds = current.find('[data-bind-component]');
+        $.each(componentBinds, function (index, cbind) {
+
+            let bindval = $(cbind).attr('data-bind-component');
+            let bindresult = eval(bindval);
+
+            if (cbind.localName.toLowerCase() == 'input') {
+                $(cbind).val(bindresult);
+            }
+            else if (cbind.localName.toLowerCase() == 'div') {
+                $(cbind).text(bindresult);
+            }
+        });
+
+        return current.html(); // Html;
     };
     this.Bind = function (html) {
 

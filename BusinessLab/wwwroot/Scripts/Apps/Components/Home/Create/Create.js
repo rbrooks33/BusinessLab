@@ -6,6 +6,8 @@
         },
         Show: function () {
 
+            let template = Me.UI.Templates.createtemplate.HTML();
+
             Me.UI.Show();
             Me.PutOnTop();
 
@@ -24,8 +26,13 @@
             $('.Create_Container').css('z-index', '200');
             let stageButtons = $('.HeadsUp_StageButtons').children().removeClass('active');
             $('.StageButtons_Create').addClass('active');
+        },
+        Model: {
+            Prop1: 'hiya prop1',
+            Func1: function () {
+                return 'hiya func1';
+            }
         }
-
     };
     return Me;
 })

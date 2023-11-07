@@ -124,7 +124,7 @@
                     "Components": [
                         {
                             "Name": "Templates",
-                            "Load": true,
+                            "Load": false,
                             "Initialize": true,
                             "UI":true
                         }
