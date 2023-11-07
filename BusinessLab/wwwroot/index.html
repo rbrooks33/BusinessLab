@@ -51,6 +51,9 @@
             Apps.Components.Helpers.PushHub.Connect();
 
             Apps.Components.Home.Show();
+
+            if (Apps.ActiveDeployment.Debug)
+                Apps.Components.Helpers.Debug.Init();
         }
     </script>
 

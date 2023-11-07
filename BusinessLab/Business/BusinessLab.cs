@@ -15,11 +15,24 @@ namespace BusinessLab
 		public Business(WorkflowScheduler scheduler) {
             _scheduler = scheduler;
         }
-        
-        public static void GetAreas(ref Result result)
+		public static void GetTemplates(ref Result result)
+		{
+			result.Data = Data.Execute($"SELECT * FROM Templates");
+			result.Success = true;
+		}
+        public static void GetTemplate(ref Result result)
         {
-            string sql = "SELECT * FROM Areas";
-            Data.Execute(sql, ref result);
+            if (result.ParamExists("TemplateID"))
+            {
+                result.Data = Data.Execute($"SELECT * FROM Templates WHERE TemplateID = {result.GetParam("TemplateID")}");
+                result.Success = true;
+            }
+
+        }
+
+		public static void GetAreas(ref Result result)
+        {
+			result.Data = Data.Execute($"SELECT * FROM Areas");
 			result.Success = true;
 		}
         public static void GetTemplates(ref Result result)
@@ -31,21 +44,18 @@ namespace BusinessLab
 
         public static void GetWorkflows(ref Result result)
 		{
-			string sql = "SELECT * FROM Workflows";
-			Data.Execute(sql, ref result);
+			result.Data = Data.Execute($"SELECT * FROM Workflows");
 			result.Success = true;
 		}
 		public static void GetSteps(ref Result result)
 		{
-			string sql = "SELECT * FROM Steps ORDER BY StepOrder";
-			Data.Execute(sql, ref result);
+			result.Data = Data.Execute($"SELECT * FROM Steps ORDER BY StepOrder");
 			result.Success = true;
 		}
 
 		public static void GetActions(ref Result result)
 		{
-			string sql = "SELECT * FROM Actions";
-			Data.Execute(sql, ref result);
+			result.Data = Data.Execute($"SELECT * FROM Steps ORDER BY StepOrder");
             result.Success = true;
 		}
         
@@ -61,7 +71,7 @@ namespace BusinessLab
                 if (action.Code != null)
                     action.Code = action.Code.Replace("'", "''");
 
-                string sql = @$"
+                FormattableString sql = $@"
                 
 
 
@@ -82,7 +92,7 @@ namespace BusinessLab
                 WHERE 
                     ActionID = {action.ActionID}";
 
-                Data.Execute(sql, ref result);
+                result.Data = Data.Execute(sql);
 				result.Success = true;
 			}
             else
@@ -94,7 +104,7 @@ namespace BusinessLab
 			{
 				var workflow = JsonConvert.DeserializeObject<dynamic>(result.Data.ToString());
 
-				string sql = @$"
+				FormattableString sql = @$"
                 
                 UPDATE Workflows SET 
                     WorkflowName = '{workflow.WorkflowName.Value}',
@@ -102,7 +112,7 @@ namespace BusinessLab
                 WHERE 
                     WorkflowID = {workflow.WorkflowID.Value}";
 
-				Data.Execute(sql, ref result);
+				result.Data = Data.Execute(sql);
 				result.Success = true;
 			}
 			else
@@ -123,7 +133,7 @@ namespace BusinessLab
                 int stepOrder = 1;
                 int.TryParse(step.StepOrder.ToString(), out stepOrder);
 
-				string sql = @$"
+				FormattableString sql = @$"
                 
                 UPDATE Steps SET 
                     StepName = '{step.StepName.Value}',
@@ -133,7 +143,7 @@ namespace BusinessLab
                 WHERE 
                     StepID = {step.StepID.Value}";
 
-				Data.Execute(sql, ref result);
+				result.Data = Data.Execute(sql);
 				result.Success = true;
 			}
 			else
@@ -142,8 +152,8 @@ namespace BusinessLab
 
 		public static void AddAction(ref Result result)
         {
-            string sql = $"INSERT INTO Actions (ActionName) VALUES ('new action')";
-            Data.Execute(sql, ref result);
+            FormattableString sql = $"INSERT INTO Actions (ActionName) VALUES ('new action')";
+            result.Data = Data.Execute(sql);
 			result.Success = true;
 		}
 
@@ -153,8 +163,8 @@ namespace BusinessLab
 
             if (areaIdParam != null)
             {
-                string sql = $"INSERT INTO Workflows (WorkflowName, WorkflowDescription, AreaID) VALUES ('new workflow', '@nbsp;@nbsp;@nbsp;', {areaIdParam.Value})";
-                Data.Execute(sql, ref result);
+                FormattableString sql = $"INSERT INTO Workflows (WorkflowName, WorkflowDescription, AreaID) VALUES ('new workflow', '@nbsp;@nbsp;@nbsp;', {areaIdParam.Value})";
+                result.Data = Data.Execute(sql);
                 result.Success = true;
             }
             else
@@ -166,8 +176,8 @@ namespace BusinessLab
 
             if (workflowId != null)
             {
-                string sql = $"INSERT INTO Steps (StepName, WorkflowID) VALUES ('new step', {workflowId.Value})";
-                Data.Execute(sql, ref result);
+                FormattableString sql = $"INSERT INTO Steps (StepName, WorkflowID) VALUES ('new step', {workflowId.Value})";
+                result.Data = Data.Execute(sql);
                 result.Success = true;
             }
             else

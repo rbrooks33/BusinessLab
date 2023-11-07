@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BusinessLab;
 using System.Text;
+using Microsoft.Data.SqlClient;
 
 namespace BusinessLab
 {
@@ -94,16 +95,15 @@ namespace BusinessLab
                         {
                             string sql = action.Sql;
 
-                            var parameters = new List<Microsoft.Data.Sqlite.SqliteParameter>();
+                            //var parameters = new List<Microsoft.Data.Sqlite.SqliteParameter>();
 
-                            foreach (var p in result.Params)
-                            {
-                                var param = new Microsoft.Data.Sqlite.SqliteParameter(action.VariableDelimiter + p.Name.ToString(), p.Value.ToString());
-                                parameters.Add(param);
-                            }
+                            //foreach (var p in result.Params)
+                            //{
+                            //    var param = new Microsoft.Data.Sqlite.SqliteParameter(action.VariableDelimiter + p.Name.ToString(), p.Value.ToString());
+                            //    parameters.Add(param);
+                            //}
 
-                            Data.Execute(sql, ref result, parameters.ToArray());
-
+                            result.Data = Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(sql, new List<SqlParameter>()));
                             result.Success = true;
                         }
                         else result.FailMessages.Add("Arg Code null or empty.");
@@ -169,7 +169,7 @@ namespace BusinessLab
                 //}
 
                 sql = (String.IsNullOrEmpty(sql) ? "select 'empty sql'" : sql);
-                Data.Execute(sql, ref result, parameters.ToArray());
+                result.Data = Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(sql, parameters.ToArray()));
                 result.Success = true;
             }
             else result.FailMessages.Add("Arg sCode null or empty.");
@@ -185,7 +185,7 @@ namespace BusinessLab
                     ('New Action', 'Description')
                     
                     ";
-            Data.Execute(updatesql, ref result);
+            result.Data = Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
 
             result.Success = true;
         }
@@ -204,7 +204,7 @@ namespace BusinessLab
                     where actionid = {actionid}
                     
                     ";
-                Data.Execute(updatesql, ref result);
+                result.Data = Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
                 result.Success = true;
             }
 
@@ -226,7 +226,7 @@ namespace BusinessLab
                     where actionid = {actionid}
                     
                     ";
-                Data.Execute(updatesql, ref result);
+                result.Data = Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
                 result.Success = true;
             }
         }

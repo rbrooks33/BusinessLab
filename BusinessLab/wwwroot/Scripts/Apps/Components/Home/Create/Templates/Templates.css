@@ -1,4 +1,4 @@
-﻿.TemplatesContentStyle {
+﻿﻿.TemplatesContentStyle {
     position: absolute;
     top: 59px;
     border: 3px solid cornflowerblue;
@@ -6,7 +6,7 @@
     width: 97vw;
     height: 90vh;
     margin-left: 1vw;
-    background-color:white;
-    z-index:200;
-    overflow:auto;
+    background-color: white;
+    z-index: 200;
+    overflow: auto;
 }
