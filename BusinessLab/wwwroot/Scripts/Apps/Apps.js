@@ -1,8 +1,10 @@
 ﻿window.Apps = {
+    Name: 'AppsJS',
+    Color: 'black',
     Components: [],
     UI: [],
     LocalComponentsReady: function () {
-        $ = jQuery.noConflict(true); //Allows legacy jquery to continue to be used
+        // $ = jQuery.noConflict(true); //Allows legacy jquery to continue to be used
 
     },
     Result: function (message, data, callback) {
@@ -16,7 +18,7 @@
             SuccessMessages: [],
             Data: data,
             AddSuccess: function (message, data) {
-                
+
                 this.SuccessMessages.push('Success: (' + timestamp + ') ' + message);
                 console.info('Success: ' + message);
                 if (callback)
@@ -27,20 +29,60 @@
                 console.warn('Fail: ' + failmessage);
                 if (callback)
                     callback('<span style="color:red;font-weight:bold;">Fail:</span> ' + '<span style="font-weight:bold;">' + failmessage + '</span> ' + (data ? data : ''));
-            }
+            },
+            Params: [],
+
+        };
+        //resultReturn.AddSuccess(message, data);
+        return resultReturn;
+    },
+    Result2: function (message) {
+
+
+        let resultReturn = {
+            Success: false,
+            Message: message,
+            FailedMessages: [],
+            SuccessMessages: [],
+            Messages: [],
+            AddSuccess: function (message, data) {
+
+                let timestamp = new Date();
+                this.SuccessMessages.push({ Timestamp: timestamp, Message: message, Data: (data ? data : '') });
+            },
+            AddFail: function (failmessage, data) {
+
+                let timestamp = new Date();
+                this.FailedMessages.push({ Timestamp: timestamp, Message: failmessage, Data: (data ? data : '') });
+            },
+            AddMessage: function (message, data) {
+
+                let timestamp = new Date();
+                this.Messages.push({ Timestamp: timestamp, Message: message, Data: (data ? data : '') });
+            },
+            Params: [],
+
         };
         //resultReturn.AddSuccess(message, data);
         return resultReturn;
     },
     PreInit: function () {
 
+        //Wait for $
+        (async () => {
+            console.log("waiting for variable");
+            while (!window.hasOwnProperty("$") && !window.hasOwnProperty("jQuery")) // define the condition as you like
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            console.log("variable is defined");
+        })();
+        console.log("above code doesn't block main function stack");
 
         Apps.SetPolyfills();
 
         Apps['ActiveDeployment'] = {
             "Active": true,
             "Version": 1, //new Date().toLocaleTimeString(), 
-            "WebRoot": "https://businesslab.azurewebsites.net",
+            "WebRoot": "https://192.168.168.68",
             "VirtualFolder": "",
             "Port": null,
             "AppsRoot": "Scripts/Apps",
@@ -51,10 +93,11 @@
         };
 
         if (Apps.ActiveDeployment.Debug) {
-            Apps.ActiveDeployment.WebRoot = 'https://localhost:54322';
+            Apps.ActiveDeployment.WebRoot = 'https://localhost:44381';
             Apps.ActiveDeployment.Version = 8; //don't change so often
+
         }
-        
+
         //if (location.pathname.toLowerCase().indexOf('default.aspx') > 0) {
         //    Apps.ActiveDeployment['EnabledComponents'] = [
         //        {
@@ -191,7 +234,7 @@
         Apps.Settings['Debug'] = deployment.Debug;
         Apps.Settings['Required'] = deployment.Required;
         Apps.Settings['UseServer'] = deployment.UseServer;
-        Apps.Settings.WebRoot = Apps.Settings.WebRoot + (deployment.Port && deployment.Port.length > 0 ?  + ':' + deployment.Port : '');
+        Apps.Settings.WebRoot = Apps.Settings.WebRoot + (deployment.Port && deployment.Port.length > 0 ? + ':' + deployment.Port : '');
         if (Apps.Settings.Debug)
             console.log('deployment settings applied');
     },
@@ -222,34 +265,34 @@
 
                 ///var allNonScriptResources = nonScriptResources;
                 //Apps.LoadUtil(function () { //After require, before components. non-optimal
-                    //Apps.LoadResizer(function () {
+                //Apps.LoadResizer(function () {
 
-                    if (Apps.Settings.Debug)
-                        console.log('script resources loaded');
+                if (Apps.Settings.Debug)
+                    console.log('script resources loaded');
 
-                    let styleResources = nonScriptResources.filter(function (ns) {
-                        return ns.ModuleType === 'style';
-                    });
+                let styleResources = nonScriptResources.filter(function (ns) {
+                    return ns.ModuleType === 'style';
+                });
 
-                    Apps.LoadStyleResources(styleResources);
+                Apps.LoadStyleResources(styleResources);
 
-                    let nonStyleResources = nonScriptResources.filter(function (ns) {
-                        return ns.ModuleType !== 'style';
-                    });
+                let nonStyleResources = nonScriptResources.filter(function (ns) {
+                    return ns.ModuleType !== 'style';
+                });
 
-                    if (nonStyleResources.length > 0) {
-                        Apps.LoadNonScriptResources(nonStyleResources, function () {
+                if (nonStyleResources.length > 0) {
+                    Apps.LoadNonScriptResources(nonStyleResources, function () {
 
-                            if (Apps.Settings.Debug)
-                                console.log('non-script resources loaded');
-                            if (callback)
-                                callback();
-                        });
-                    }
-                    else {
+                        if (Apps.Settings.Debug)
+                            console.log('non-script resources loaded');
                         if (callback)
                             callback();
-                    }
+                    });
+                }
+                else {
+                    if (callback)
+                        callback();
+                }
                 //});
                 //});
             });
@@ -287,25 +330,39 @@
             return item.LoadFirst === false;
         });
 
-        Apps.LoadFirstScripts(loadFirst, function () {
+        if (loadFirst.length > 0) {
+            Apps.LoadFirstScripts(loadFirst, function () {
 
-            loadNext.forEach(function (r, index) {
-
-                let resourcesFolder = Apps.Settings.WebRoot + '/' + Apps.Settings.AppsRoot + '/Resources';
-
-                Apps.CountDownScriptResources.count++;
-
-                Apps.LoadScript(resourcesFolder + '/' + r.FileName + '?version=' + Apps.Settings.Version, function () {
-
-                    if (Apps.Settings.Debug)
-                        console.log('Script: loading next ' + r.FileName);
-
-                    Apps.CountDownScriptResources.check();
-
+                loadNext.forEach(function (r, index) {
+                    Apps.LoadResourceScript(r);
                 });
             });
-        });
+        }
+        else {
+
+            loadNext.forEach(function (r, index) {
+                Apps.LoadResourceScript(r);
+            });
+
+        }
+
         Apps.ScriptResourcesReady = callback;
+
+    },
+    LoadResourceScript: function (r) {
+
+        let resourcesFolder = Apps.Settings.WebRoot + '/' + Apps.Settings.AppsRoot + '/Resources';
+
+        Apps.CountDownScriptResources.count++;
+
+        Apps.LoadScript(resourcesFolder + '/' + r.FileName + '?version=' + Apps.Settings.Version, function () {
+
+            if (Apps.Settings.Debug)
+                console.log('Script: loading next ' + r.FileName);
+
+            Apps.CountDownScriptResources.check();
+
+        });
 
     },
     Values: function (obj) {
@@ -342,6 +399,21 @@
 
                 if (Apps.Settings.Debug)
                     console.log('Script: loading first ' + fileName);
+
+                if (fileName == 'require.js') {
+
+                    Apps.Require = requirejsAJS;
+                    Apps.Define = window.defineAJS;
+
+                    //    requirejs.config({
+                    //        baseUrl: '/Scripts/Apps/Resources',
+                    //        map: {
+                    //            notify: '/Scripts/Apps/Resources/vanilla-notify',
+                    //            util: '/Scripts/Apps/Resources/util'
+                    //        }
+                    //    });
+                }
+
                 Apps.LoadFirstScripts(loadFirsts, callback);
             });
 
@@ -378,7 +450,7 @@
             if (r.Enabled) {
                 if (r.ModuleType === 'require') {
                     Apps.CountDownNonScriptResources.count++;
-                    requirejs([resourcesFolder + '/' + r.FileName + '?version=' + Apps.Settings.Version], function (resource) {
+                    Apps.Require([resourcesFolder + '/' + r.FileName + '?version=' + Apps.Settings.Version], function (resource) {
 
                         if (r.ModuleName) {
                             Apps[r.ModuleName] = resource;
@@ -463,11 +535,14 @@
         }
         //Apps.ComponentsReady = callback; //just for testing, external app needs to wire this up
     },
+    ComponentList: [],
     LoadComponents: function (parentComponent, components, componentsFolder) {
 
         Apps.CountDownComponents.count++;
 
         if (components) {
+
+
             components.forEach(function (c, index) {
 
                 //if (c.Load && c.ModuleType === 'es6') {
@@ -485,16 +560,26 @@
                 //Make load==true default (rb 4/19/2021)
                 if (
                     (c.Load == null || c.Load == true) &&
-                    (c.ModuleType === 'require' || c.ModuleType == null)) {
+                    (c.ModuleType === 'require' || c.ModuleType == null || c.ModuleType == undefined)) {
 
                     if (Apps.Settings.Debug)
                         console.log('loading component: ' + c.Name);
 
                     Apps.CountDownComponents.count++;
-                    requirejs([componentsFolder + '/' + c.Name + '/' + c.Name + '.js?version=' + Apps.Settings.Version], function (cObj) {
+                    Apps.Require([componentsFolder + '/' + c.Name + '/' + c.Name + '.js?version=' + Apps.Settings.Version], function (cObj) {
+
+                        cObj['Config'] = c;
+                        Apps.ComponentList.push(cObj);
+
                         Apps.LoadComponent(parentComponent, cObj, c, function () {
                             Apps.LoadComponents(cObj, c.Components, componentsFolder + '/' + c.Name); // + '/Components');
                             Apps.CountDownComponents.check();
+
+
+                            //console.debug('test for ' + c.Name);
+                            if (Apps.ActiveDeployment.Test && cObj.Test) {
+                                cObj.Test();
+                            }
 
                         });
                     });
@@ -586,13 +671,17 @@
                 component['UI'] = new Apps.Template({ id: configName, content: data });
                 component['UI'].Load(data);
                 component['UI']['Parent'] = component;
-                component.UI['Templates'] = {};
+                component.UI['Templates'] = [];
+                //component.UI['Islands'] = [];
 
                 let templates = $('<div>' + data + '</div>').find('script[type="text/template"]');
 
                 $.each(templates, function (index, template) {
                     component.UI.Templates[template.id] = new Apps.ComponentTemplate({ id: configName + '_' + template.id, content: template.innerHTML });
+
+
                 });
+
 
                 Apps.LoadStyle(component.Path + '/' + configName + '.css?version=' + Apps.ActiveDeployment.Version);
 
@@ -815,20 +904,30 @@
 
                 Apps.ComponentsReady();
 
+                //Bind
+                //Apps.BindComponents();
+                //Apps.Bind.BindDocumentIslands();
+
+                //Apps.LoadIslands();
+                Apps.LoadDocumentIslands();
+
+                //Start
+                Apps.StartComponents();
+
                 if (Apps.ActiveDeployment.Debug)
                     Apps.Notify('warning', 'Debug configuration is enabled.');
                 if (Apps.ActiveDeployment.Test) {
                     Apps.Notify('warning', 'Test mode is enabled. Running tests...');
 
-                    requirejs(['/Scripts/Apps/Resources/funcunit.js'], function (funcunit) {
+                    Apps.Require(['/Scripts/Apps/Resources/funcunit.js'], function (funcunit) {
 
-                        requirejs(['/Scripts/Apps/Resources/qunit.js'], function (qunit) {
+                        Apps.Require(['/Scripts/Apps/Resources/qunit.js'], function (qunit) {
 
                             QUnit.config.autostart = false;
 
                             F.speed = 400;
                             //    //Edit/save App
-                            Apps.TestComponents();
+                            //Apps.TestComponents();
                             //    Me.Edit(2);
 
                         });
@@ -838,6 +937,532 @@
             }
         }
     },
+    GetBoundTemplate: function (caller) {
+        //Get template whose data-bin-property is '[property]'
+        //Apps.LoadBoundTemplates(property);
+    },
+    LoadBoundTemplates: function (property) {
+
+        $.each(Apps.ComponentList, function (index, component) {
+
+            if (component.UI && component.UI.Templates) {
+
+
+                let templateNames = Object.keys(component.UI.Templates);
+
+                $.each(templateNames, function (i, t) {
+
+
+                    Apps.LoadBoundTemplate(component.UI.Templates[t]);
+
+                });
+            }
+
+        });
+
+    },
+    LoadBoundTemplate: function (template) {
+
+
+        //Add template islands
+        //let thisTemplate = component.UI.Templates[template.id];
+        //template['Islands'] = [];
+
+        let templateHtml = template.HTML();
+
+        let templateDom = new DOMParser().parseFromString(templateHtml, 'text/html');
+
+        let islands = templateDom.querySelectorAll('Island');
+
+        $.each(islands, function (i, island) {
+            template.Islands.push(island);
+        });
+
+    },
+
+    AutoBind: function () {
+
+        let references = Apps.AutoBindReferences;
+        let bindElements = $('[data-bind-property]');
+
+        $.each(bindElements, function (i, e) {
+
+            var bindpropname = $(e).attr('data-bind-property'); // "ShippingAddressHTML";
+
+            //Get where not in list or control count is different
+            let existing = Enumerable.From(references).Where(r => r.Name == bindpropname).ToArray();
+
+            if (existing.length == 0) {
+
+                //Look for it in every component
+                $.each(Apps.ComponentList, function (i, c) {
+
+                    Apps.AutoBindComponent(bindpropname, c);
+
+                });
+            }
+
+        });
+
+    },
+    AutoBindComponent: function (bindpropname, c) {
+
+        if (c.Model) {
+            let modelString = JSON.stringify(c.Model, function (key, value) {
+                if (typeof value === 'function') {
+                    return value.toString();
+                } else {
+                    return value;
+                }
+            });
+            let instances = modelString.match(bindpropname);
+            if (instances && instances.length == 1) {
+
+                Apps.AutoBindModel(bindpropname, c);
+                //Save to do only once
+                //    }
+                //    else
+                //        Apps.Notify('info', 'Cannot bind: ' + bindpropname + ' not found in ' + c.Config.Name + '.Model');
+                //}
+                //else
+                //    Apps.Notify('info', 'Cannot bind: ' + bindpropname + ' not found in ' + c.Config.Name + '.Controls');
+
+                //else if (existing.length == 1) {
+                //    //Find out if changed
+                //    if (references[0].CountrolCount != c.Controls.length)
+                //        Apps.Bind.DataBindControls(c.Model, bindpropname, c.Controls);
+                //}
+                //    else if (existing.length > 1) {
+                //        //Somehow more than one, remove all and start over
+                //        Apps.AutoBindReferences = references.filter(r => r.Name);
+                //        Apps.Bind.DataBindControls(c.Model, bindpropname, c.Controls);
+
+                //        Apps.AutoBindReferences.push({ Name: bindpropname, ControlCount: c.Controls.length });
+            }
+            else if (instances && instances.length > 1)
+                Apps.Notify('info', 'More than one property exists for ' + bindpropname + '!');
+
+        }
+
+    },
+    AutoBindModel: function (bindpropname, c) {
+
+        let references = Apps.AutoBindReferences;
+
+        try {
+
+            if (c.Controls) {
+                //match! Get the element and add data-bind-type (for backward compatibility)
+                let elements = document.querySelectorAll('[data-bind-property="' + bindpropname + '"]');
+
+                //if (eval('c.Model.' + bindpropname)) {
+
+                $.each(elements, function (i, e) {
+
+                    //Apply current model values
+                    var propertyValue = eval('c.Model.' + bindpropname);
+                    var elementType = e.localName.toLowerCase();
+                    var contentType = $(e).attr('data-bind-contenttype');
+
+                    if (elementType == 'div' || elementType == 'span') {
+                        if (contentType == 'html')
+                            e.innerHTML = propertyValue;
+                        else if (contentType == 'bool') {
+                            //nothing
+                        }
+                        else
+                            e.innerText = propertyValue;
+                    }
+                    else if (elementType == 'input') {
+                        e.defaultValue = propertyValue; // eval(componentString); // + '.Model.' + propertyName);
+                    }
+                    else if (elementType == 'option') {
+                        e.innerText = propertyValue; // eval(componentString);
+                    }
+
+                    //Add reference and create binding if not already exists
+                    let existing = Enumerable.From(references).Where(r => r.Name == bindpropname).ToArray();
+
+                    if (existing.length == 0 || forceBind) {
+
+                        //Add reference
+                        Apps.AutoBindReferences.push({
+                            Name: bindpropname,
+                            ComponentObject: c,
+                            Component: c.Config.Name,
+                            ElementType: e.localName,
+                            ElementClass: e.className
+                        });
+
+                        //For simplicity make type name same as property
+                        $(e).attr('data-bind-type', bindpropname);
+
+                        //Bind and validate existing values
+                        Apps.Bind.DataBindControls(c.Model, bindpropname, c.Controls);
+
+                    }
+                    else
+                        console.debug('Found ' + existing.length + ' data-bind-property ' + bindpropname + ' in ' + c.Config.Name);
+                    //});
+
+                    //    $(e).attr('data-bind-type', bindpropname); //For simplicity make type name same as property
+
+                    //    Apps.AutoBindReferences.push({
+                    //        Name: bindpropname,
+                    //        Component: c.Config.Name,
+                    //        ElementType: e.localName,
+                    //        ElementClass: e.className
+                    //    });
+
+                    //    //Bind
+                    //    Apps.Bind.DataBindControls(c.Model, bindpropname, c.Controls);
+
+                    //    //    if (e.localName == 'script') {
+                    //    //        //Bind the templates contents also
+                    //    //        Apps.AutoBindContents();
+                    //    //    }
+                });
+
+                //Bind (if control property exists)
+                //if (eval('c.Controls.' + bindpropname))
+                //{
+                //    if (eval('c.Controls.' + bindpropname)) {
+            }
+            //    }
+            //    else
+            //        console.debug('Component ' + c.Config.Name + ' Controls obj not found while doing auto-bind.');
+        }
+        catch (err) {
+            //ignore: usually because eval did not find model property which happens when similar
+            //Apps.Components.Helpers.HandleException(err);
+            console.debug('Did not find: "' + c.Config.Name + '.Model.' + bindpropname + '"');
+        }
+
+    },
+    OpenDialog: function (component, id, title, content, topbuttons, bottombuttons) {
+
+        Apps.Components.Helpers.Dialogs.CloseAll();
+
+        Apps.Components.Helpers.Dialogs.Register(id, {
+            title: title,
+            topbuttons: topbuttons,
+            buttons: bottombuttons
+        });
+
+        Apps.Components.Helpers.Dialogs.Content(id, content);
+        Apps.Components.Helpers.Dialogs.Open(id);
+
+        let contentSelector = $('#' + id).find('.dialog-body');
+        Apps.BindHTML(contentSelector, component, true);
+    },
+    GetTemplateHTML: function (templateId) {
+        return $('script[id="' + templateId + '"]').html();
+    },
+    MoveHTMLx: function (sourceSelector, destinationSelector) {
+        Apps.GetMoveBindSource(sourceId, destinationId, null, true);
+    },
+    BindHTML: function (selector, c, forceBind) {
+
+        let references = Apps.AutoBindReferences;
+        let innerElements = selector.find('[data-bind-property]');
+
+        $.each(innerElements, function (i, e) {
+
+            var bindpropname = $(e).attr('data-bind-property'); // "ShippingAddressHTML";
+
+            try {
+                if (c.Model) {
+
+                    //Apply current model values
+                    var propertyValue = eval('c.Model.' + bindpropname);
+                    var elementType = e.localName.toLowerCase();
+                    var contentType = $(e).attr('data-bind-contenttype');
+
+                    if (elementType == 'div' || elementType == 'span') {
+                        if (contentType == 'html')
+                            e.innerHTML = propertyValue;
+                        else if (contentType == 'bool' || contentType == 'none') {
+                            //nada
+                        }
+                        else
+                            e.innerText = propertyValue; //default to text
+                    }
+                    else if (elementType == 'input') {
+                        e.defaultValue = propertyValue; // eval(componentString); // + '.Model.' + propertyName);
+                    }
+                    else if (elementType == 'option') {
+                        e.innerText = propertyValue; // eval(componentString);
+                    }
+
+                    //Add reference and create binding if not already exists
+                    let existing = Enumerable.From(references).Where(r => r.Name == bindpropname).ToArray();
+
+                    if (existing.length == 0 || forceBind) {
+
+                        //Add reference
+                        Apps.AutoBindReferences.push({
+                            Name: bindpropname,
+                            ComponentObject: c,
+                            Component: c.Config.Name,
+                            ElementType: e.localName,
+                            ElementClass: e.className
+                        });
+
+                        //For simplicity make type name same as property
+                        $(e).attr('data-bind-type', bindpropname);
+
+                        //Bind and validate existing values
+                        Apps.Bind.DataBindControls(c.Model, bindpropname, c.Controls);
+
+                    }
+                    else
+                        console.debug('Found ' + existing.length + ' data-bind-property ' + bindpropname + ' in ' + c.Config.Name);
+                    //});
+
+                }
+                else {
+                    console.debug('Component ' + c.Config.Name + ' has no Model');
+                }
+            }
+            catch (err) {
+                console.debug(bindpropname + ' does not appear to be found in ' + c.Config.Name + ' model');
+            }
+
+
+        });
+
+    },
+    GetMoveBindSourcex: function (sourceId, destinationId, c, moveOnly) {
+
+        if (destinationId == null)
+            destinationId = sourceId;
+
+        let references = Apps.AutoBindReferences;
+
+        let sourceHtml = $('script[id="' + sourceId + '"]').html();
+        let destinationElement = $('[data-bind-destination="' + destinationId + '"]'); //There should be only one matching destination property for island
+
+        if (destinationElement.length == 1) {
+
+            //Parse html of island (look for properties to bind)
+            let currentDom = new DOMParser().parseFromString(sourceHtml, 'text/html');
+            let bindElements = currentDom.querySelectorAll('[data-bind-property]');
+
+            ////Add type attribute
+            //$.each(bindElements, function (i, e) {
+            //    let propname = $(e).attr('data-bind-property'); // "ShippingAddressHTML";
+            //    $(e).attr('data-bind-type', propname); //For simplicity make type name same as property
+            //});
+
+            // html = $('div[data-bind-island="' + id + '"]').html(); //Re-grab modified html
+
+            //Drop island on destination element
+            $(destinationElement).html(sourceHtml);
+
+            if (!moveOnly) {
+
+                Apps.BindDestination($(destinationElement), c);
+                //    //Bind inner properties
+                //    let innerElements = $(destinationElement).find('[data-bind-property]');
+
+                //    $.each(innerElements, function (i, e) {
+
+                //        var bindpropname = $(e).attr('data-bind-property'); // "ShippingAddressHTML";
+
+                //        //Get where not in list or control count is different
+                //        let existing = Enumerable.From(references).Where(r => r.Name == bindpropname).ToArray();
+
+                //        if (existing.length == 0) {
+
+                //            try {
+                //                if (c.Model) {
+
+                //                    $(e).attr('data-bind-type', bindpropname); //For simplicity make type name same as property
+                //                    //$.each(elements, function (i, e) {
+
+                //                    //var propertyName = $(e).attr('data-bind-property');
+                //                    var propertyValue = eval('c.Model.' + bindpropname);
+                //                    var elementType = e.localName.toLowerCase();
+
+                //                    if (elementType == 'div' || elementType == 'span') {
+                //                        e.innerText = propertyValue;
+                //                    }
+                //                    else if (elementType == 'input') {
+                //                        e.defaultValue = propertyValue; // eval(componentString); // + '.Model.' + propertyName);
+                //                    }
+                //                    else if (elementType == 'option') {
+                //                        e.innerText = propertyValue; // eval(componentString);
+                //                    }
+
+                //                    //Add reference
+                //                    Apps.AutoBindReferences.push({
+                //                        Name: bindpropname,
+                //                        ComponentObject: c,
+                //                        Component: c.Config.Name,
+                //                        ElementType: e.localName,
+                //                        ElementClass: e.className
+                //                    });
+
+                //                    //Bind
+                //                    Apps.Bind.DataBindControls(c.Model, bindpropname, c.Controls);
+
+                //                    //});
+
+                //                }
+                //                else {
+                //                    console.debug('Component ' + c.Config.Name + ' has no Model');
+                //                }
+                //            }
+                //            catch (err) {
+                //                console.debug(bindpropname + ' does not appear to be found in ' + c.Config.Name + ' model');
+                //            }
+
+                //        }
+                //        else
+                //            console.debug('Found ' + existing.length + ' data-bind-property ' + bindpropname + ' in ' + c.Config.Name);
+
+                //    });
+            }
+            //    //Bind
+            //    $.each(Apps.AutoBindReferences, function (i, r) {
+            //        Apps.Bind.DataBindControls(r.ComponentObject.Model, r.Name, r.ComponentObject.Controls);
+            //    });
+        }
+        else
+            console.debug('Not exactly 1 destination property ' + destinationId);
+
+        return sourceHtml;
+    },
+    AutoBindContents: function (currentHtml) {
+
+        let currentDom = new DOMParser().parseFromString(currentHtml, 'text/html');
+
+        if (currentDom.children[0].children[1].children.length == 1) { //dom inserts doc/html/body
+
+            try {
+
+                let bindElements = currentDom.querySelectorAll('[data-bind-property]');
+
+                if (bindElements.length > 0) {
+                    $.each(bindElements, function (index, element) {
+
+
+                        var propertyName = $(element).attr('data-bind-property');
+                        var elementType = element.localName.toLowerCase();
+                        var modelProperty = eval(fullModelPath + '.' + propertyName);
+
+                        if (elementType == 'div' || elementType == 'span') {
+                            element.innerText = modelProperty;
+                        }
+                        else if (elementType == 'input') {
+                            componentTag.defaultValue = modelProperty; // eval(componentString); // + '.Model.' + propertyName);
+                        }
+                        else if (elementType == 'option') {
+                            componentTag.innerText = modelProperty; // eval(componentString);
+                        }
+
+                        //    $.each(props, function (tindex, prop) {
+                        //    });
+                    });
+                    currentHtml = currentDom.body.innerHTML; // current.html();
+                }
+            }
+            catch (err) {
+                //
+            }
+        }
+
+        return currentHtml;
+
+    },
+    AutoBindReferences: [],
+    LoadDocumentIslands: function () {
+        Apps.Islands = document.querySelectorAll('Island');
+    },
+    LoadIslands: function () {
+
+        $.each(Apps.ComponentList, function (index, component) {
+
+            if (component.UI && component.UI.Templates) {
+
+                let templateNames = Object.keys(component.UI.Templates);
+
+                $.each(templateNames, function (i, t) {
+
+                    Apps.LoadIsland(component.UI.Templates[t]);
+
+                });
+            }
+
+        });
+
+    },
+    LoadIsland: function (template) {
+
+
+        //Add template islands
+        //let thisTemplate = component.UI.Templates[template.id];
+        template['Islands'] = [];
+
+        let templateHtml = template.HTML();
+
+        let templateDom = new DOMParser().parseFromString(templateHtml, 'text/html');
+
+        let islands = templateDom.querySelectorAll('Island');
+
+        $.each(islands, function (i, island) {
+            template.Islands.push(island);
+        });
+
+    },
+    StartComponents: function () {
+        $.each(Apps.ComponentList, function (index, component) {
+            Apps.StartComponent(component);
+        });
+    },
+    StartComponent: function (c) {
+        console.debug('start ' + c.Path);
+
+        //Look for island destinations on document
+        if (c.Start && c.Config.Start && c.Config.Start === true) {
+
+            c.Start();
+        }
+    },
+
+    //BindComponents: function () {
+    //    //let componentNames = Object.keys(Apps.Components);
+    //    $.each(Apps.ComponentList, function (index, component) {
+    //        Apps.BindComponent(component);
+    //    });
+    //},
+    //BindComponent: function (c) {
+    //    console.debug('bind ' + c.Path);
+
+    //    //Look for island destinations on document
+    //    if (c.UI) {
+
+    //        let uiTemplates = Object.keys(c.UI.Templates);
+
+    //        $.each(uiTemplates, function (i, templateName) {
+
+    //            let template = c.UI.Templates[templateName];
+
+
+
+    //            $.each(template.Islands, function (i, island) {
+
+    //            });
+
+    //        });
+    //    }
+    ////    if (c.Components) {
+    ////        $.each(c.Components, function (index, component) {
+    ////            Apps.BindComponent(component);
+    ////        });
+    ////    }
+    //},
+
     TestComponents: function () {
         let componentNames = Object.keys(Apps.Components);
         $.each(componentNames, function (index, componentName) {
@@ -845,13 +1470,14 @@
         });
     },
     TestComponent: function (c) {
+        console.debug('test for ' + c.Path);
         if (c.Test) {
             c.Test();
-            if (c.Components) {
-                $.each(c.Components, function (index, component) {
-                    Apps.TestComponent(component);
-                });
-            }
+        }
+        if (c.Components) {
+            $.each(c.Components, function (index, component) {
+                Apps.TestComponent(component);
+            });
         }
     },
     BlockUI: function (settings) {
@@ -868,7 +1494,7 @@
         if ($.isFunction($.blockUI))
             $.unblockUI();
     },
-    Notify: function (type, message, title, position) {
+    Notify: function (type, message, title, position, x, y) {
 
         //Example calls:
         //Info Notification: vNotify.info({ text: 'text', title: 'title' });
@@ -905,6 +1531,9 @@
 
             var delay = 1000;
 
+            if (x && y)
+                delay = 500;
+
             if (type === 'warning' || type === 'error')
                 visibleDuration = 10000;
 
@@ -919,13 +1548,14 @@
                 showClose: true
             };
 
-            var messageObject = title ? { text: message, title: title, position: vNotify.options.position } : { text: message, position: vNotify.options.position };
+            var messageObject = title ? { text: message, title: title, position: vNotify.options.position } : { text: message, position: vNotify.options.position, x: x, y: y };
             switch (type) {
                 case 'info': vNotify.info(messageObject); break;
                 case 'success': vNotify.success(messageObject); break;
                 case 'warning': vNotify.warning(messageObject); break;
                 case 'error': vNotify.error(messageObject); break;
                 case 'notify': vNotify.notify(messageObject); break;
+                case 'custom': vNotify.custom(messageObject); break;
             }
         }
         else
@@ -973,10 +1603,11 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
             headers: {
-                'Authorization': 'Bearer ' + Apps.GetAuthenticationData(),
+                //'Authorization': 'Bearer ' + Apps.GetAuthenticationData(),
                 'by': Apps.By,
                 'Accept': '*/*',
-                'Content-Type':'application/json'
+                'Content-Type': 'application/json'
+                //'Access-Control-Allow-Origin': '*'
             },
             async: !sync,
             success: function (result) {
@@ -1000,8 +1631,7 @@
             data: formData,
             async: false,
             cache: false,
-            //enctype: 'application/pdf',
-            contentType: 'multipart/form-data',
+            contentType: 'application/json',
             processData: false,
             success: function (response) {
 
@@ -1312,6 +1942,7 @@ Apps.Data = {
 
                 }, me.Data.Gets[getName].Sync);
             }
+
         };
     },
     RegisterPOST: function (dataName, url, args) {
@@ -1344,6 +1975,37 @@ Apps.Data = {
                 //setTimeout(Apps.Data.DoNothing, 1000);
 
                 refreshPost(newPath, JSON.stringify(obj), function (result) {
+
+
+                    var postPostName = postName;
+
+                    if (result.Success) {
+                        me.Data.Posts[postPostName].Success = true; //!error && result.Success;
+                        me.Data.Posts[postPostName].Data = result.Data;
+                    }
+                    else {
+                        me.Data.Posts[postPostName].Success = false;
+                        Apps.Data.HandleException(result);
+                    }
+                    me.Data.Posts[postPostName].Result = result;
+
+
+                    if (callback)
+                        callback();
+                });
+            },
+            Execute: function (resultString, args, callback) {
+
+                var refreshPostName = postName;
+                var refreshSync = sync;
+
+                let newPath = this.Path.SearchAndReplace.apply(me.Data.Posts[refreshPostName].Path, args);
+
+                let refreshPost = sync ? Apps.PostSync : Apps.Post;
+
+                //setTimeout(Apps.Data.DoNothing, 1000);
+
+                refreshPost(newPath, resultString, function (result) {
 
 
                     var postPostName = postName;
@@ -1413,9 +2075,9 @@ Apps.Data = {
             }
         }
         //Removed as unhelpfule from within power apps
-    //    else {
-    //        Apps.Notify('error', 'Unable to contact web server.');
-    //    }
+        //    else {
+        //        Apps.Notify('error', 'Unable to contact web server.');
+        //    }
     }
 };
 Apps.Template = function (settings) {
@@ -1476,6 +2138,39 @@ Apps.Template = function (settings) {
 
         return this;
     };
+    //this.DropToDocument = function (argsArray) {
+    //    //Get template html and drop to dom and reload selector
+    //    // var content = Apps.Util.DropTemplate(this.TemplateID);
+    //    if (!document.getElementById('content' + this.TemplateID)) {
+
+    //        this.Selector = document.getElementById(this.TemplateID);
+
+    //        if (this.Template) {
+    //            //Gets html from template and puts inside container div (exposing it)
+    //            var content = this.Template.innerHTML; // this.Selector.find('div').html();
+
+    //            if (argsArray)
+    //                content = content.SearchAndReplace.apply(content, argsArray);
+
+
+    //            let contentDiv = document.createElement('div');
+    //            contentDiv.id = 'content' + this.TemplateID;
+    //            contentDiv.classList = this.TemplateID + 'ContentStyle';
+    //            contentDiv.innerHTML = content;
+
+    //            document.body.appendChild(contentDiv);
+    //        }
+    //    }
+
+
+    //    // if($(content).length === 0)
+    //    // if ($('#' + $(content)[0].id).length === 0)
+    //    //    this.Selector.append(content);
+    //    //   //this.Selector.append(content);
+
+    //    return this;
+    //};
+
     this.Show = function (speed) {
 
         //Re-check since variable doesn't change when removed from dom
@@ -1483,6 +2178,13 @@ Apps.Template = function (settings) {
 
         //if (this.Selector.length === 0)
         this.Drop(); //Drops the inner template content
+
+        ////hide data island templates (TODO)
+        //let bindElements = $(this.Selector).find('[data-bind-template]');
+
+        //$.each(bindElements, function (index, element) {
+        //    $(element).hide();
+        //});
 
         // this.Selector.style.opacity = 0;
         if (this.Selector)
@@ -1582,6 +2284,14 @@ Apps.Template = function (settings) {
         var currentHtml = $("#" + this.TemplateID).html();
         var newHtml = currentHtml.SearchAndReplace.apply(currentHtml, paramArray);
 
+        ////process data island templates
+        //let bindElements = $(this.Selector).find('[data-bind-template]');
+        //let exist = bindElements.length;
+
+        //$.each(bindElements, function (index, element) {
+        //    $(element).hide();
+        //});
+
         this.Selector.html(newHtml);
         return this;
     };
@@ -1670,9 +2380,9 @@ Apps['AppDialogs'] = {
         str += '                <div class="dialog-container {3} dialog-scrollable">';
         str += '                    <div class="dialog-content">';
         str += '                        <div class="dialog-header">';
-        str += '                            <table style="width:100%;">';
+        str += '                            <table>';
         str += '                                <tr>';
-        str += '                                    <td style="width:15%;"><h5 class="dialog-title">{1}</h5></td>';
+        str += '                                    <td><h5 class="dialog-title">{1}</h5></td>';
         str += '                                    <td><div id="myDialog_{2}_Header_AdditionalContent" class="myDialog_{2}_Header_AdditionalContent_Style"></div></td>';
         str += '                                </tr>';
         str += '                            </table>';
@@ -1759,7 +2469,7 @@ Apps.ComponentTemplate = function (settings) {
     this.Selector = null;
     this.Drop = function (argsArray, container) {
 
-        
+
         if (!document.getElementById(this.ID + 'Div')) {
 
             let templateNode = document.createElement('div');
@@ -1850,8 +2560,37 @@ Apps.ComponentTemplate = function (settings) {
             currentHtml = currentHtml.SearchAndReplace.apply(currentHtml, argsArray);
             //this.Content = Selector.html(newHtml);
         }
-        //currentHtml = this.Selector.html();
-        //}
+
+        currentHtml = Apps.Bind.BindHTML(currentHtml);
+        //currentHtml = Apps.Bind.BindIslands(currentHtml);
+
+        ////process component model/controls
+        //let bindComponents = $(currentHtml).find('[data-bind-component]');
+
+        //$.each(bindComponents, function (index, componentTag) {
+
+        //    var props = $(componentTag).children('[data-bind-property]');
+        //    var componentString = $(componentTag).attr('data-bind-component');
+
+        //    $.each(props, function (tindex, prop) {
+        //        let propertyName = $(prop).attr('data-bind-property');
+        //        currentHtml = currentHtml.replace(prop.outerHTML, eval(componentString + '.Model.' + propertyName));
+        //    });
+        //});
+
+        ////process data islands
+        //let bindIslands = $(currentHtml).find('[data-bind-island-destination]');
+        //$.each(bindIslands, function (tindex, islandDestination) {
+
+        //    let islandName = $(islandDestination).attr('data-bind-island-destination');
+        //    let island = $(currentHtml).find('[data-bind-island=' + islandName + ']');
+
+        //    if (island && island.length == 1) {
+        //        $(island).removeProp('hidden');
+        //        currentHtml = currentHtml.replace(islandDestination.outerHTML, $(island).html());
+        //    }
+        //});
+
         return currentHtml;
     };
     this.Bind = function (html) {
@@ -1893,24 +2632,24 @@ Apps.ComponentTemplate = function (settings) {
 
         });
     },
-    this.BindDropdown = function (dropdownId) {
+        this.BindDropdown = function (dropdownId) {
 
-        //Look only for these classes in this template
-        let bindElements = this.Selector.find('#' + dropdownId);
+            //Look only for these classes in this template
+            let bindElements = this.Selector.find('#' + dropdownId);
 
-        if (bindElements.length == 1) {
+            if (bindElements.length == 1) {
 
-            let elementSelector = $(bindElements[0]);
-            let content = eval(elementSelector.attr('data-template-binddropdown'));
+                let elementSelector = $(bindElements[0]);
+                let content = eval(elementSelector.attr('data-template-binddropdown'));
+                elementSelector.html(content);
+            }
+        },
+        this.BindElement = function (elementSelector, methodString) {
+
+            let content = eval(methodString);
             elementSelector.html(content);
+
         }
-    },
-    this.BindElement = function (elementSelector, methodString) {
-
-        let content = eval(methodString);
-        elementSelector.html(content);
-
-    }
 
 };
 Apps.PreInit();

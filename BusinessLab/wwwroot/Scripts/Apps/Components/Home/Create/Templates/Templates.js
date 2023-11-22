@@ -48,13 +48,13 @@
             //    }
             //});
 
-                        if (callback)
-                            callback();
-                    }
-                    else {
-                        Apps.Notify('warning', 'Problem getting templates.');
-                    }
-                });
+        //                if (callback)
+        //                    callback();
+        //            }
+        //            else {
+        //                Apps.Notify('warning', 'Problem getting templates.');
+        //            }
+        //        });
         },
         Show: function () {
 
