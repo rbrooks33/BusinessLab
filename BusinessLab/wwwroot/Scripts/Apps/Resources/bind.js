@@ -12,7 +12,7 @@
 //    Note: if an element doesn't have an inherant property "type" one must be added.
 //    See below for handled types. They usually equate to the type of element (e.g. "div")
 
-define([], function () {
+Apps.Define([], function () {
     var Me = {
 
         Obj: null,
@@ -40,137 +40,64 @@ define([], function () {
         BindingFinished: null,
         DataBind: function (obj, key, isCollection, callback, changedCallback, boundCallback) {
 
-            Me.Obj = obj;
+            //Me.Obj = obj;
             var boundElements = $("[data-bind-type='" + key + "']");
 
             $.each(boundElements, function (index, boundElement) {
 
                 Me.CountDownBind.count++;
 
-                var propertyName = $(boundElement).attr("data-bind-property"); //For now: required
-                var propertyCollectionName = $(boundElement).attr("data-bind-collection-property"); //Optional if using collection
-                var propertyVisible = $(boundElement).attr("data-bind-property-visible");
-                var propertyCollectionVisible = $(boundElement).attr("data-bind-collection-property-visible");
-                var propertyValueIsInt = $(boundElement).attr("data-bind-int");
+                try {
+                    var propertyName = $(boundElement).attr("data-bind-property"); //For now: required
+                    var propertyCollectionName = $(boundElement).attr("data-bind-collection-property"); //Optional if using collection
+                    var propertyVisible = $(boundElement).attr("data-bind-property-visible");
+                    var propertyCollectionVisible = $(boundElement).attr("data-bind-collection-property-visible");
+                    var propertyValueIsInt = $(boundElement).attr("data-bind-int");
 
-                //Note: "Me.Obj." denotes the binding always takes place with a single object
-                //      Collection binding (e.g. "DynamicColumns[n].Property") also denote
-                //      an object as root.
-                //      What if we want to bind to a collection itself? The notation would be
-                //      "[0].Property" and the eval would be "Me.Obj" + propertyName". The
-                //      reason we want this is to support both templating and binding: with the
-                //      same collection build the html and bind each row. Adding "isCollection" param.
+                    //Note: "Me.Obj." denotes the binding always takes place with a single object
+                    //      Collection binding (e.g. "DynamicColumns[n].Property") also denote
+                    //      an object as root.
+                    //      What if we want to bind to a collection itself? The notation would be
+                    //      "[0].Property" and the eval would be "Me.Obj" + propertyName". The
+                    //      reason we want this is to support both templating and binding: with the
+                    //      same collection build the html and bind each row. Adding "isCollection" param.
 
-                //var propertyValue = '';
-                var collectionIndex = 0;
-                //if (propertyCollectionName) {
-                //    propertyValue = isCollection ? eval("Me.Obj" + propertyCollectionName) : eval("Me.Obj." + propertyName);
-                //    let collectionIndexStart = propertyCollectionName.indexOf('[');
-                //    let collectionIndexEnd = propertyCollectionName.indexOf(']');
-                //    collectionIndex = propertyCollectionName.substr(collectionIndexStart + 1, collectionIndexEnd - (collectionIndexStart + 1));
-                //}
-                //else {
-                //}
-                var propertyValue = eval("Me.Obj." + propertyName);
-                var elementType = boundElement.localName; // Apps.$(boundElement).localName; //.prev()[0].nodeName; // Apps.$(boundElement).attr("type");
+                    //var propertyValue = '';
+                    var collectionIndex = 0;
+                    //if (propertyCollectionName) {
+                    //    propertyValue = isCollection ? eval("Me.Obj" + propertyCollectionName) : eval("Me.Obj." + propertyName);
+                    //    let collectionIndexStart = propertyCollectionName.indexOf('[');
+                    //    let collectionIndexEnd = propertyCollectionName.indexOf(']');
+                    //    collectionIndex = propertyCollectionName.substr(collectionIndexStart + 1, collectionIndexEnd - (collectionIndexStart + 1));
+                    //}
+                    //else {
+                    //}
+                    let propertyValue = '';
+                    if (propertyCollectionName && propertyCollectionName.length > 0) {
+                        propertyValue = eval('obj.' + propertyCollectionName);
+                    }
+                    else
+                        propertyValue = eval("obj." + propertyName);
 
-                ////SET VISIBILITY
-                //if (propertyVisible) {
-                //    var isVisible = isCollection ? eval("Me.Obj" + propertyCollectionVisible) : eval("Me.Obj." + propertyVisible);
-                //    if (isVisible)
-                //        Apps.$(boundElement).show();
-                //    else
-                //        Apps.$(boundElement).hide();
-                //}
+                    if (typeof propertyValue === 'function')
+                        propertyValue = eval("obj." + propertyName + '()');
 
-                //ELEMENT TYPE
-                if (elementType.toLowerCase() === "text"
-                    || elementType.toLowerCase() === "textarea") {
+                    var elementType = boundElement.localName; // Apps.$(boundElement).localName; //.prev()[0].nodeName; // Apps.$(boundElement).attr("type");
 
-                    var objCreate = Me.Obj; //Make avail to this scope
+                    ////SET VISIBILITY
+                    //if (propertyVisible) {
+                    //    var isVisible = isCollection ? eval("Me.Obj" + propertyCollectionVisible) : eval("Me.Obj." + propertyVisible);
+                    //    if (isVisible)
+                    //        Apps.$(boundElement).show();
+                    //    else
+                    //        Apps.$(boundElement).hide();
+                    //}
 
-                    //SET THE VALUE
-                    $(boundElement).val(propertyValue);
+                    //ELEMENT TYPE
+                    if (elementType.toLowerCase() === "text"
+                        || elementType.toLowerCase() === "textarea") {
 
-                    //WIRE EVENTS
-                    $(boundElement).on('change keyup paste', function () {
-
-                        var objWire = objCreate;
-                        //isCollection ? eval("objWire" + propertyCollectionName + " = '" + Apps.$(this).val() + "'") : eval("objWire." + propertyName + " = '" + Apps.$(this).val() + "'");
-                        eval("objWire." + propertyName + " = '" + $(this).val() + "'");
-                        //if (propertyValueIsInt && propertyValueIsInt === true)
-                        //    eval("objWire." + propertyName + " = '" + parseInt(Apps.$(this).val()) + "'");
-                        //else
-                        //    eval("objWire." + propertyName + " = '" + Apps.$(this).val() + "'");
-
-                        if (changedCallback)
-                            changedCallback($(boundElement), propertyName, $(this).val(), collectionIndex);
-                    });
-
-                    //CLICK EVENT ??
-                    //Apps.$(boundElement).on('click', function () {
-                    //    this.select();
-                    //});
-                }
-                else if (elementType.toLowerCase() === "div"
-                    || elementType.toLowerCase() === "span") {
-
-                    $(boundElement).text(propertyValue);
-
-                    //Note: Non-editable elements' change event must be fired programmatically
-                    //(e.g. "Apps.$('element').change()")
-                    $(boundElement).on('change', function () {
-
-                        eval("Me.Obj." + propertyName + " = '" + $(this).text() + "'");
-
-                        //if (Me.ChangedCallback)
-                        //    Me.ChangedCallback(propertyName, Apps.$(this).text());
-                    });
-                }
-                else if (elementType.toLowerCase() === "select") {
-                    var objCreateSelect = Me.Obj; //Make avail to this scope
-                    var isIntCreate = propertyValueIsInt;
-
-                    $(boundElement).val(propertyValue);
-
-                    $(boundElement).on('change', function () {
-
-                        var objWire = objCreateSelect;
-                        var isIntWire = isIntCreate;
-
-                        if (isIntWire)
-                            isCollection ? eval("objWire" + propertyCollectionName + " = " + $(this).val()) : eval("objWire." + propertyName + " = " + parseInt($(this).val()));
-                        else
-                            isCollection ? eval("objWire" + propertyCollectionName + " = '" + $(this).val() + "'") : eval("objWire." + propertyName + " = '" + $(this).val() + "'");
-
-                        if (changedCallback)
-                            changedCallback($(boundElement), propertyName, $(this).val(), collectionIndex);
-                    });
-
-                }
-                //else if (elementType.toLowerCase() === "checkbox") {
-
-                //    var objCreateCheckbox = Me.Obj; //Make avail to this scope
-
-                //    Apps.$(boundElement).prop("checked", propertyValue);
-
-                //    Apps.$(boundElement).on('change', function () {
-
-                //        var objWire = objCreateCheckbox;
-
-                //        isCollection ? eval("objWire" + propertyCollectionName + " = " + Apps.$(this).prop("checked")) : eval("objWire." + propertyName + " = " + Apps.$(this).prop("checked"));
-
-                //        if (changedCallback)
-                //            changedCallback(Apps.$(boundElement), propertyName, Apps.$(this).prop("checked"));
-
-                //    });
-
-                //}
-                //Some elements by nature e.g. radio need logic so just let changed event fire
-                else if (elementType.toLowerCase() === "input") {
-
-                    if (boundElement.type === 'text') {
-                        var objCreate = Me.Obj; //Make avail to this scope
+                        //var objCreate = Me.Obj; //Make avail to this scope
 
                         //SET THE VALUE
                         $(boundElement).val(propertyValue);
@@ -178,9 +105,9 @@ define([], function () {
                         //WIRE EVENTS
                         $(boundElement).off().on('change keyup paste', function () {
 
-                            var objWire = objCreate;
-                            isCollection ? eval("objWire" + propertyCollectionName + " = '" + $(this).val() + "'") : eval("objWire." + propertyName + " = '" + $(this).val() + "'");
-
+                            //var objWire = objCreate;
+                            //isCollection ? eval("objWire" + propertyCollectionName + " = '" + Apps.$(this).val() + "'") : eval("objWire." + propertyName + " = '" + Apps.$(this).val() + "'");
+                            eval("obj." + propertyName + " = '" + $(this).val() + "'");
                             //if (propertyValueIsInt && propertyValueIsInt === true)
                             //    eval("objWire." + propertyName + " = '" + parseInt(Apps.$(this).val()) + "'");
                             //else
@@ -195,70 +122,204 @@ define([], function () {
                         //    this.select();
                         //});
                     }
-                    else if (boundElement.type === 'checkbox') {
+                    else if (elementType.toLowerCase() === "div"
+                        || elementType.toLowerCase() === "span") {
 
-                        var objCreateCheckbox = Me.Obj; //Make avail to this scope
+                        let contentType = $(boundElement).attr('data-bind-contenttype');
 
-                        $(boundElement).prop("checked", propertyValue);
+                        if (contentType == 'text' || contentType == undefined) {
 
-                        $(boundElement).on('change', function () {
+                            $(boundElement).text(propertyValue);
 
-                            var objWire = objCreateCheckbox;
+                            //Note: Non-editable elements' change event must be fired programmatically
+                            //(e.g. "Apps.$('element').change()")
+                            $(boundElement).off().on('change', function () {
 
-                            isCollection ? eval("objWire" + propertyCollectionName + " = " + $(this).prop("checked")) : eval("objWire." + propertyName + " = " + $(this).prop("checked"));
+                                eval("obj." + propertyName + " = '" + $(this).text() + "'");
 
-                            if (changedCallback)
-                                changedCallback($(boundElement), propertyName, $(this).prop("checked"), collectionIndex);
-
-                        });
-
+                                //if (Me.ChangedCallback)
+                                //    Me.ChangedCallback(propertyName, Apps.$(this).text());
+                            });
+                        }
+                        else if (contentType == 'html') {
+                            $(boundElement).html(propertyValue);
+                            //change?
+                        }
+                        else if (contentType == 'none') {
+                            //Used only as an event sink
+                        }
+                        else if (contentType == 'bool') {
+                            //?
+                        }
                     }
-                    else if (boundElement.type === 'radio') {
-                        $(boundElement).change(function () {
-                            if (changedCallback)
-                                changedCallback($(boundElement), propertyName, $(this).prop("checked"), collectionIndex);
-                        });
-                    }
-                    else if (boundElement.type === 'number') {
-                        var objNumber = Me.Obj; //Make avail to this scope
+                    else if (elementType.toLowerCase() === "select") {
+                        //var objCreateSelect = Me.Obj; //Make avail to this scope
+                        var isIntCreate = propertyValueIsInt;
+
                         $(boundElement).val(propertyValue);
-                        $(boundElement).change(function () {
-                            var objWire = objNumber;
-                            isCollection ? eval("objWire" + propertyCollectionName + " = '" + $(this).val() + "'") : eval("objWire." + propertyName + " = '" + $(this).val() + "'");
+
+                        $(boundElement).off().on('change', function () {
+
+                            //var objWire = objCreateSelect;
+                            var isIntWire = isIntCreate;
+
+                            if (isIntWire)
+                                isCollection ? eval("obj" + propertyCollectionName + " = " + $(this).val()) : eval("obj." + propertyName + " = " + parseInt($(this).val()));
+                            else
+                                isCollection ? eval("obj" + propertyCollectionName + " = '" + $(this).val() + "'") : eval("obj." + propertyName + " = '" + $(this).val() + "'");
+
                             if (changedCallback)
                                 changedCallback($(boundElement), propertyName, $(this).val(), collectionIndex);
                         });
+
                     }
+                    //else if (elementType.toLowerCase() === "checkbox") {
+
+                    //    var objCreateCheckbox = Me.Obj; //Make avail to this scope
+
+                    //    Apps.$(boundElement).prop("checked", propertyValue);
+
+                    //    Apps.$(boundElement).on('change', function () {
+
+                    //        var objWire = objCreateCheckbox;
+
+                    //        isCollection ? eval("objWire" + propertyCollectionName + " = " + Apps.$(this).prop("checked")) : eval("objWire." + propertyName + " = " + Apps.$(this).prop("checked"));
+
+                    //        if (changedCallback)
+                    //            changedCallback(Apps.$(boundElement), propertyName, Apps.$(this).prop("checked"));
+
+                    //    });
+
+                    //}
+                    //Some elements by nature e.g. radio need logic so just let changed event fire
+                    else if (elementType.toLowerCase() === "input") {
+
+                        if (boundElement.type === 'text') {
+                            //var objCreate = Me.Obj; //Make avail to this scope
+
+                            //SET THE VALUE
+                            $(boundElement).val(propertyValue);
+
+                            //WIRE EVENTS
+                            $(boundElement).off().on('change keyup paste', function () {
+
+                                //var objWire = objCreate;
+                                isCollection ? eval("obj" + propertyCollectionName + " = '" + $(this).val() + "'") : eval("obj." + propertyName + " = '" + $(this).val() + "'");
+
+                                //if (propertyValueIsInt && propertyValueIsInt === true)
+                                //    eval("objWire." + propertyName + " = '" + parseInt(Apps.$(this).val()) + "'");
+                                //else
+                                //    eval("objWire." + propertyName + " = '" + Apps.$(this).val() + "'");
+
+                                if (changedCallback)
+                                    changedCallback($(boundElement), propertyName, $(this).val(), collectionIndex);
+                            });
+
+                            //CLICK EVENT ??
+                            //Apps.$(boundElement).on('click', function () {
+                            //    this.select();
+                            //});
+                        }
+                        else if (boundElement.type === 'checkbox') {
+
+                            //var objCreateCheckbox = Me.Obj; //Make avail to this scope
+
+                            $(boundElement).prop("checked", propertyValue);
+
+                            $(boundElement).off().on('change', function () {
+
+                                //var objWire = objCreateCheckbox;
+
+                                isCollection ? eval("obj" + propertyCollectionName + " = " + $(this).prop("checked")) : eval("obj." + propertyName + " = " + $(this).prop("checked"));
+
+                                if (changedCallback)
+                                    changedCallback($(boundElement), propertyName, $(this).prop("checked"), collectionIndex);
+
+                            });
+
+                        }
+                        else if (boundElement.type === 'radio') {
+                            $(boundElement).change(function () {
+                                if (changedCallback)
+                                    changedCallback($(boundElement), propertyName, $(this).prop("checked"), collectionIndex);
+                            });
+                        }
+                        else if (boundElement.type === 'number') {
+                            //var objNumber = Me.Obj; //Make avail to this scope
+                            $(boundElement).val(propertyValue);
+                            $(boundElement).change(function () {
+                                //var objWire = objNumber;
+                                isCollection ? eval("obj" + propertyCollectionName + " = '" + $(this).val() + "'") : eval("obj." + propertyName + " = '" + $(this).val() + "'");
+                                if (changedCallback)
+                                    changedCallback($(boundElement), propertyName, $(this).val(), collectionIndex);
+                            });
+                        }
+                    }
+                    else if (elementType.toLowerCase() === "image") {
+
+                        //if (Me.ChangedCallback)
+                        //    Me.ChangedCallback(Apps.$(boundElement), propertyName, propertyValue);
+                    }
+                    else if (elementType.toLowerCase() === "button") {
+
+                    }
+                    else if (elementType.toLowerCase() === "span") {
+                        $(boundElement).text(propertyValue);
+                    }
+
+                    if (Me.BindCallback)
+                        Me.BindCallback($(boundElement), propertyName, propertyValue);
+
+                    if (callback)
+                        callback($(boundElement), propertyName, propertyValue, collectionIndex);
                 }
-                else if (elementType.toLowerCase() === "image") {
-
-                    //if (Me.ChangedCallback)
-                    //    Me.ChangedCallback(Apps.$(boundElement), propertyName, propertyValue);
+                catch (err) {
+                    Apps.Components.Helpers.HandleException(err);
                 }
-                else if (elementType.toLowerCase() === "button") {
-
-                }
-                else if (elementType.toLowerCase() === "span") {
-                    $(boundElement).text(propertyValue);
-                }
-
-                if (Me.BindCallback)
-                    Me.BindCallback($(boundElement), propertyName, propertyValue);
-
-                if (callback)
-                    callback($(boundElement), propertyName, propertyValue, collectionIndex);
-
                 Me.CountDownBind.check();
             });
         },
         DataBindControls: function (data, bindType, controlsObject) {
-            //Binding and validation. 
+            //Binding and validation.
+
+            if (!Me.ControlTypes)
+                Me['ControlTypes'] = [];
+
+            Me.ControlTypes[bindType] = {
+                Name: bindType
+            };
+            Me.ControlTypes[bindType]['Controls'] = [];
+
             Apps.Bind.DataBind(data, bindType, false,
                 function (selector, propertyName, boundValue) {
+
+
                     //Bound 
                     try {
-                        let control = controlsObject[propertyName]; // eval('Me.Controls.' + propertyName);
+                        //let controlTemp = controlsObject;
+                        //let propVal = eval('data.' + propertyName);
+
+                        //Object.defineProperty(data, propertyName, {
+                        //    get() {
+                        //        return propVal;
+                        //    },
+                        //    set(x) {
+                        //        //let hi = 'ya';
+                        //        propVal = x;
+                        //    }
+                        //});
+
+                        let control = eval('controlsObject.' + propertyName);
+                        //let control = controlsObject[propertyName]; // eval('Me.Controls.' + propertyName);
+
                         if (control) {
+
+                            control['Name'] = propertyName;
+
+                            if (!control.PendingMessage)
+                                control['PendingMessage'] = '';
+
+                            //if (control) {
                             control.Selector = selector;
                             control.Data = data;
                             if (control.Defaults) {
@@ -270,22 +331,33 @@ define([], function () {
                             if (control.Bound) {
                                 control.Bound(propertyName, boundValue);
                             }
-                        }
-                        else {
-                            Apps.Notify('info', 'Cant find a control for ' + propertyName);
+
+                            Me.ValidateControl(control, selector, data); //Fire during bind, accumulates default validation values
+
+                            Me.ControlTypes[bindType].Controls.push(control);
+                            //    }
+                            //    else {
+                            //        Apps.Notify('info', 'Cant find a control for ' + propertyName);
+                            //    }
                         }
                     }
                     catch (err) {
-                        Apps.Notify('info', 'Need a control for ' + propertyName);
+                        Apps.Notify('info', 'Problem finding control ' + propertyName);
+                        Apps.Components.Helpers.HandleException(err);
                     }
                 },
                 function (selector, propertyName, newValue) {
                     //Changed 
-                    Me.Validate(bindType, controlsObject);
+                    Me.Validate(bindType, controlsObject, selector, data);
 
-                    let control = controlsObject[propertyName]; // eval('Me.Controls.' + propertyName);
+                    //let control = controlsObject[propertyName]; // eval('Me.Controls.' + propertyName);
+                    let control = eval('controlsObject.' + propertyName); //handles multi-level objects
 
                     if (control) {
+
+                        control.Selector = selector;
+                        control.Data = data;
+
                         if (control.Cleanse) {
                             control.Cleanse(newValue);
                         }
@@ -293,14 +365,96 @@ define([], function () {
                             control.Changed(propertyName, newValue);
                         }
                     }
-                });
-
+                    if (Me.ChangeCallback)
+                        Me.ChangeCallback(selector, propertyName, newValue);
+                }
+            );
+            //Me.Validate(bindType, controlsObject);
         },
-        Validate: function (bindType, controlsObject) {
+
+
+        BindProperty: function (component, propertyName) {
+
+
+            Apps.Bind.DataBind(data, bindType, false,
+                function (selector, propertyName, boundValue) {
+
+
+                    //Bound 
+                    try {
+                        //let control = controlsObject[propertyName]; // eval('Me.Controls.' + propertyName);
+                        let control = eval('controlsObject.' + propertyName);
+
+                        if (control) {
+
+                            control['Name'] = propertyName;
+
+                            if (!control.PendingMessage)
+                                control['PendingMessage'] = '';
+
+                            //if (control) {
+                            control.Selector = selector;
+                            control.Data = data;
+                            if (control.Defaults) {
+                                control.Defaults();
+                            }
+                            if (control.Cleanse) {
+                                control.Cleanse(selector.val()); //Cleanses default value of element
+                            }
+                            if (control.Bound) {
+                                control.Bound(propertyName, boundValue);
+                            }
+
+                            Me.ValidateControl(control, selector, data); //Fire during bind, accumulates default validation values
+
+                            Me.ControlTypes[bindType].Controls.push(control);
+                            //    }
+                            //    else {
+                            //        Apps.Notify('info', 'Cant find a control for ' + propertyName);
+                            //    }
+                        }
+                    }
+                    catch (err) {
+                        Apps.Notify('info', 'Problem finding control ' + propertyName);
+                        Apps.Components.Helpers.HandleException(err);
+                    }
+                },
+                function (selector, propertyName, newValue) {
+                    //Changed 
+                    Me.Validate(bindType, controlsObject, selector, data);
+
+                    //let control = controlsObject[propertyName]; // eval('Me.Controls.' + propertyName);
+                    let control = eval('controlsObject.' + propertyName); //handles multi-level objects
+
+                    if (control) {
+
+                        control.Selector = selector;
+                        control.Data = data;
+
+                        if (control.Cleanse) {
+                            control.Cleanse(newValue);
+                        }
+                        if (control.Changed) {
+                            control.Changed(propertyName, newValue);
+                        }
+                    }
+                    if (Me.ChangeCallback)
+                        Me.ChangeCallback(selector, propertyName, newValue);
+                }
+            );
+            //Me.Validate(bindType, controlsObject);
+        },
+
+        ChangeCallback: null,
+        Validate: function (bindType, controlsObject, selector, data) {
             var result = true;
             Me.IncompleteControlCount = 0;
             Me.PassedControlCount = 0;
             Me.FailedControlCount = 0;
+
+            //This may replace above
+            Me[bindType] = {};
+            Me[bindType]['Controls'] = [];
 
             //Policy
             let elements = $('[data-bind-type="' + bindType + '"]');
@@ -308,9 +462,11 @@ define([], function () {
                 let prop = $(el).attr('data-bind-property');
                 if (prop) {
 
-                    let policyControl = controlsObject[prop]; // eval('Me.Controls.' + prop);
-                    if (policyControl) {
-                        Me.ValidateControl(policyControl);
+                    //let policyControl = controlsObject[prop]; // eval('Me.Controls.' + prop);
+                    let policyControl = eval('controlsObject.' + prop);
+                    if (policyControl != undefined) {
+                        Me.ValidateControl(policyControl, policyControl.Selector, data);
+                        Me[bindType].Controls.push(policyControl);
                     }
                 }
             });
@@ -321,23 +477,344 @@ define([], function () {
 
             return result;
         },
-        ValidateControl: function (control) {
+        ValidateControl: function (control, selector, data) {
+
+            //Incomplete is default, on bind make sure property exists so dev doesn't need to check for "property doesnt exist" as opposed to "0"
+            if (!Me['PassedControlCount'])
+                Me['PassedControlCount'] = 0;
+
             if (control.Validate) {
-                let validationState = control.Validate();
+
+                control.Selector = selector;
+                control.Data = data;
+
+                let validationState = control.Validate(selector, data);
+
+
                 if (validationState == 3) {
-                    Me.PassedControlCount++;
+
+                    if (!Me.PassedControlCount)
+                        Me['PassedControlCount'] = 1;
+                    else
+                        Me.PassedControlCount++;
+
                     control.Selector.attr('title', '');
+
+                    control['State'] = 3;
                 }
                 else if (validationState == 2) {
-                    Me.FailedControlCount++;
+
+                    if (!Me.FailedControlCount)
+                        Me['FailedControlCount'] = 1;
+                    else
+                        Me.FailedControlCount++;
+
                     control.Selector.attr('title', control.FailedMessage);
+
+                    control['State'] = 2;
+
                 }
-                else if (validationState == 1) {
+                else if (validationState == 1 || validationState == undefined) { //default to incomplete
+
+                    if (!Me.IncompleteControlCount)
+                        Me['IncompleteControlCount'] = 1;
+                    else
+                        Me.IncompleteControlCount++;
+
+                    if (control.Selector != undefined)
+                        control.Selector.attr('title', control.IncompleteMessage);
+
+                    control['State'] = 1;
+                }
+
+
+            }
+            else {
+
+                //default to incomplete
+                if (!Me.IncompleteControlCount)
+                    Me['IncompleteControlCount'] = 1;
+                else
                     Me.IncompleteControlCount++;
+
+                if (control.Selector != undefined)
                     control.Selector.attr('title', control.IncompleteMessage);
+
+                control['State'] = 1;
+            }
+
+        },
+        BindHTML: function (currentHtml) {
+
+            let resultHtml = currentHtml;
+            try {
+
+                currentHtml = Me.BindTemplateIslands(currentHtml);
+                currentHtml = Me.BindTemplateModel(currentHtml);
+
+                resultHtml = currentHtml;
+
+            } catch (err) {
+
+                //Apps.Components.Helpers.HandleError(err);
+                Apps.Notify('warning', 'HTML binding failure!');
+            }
+
+            return resultHtml;
+        },
+        BindTemplateModel: function (currentHtml) {
+
+
+            //process component model/controls
+            //replaces tag with components model value
+
+            let currentDom = new DOMParser().parseFromString(currentHtml, 'text/html');
+
+            if (currentDom.children[0].children[1].children.length == 1) { //dom inserts doc/html/body
+
+                //let current = $(currentHtml);
+
+                //if (current.length == 1) {
+
+                try {
+
+
+                    let bindComponents = currentDom.querySelectorAll('[data-bind-component]'); // current.find('[data-bind-component]');
+
+                    if (bindComponents.length > 0) {
+                        $.each(bindComponents, function (index, componentTag) {
+
+                            //var prop = $(componentTag).attributes('[data-bind-property]');
+                            var componentString = $(componentTag).attr('data-bind-component');
+                            var elementType = componentTag.localName.toLowerCase();
+
+                            //let propertyName = $(prop).attr('data-bind-property');
+                            if (elementType == 'div' || elementType == 'span') {
+                                componentTag.innerText = eval(componentString); // + '.Model.' + propertyName));
+                            }
+                            else if (elementType == 'input') {
+                                componentTag.defaultValue = eval(componentString); // + '.Model.' + propertyName);
+                            }
+                            else if (elementType == 'option') {
+                                componentTag.innerText == eval(componentString);
+                            }
+
+                            //    $.each(props, function (tindex, prop) {
+                            //    });
+                        });
+                        currentHtml = currentDom.body.innerHTML; // current.html();
+                    }
+                }
+                catch (err) {
+                    let hi = 'ya'; //
                 }
             }
 
+            return currentHtml;
+        },
+        BindModelProperty: function (modelProperty,) {
+
+        },
+        BindTemplateIslands: function (currentHtml) {
+
+            var currentDom = new DOMParser().parseFromString(currentHtml, 'text/html');
+
+            if (currentDom.children[0].children[1].children.length == 1) {
+
+                //var current = $(currentHtml);
+
+                //if (current.length == 1) {
+
+                let islandDestinations = currentDom.querySelectorAll('DataIslandDestination'); // current.find('DataIslandDestination');
+
+                if (islandDestinations.length > 0) {
+
+                    $.each(islandDestinations, function (i, dest) {
+
+                        //let dataIsland = dest.id;
+
+                        //Find data island id
+                        let dataIslandId = dest.attributes['data-island'].value;
+
+                        //Create a new content div
+                        let contentDiv = currentDom.createElement('div'); //
+                        contentDiv.id = 'dataIslandInstance_' + dest.id;
+
+                        if (dataIslandId) {
+
+                            //Get island content
+                            let dataIslandContents = currentDom.querySelectorAll('#' + dataIslandId); //.html();
+                            if (dataIslandContents.length == 1) {
+
+                                let dataIsland = dataIslandContents[0];
+                                dataIsland.style.display = 'none';
+
+                                contentDiv.innerHTML = dataIsland.innerHTML;
+                                dest.after(contentDiv);
+                            }
+                        }
+
+                    });
+                    currentHtml = currentDom.body.innerHTML;
+                }
+                //}
+            }
+
+            //$.each(bindComponents, function (index, componentTag) {
+
+            //    var props = $(componentTag).children('[data-bind-property]');
+            //    var componentString = $(componentTag).attr('data-bind-component');
+
+            //    $.each(props, function (tindex, prop) {
+            //        let propertyName = $(prop).attr('data-bind-property');
+            //        currentHtml = currentHtml.replace(prop.outerHTML, eval(componentString + '.Model.' + propertyName));
+            //    });
+            //});
+
+            //var html = ''
+            //$.each(current, function (i, c) {
+            //    html += $(c).html();
+            //});
+            return currentHtml;
+
+
+            //    //let currentHtmlTemp = '<span>' + currentHtml + '</span>'; //for converting html and back
+
+            //    //process data islands
+            //    //replaces island "destination" tags with island contents
+            //    let currentDom = new DOMParser().parseFromString(currentHtml, 'text/html');
+            //    //current = $(current);
+
+            //    let bindIslands = currentDom.querySelectorAll('[data-bind-island-destination]');
+
+
+            //    //let bindIslands = current.find('[data-bind-island-destination]');
+            //    $.each(bindIslands, function (tindex, islandDestination) {
+
+            //        let bindIslandArg = $(islandDestination).attr('data-bind-island-arg');
+
+            //        //Skip if arg is indicated. Looking for arg
+            //        if (!bindIslandArg) {
+
+            //            let islandName = $(islandDestination).attr('data-bind-island-destination');
+            //            let island = currentDom.querySelectorAll('[data-bind-island=' + islandName + ']');
+
+            //            if (island && island.length == 1) {
+            //                $(island).removeProp('hidden');
+            //                $(islandDestination).after($(island));
+
+            //                //currentHtml = currentHtml.replace(islandDestination.outerHTML, );
+            //            }
+            //        }
+            //    });
+            //    //currentHtml = current.children().html();
+            //    //currentHtml = '';
+            //    //$.each(current, function (index, element) {
+            //    //    currentHtml += element.data;
+            //    //})
+            //    return currentDom.body.innerHTML; // Html;
+        },
+        BindDocumentIslands: function () {
+
+            let islandDestinations = document.querySelectorAll('IslandDestination');
+            $.each(islandDestinations, function (i, dest) {
+
+                //Hide
+                $(dest).hide();
+
+                //Find data island id
+                let dataIslandId = dest.attributes['island'].value;
+
+                let documentIslands = $('Island[id="' + dataIslandId + '"]');
+
+                if (documentIslands.length == 1) {
+                    dest.innerHTML = documentIslands[0].innerHTML;
+                }
+                else if (documentIslands.length == 0)
+                    Apps.Notify('info', 'Island destination cannot find island "' + dataIslandId + '.');
+                else if (documentIslands.length > 1)
+                    Apps.Notify('info', 'More than on Island found: "' + dataIslandId + '".');
+            });
+        },
+
+        BindIslands: function (selector) {
+
+            var currentDom = new DOMParser().parseFromString(selector.html(), 'text/html');
+
+            let islandDestinations = currentDom.querySelectorAll('DataIslandDestination'); // current.find('DataIslandDestination');
+
+            if (islandDestinations.length > 0) {
+
+                $.each(islandDestinations, function (i, dest) {
+
+                    //Find data island id
+                    let dataIslandId = dest.attributes['data-island'].value;
+
+                    //Create a new content div
+                    let contentDiv = currentDom.createElement('div'); //
+                    contentDiv.id = 'dataIslandInstance_' + dest.id;
+
+                    if (dataIslandId) {
+
+                        //Get island content
+                        let dataIslandContents = currentDom.querySelectorAll('#' + dataIslandId); //.html();
+                        if (dataIslandContents.length == 1) {
+
+                            let dataIsland = dataIslandContents[0];
+                            dataIsland.style.display = 'none';
+
+                            contentDiv.innerHTML = dataIsland.innerHTML;
+                            dest.after(contentDiv);
+                        }
+                    }
+
+                });
+                currentHtml = currentDom.body.innerHTML;
+            }
+        },
+        BindIsland: function (contentDivId, islandSelector, destinationSelector) {
+
+            if (islandSelector && destinationSelector && islandSelector.length == 1 && destinationSelector.length == 1) {
+
+                //let contentDivString = '<div class="ShippingAccountMethodSelected" id="' + contentDivId + '"></div>';
+
+                //$('.ShippingAccountMethodSelected').detach();
+
+                //let contentDiv = $(contentDivString);
+
+                //destinationSelector.after(contentDiv);
+                //contentDiv.html(islandSelector.html());
+
+                destinationSelector.html(islandSelector.html());
+            }
+        },
+
+        BindModel: function (model, selector) {
+
+            var currentDom = new DOMParser().parseFromString(selector.html(), 'text/html');
+
+            let pageBinds = currentDom.querySelectorAll('DataIslandDestination'); // current.find('DataIslandDestination');
+
+            if (pageBinds.length > 0) {
+
+                $.each(pageBinds, function (i, pageBind) {
+
+                    try {
+                        let modelPropertyString = pageBind.attributes['data-bind-model-property'];
+
+                        if (elementType == 'div' || elementType == 'span') {
+                            pageBind.innerText = eval(modelPropertyString); // + '.Model.' + propertyName));
+                        }
+                        else if (elementType == 'input') {
+                            pageBind.defaultValue = eval(modelPropertyString); // + '.Model.' + propertyName);
+                        }
+
+                    }
+                    catch (err) {
+                        console.error(err.message);
+                    }
+                });
+            }
         },
         DataBindTable: function (settings) {
 
@@ -460,7 +937,8 @@ define([], function () {
             }
 
             //APPEND ROWS
-            $.each(settings.data, function (index, row) {
+            //$.each(settings.data, function (index, row) {
+            settings.data.forEach(function (row, index) {
 
                 var rowHtml = '';
 
@@ -519,6 +997,96 @@ define([], function () {
                 }
                 $(document).mousemove(move).mouseup(up);
             });
+
+        },
+        ValidationUtilities: {
+            SetState: function (stateNumber, selector) {
+                /*
+                    Assumes parent element is acting as the validation indicator (e.g. color rectangle)
+                    1 = incomplete
+                    2 = failed
+                    3 = passed
+                */
+
+                if (selector && selector.length > 0) { //Sometimes validation gets called and element isn't ready
+                    var parentElem = selector[0].parentElement;
+                    if (!selector[0].style.display) { // only add classes to elements without style="display: none"
+                        if ($(parentElem)[0].localName == 'td') {
+                            selector = selector.parent();   // selector is a td so move classes to its parent
+                        }
+                        switch (stateNumber) {
+                            case 1: selector.addClass('pending').removeClass('issue').removeClass('passed'); break;
+                            case 2: selector.addClass('issue').removeClass('pending').removeClass('passed'); break;
+                            case 3: selector.addClass('passed').removeClass('pending').removeClass('issue'); break;
+                        }
+                    }
+                }
+                return stateNumber;
+            },
+
+            Not_Empty_Required: function (selector) {
+                let val = 1
+
+                if (selector && selector.length > 0) {
+                    if (selector.is('input')) {
+                        if (selector.val() && selector.val().length > 0) {
+                            val = 3;
+                        }
+                    }
+                    else if (selector.is('span') || selector.is('div')) {
+                        if (selector.text() && selector.text().length > 0) {
+                            val = 3;
+                        }
+                    }
+                    Me.ValidationUtilities.SetState(val, selector);
+                }
+                return val;
+            },
+            Positive_Int_Required: function (selector) {
+                let val = 1
+
+                if (selector) {
+                    if (selector.is('input')) {
+                        if (parseInt(selector.val()) && parseInt(selector.val()) > 0) {
+                            val = 3;
+                        }
+                    }
+                    else if (selector.is('span') || selector.is('div')) {
+                        if (parseInt(selector.text()) && parseInt(selector.text()) > 0) {
+                            val = 3;
+                        }
+                    }
+                    else if (selector.is('select')) {
+                        if (parseInt(selector.val()) && parseInt(selector.val()) > 0) {
+                            val = 3;
+                        }
+                    }
+                    Me.ValidationUtilities.SetState(val, selector);
+                }
+                return val;
+            },
+            SetToZero: function (selector) {
+                if (selector) {
+                    if (selector.is('input')) {
+                        selector.val(0);
+                    }
+                    else if (selector.is('span') || selector.is('div')) {
+                        selector.text(0);
+                    }
+                }
+
+            },
+            SetToOne: function (selector) {
+                if (selector) {
+                    if (selector.is('input')) {
+                        selector.val(1);
+                    }
+                    else if (selector.is('span') || selector.is('div')) {
+                        selector.text(1);
+                    }
+                }
+
+            }
 
         }
     }
