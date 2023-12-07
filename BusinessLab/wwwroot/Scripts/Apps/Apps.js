@@ -93,7 +93,7 @@
         };
 
         if (Apps.ActiveDeployment.Debug) {
-            Apps.ActiveDeployment.WebRoot = 'https://localhost:44381';
+            Apps.ActiveDeployment.WebRoot = 'https://localhost:54322';
             Apps.ActiveDeployment.Version = 8; //don't change so often
 
         }

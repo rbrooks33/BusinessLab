@@ -1,5 +1,5 @@
 ﻿//JS
-define([], function () {
+Apps.Define([], function () {
     var Me = {
         Editor: null,
         Initialize: function (callback) {

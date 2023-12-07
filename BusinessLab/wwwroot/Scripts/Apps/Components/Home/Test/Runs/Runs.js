@@ -1,4 +1,4 @@
-﻿define([], function () {
+﻿Apps.Define([], function () {
     var Me = {
         Initialize: function (callback) {
         //    Apps.Data.RegisterGET('TestRunInstances', 'api/TestRun/GetTestRunInstances');

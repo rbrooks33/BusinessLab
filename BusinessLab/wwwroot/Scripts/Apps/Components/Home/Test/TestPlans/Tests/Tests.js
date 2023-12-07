@@ -2,7 +2,7 @@
 //html source to populate a Test Plan "child" data source.
 //That being the case, it is called like an instantiated object
 //where Initialize is the ctor (auto-initialized is turned off)
-define([], function () {
+Apps.Define([], function () {
     var Me = {
         Initialize: function (callback) {
         //    Apps.Data.RegisterGET('TestModel', '/api/Test/GetTestModel');

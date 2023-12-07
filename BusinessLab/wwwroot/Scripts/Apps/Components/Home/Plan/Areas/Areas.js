@@ -1,4 +1,4 @@
-﻿define([], function () {
+﻿Apps.Define([], function () {
     var Me = {
         SelectedAreaID: 0,
         Create: function () {

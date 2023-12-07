@@ -1,7 +1,11 @@
 {
     "Components": [
        
-     
+        {
+            "Name": "BL",
+            "Load": true,
+            "Initialize":true
+        },
         {
             "Name": "Helpers",
             "Load": true,

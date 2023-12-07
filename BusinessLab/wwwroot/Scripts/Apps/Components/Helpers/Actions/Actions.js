@@ -1,4 +1,4 @@
-﻿define(['./Controls/ActionsTable.js'], function (ActionsTable) {
+﻿Apps.Define(['./Controls/ActionsTable.js'], function (ActionsTable) {
     var Me = {
         ActionsTable: ActionsTable,
         SqlEditor: null,

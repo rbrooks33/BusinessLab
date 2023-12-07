@@ -1,4 +1,4 @@
-﻿define([], function () {
+﻿Apps.Define([], function () {
     var Me = {
         MouseX: 0,
         MouseY: 0,
