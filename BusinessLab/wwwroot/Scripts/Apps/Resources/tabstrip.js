@@ -6,7 +6,7 @@
 //</div>
 //Apps.Tabstrips.Initialize('[tabstripId]');
 
-define(['./util.js'], function (Util) {
+Apps.Define([], function () {
 
     var Me = {
         Tabs: [],
@@ -17,7 +17,7 @@ define(['./util.js'], function (Util) {
 
             //Util.LoadTemplateFiles(Me.BaseFolder);
             //Util.AddStyleReference(Me.BaseFolder + '/css/tabstrip.css');
-            Util.GetQueryString();
+            Apps.Util.GetQueryString();
 
             Me.CreateTabstrips(tabstripId);
 
@@ -33,13 +33,10 @@ define(['./util.js'], function (Util) {
                 if (ts.id === tabstripId) {
 
                     //Custom css file e.g. 'tabstripEditor-tabstrip-custom'
-                    //var newTabstripHTML = $('<div class="css3-tabstrip ' + tabstripId + '-tabstrip-custom"><ul></ul> </div>');
-                    //var test =              $('#contentCreate > div > div:nth-child(3)')
-                    //if (newTabstripHTML.length == 0)
-                    if ($('.' + tabstripId + '-tabstrip-custom').length == 0)
-                    {
-                        let newTabstripHTML = $('<div class="css3-tabstrip ' + tabstripId + '-tabstrip-custom"><ul></ul> </div>');
+                    var newTabstripHTML = $('<div class="css3-tabstrip ' + tabstripId + '-tabstrip-custom"><ul></ul> </div>');
 
+                    //if (newTabstripHTML.length === 0)
+                    {
                         //INSERT TABS & CONTENT
                         //Content element id is by convention: template id + 'Content' (e.g. 'templateTabLayoutContent')
                         $.each($(ts).children(), function (tabIndex, tab) {
@@ -47,15 +44,16 @@ define(['./util.js'], function (Util) {
                             var tabTemplateId = $(tab).attr("data-tabstrip-templateid");
                             var tabTitle = $(tab).attr("data-tabstrip-tabtitle");
                             var tabHTML = '';
-                            if (Util.GetContent(tabTemplateId))
-                                tabHTML = Util.GetContent(tabTemplateId);
+                            if (Apps.Util.GetContent(tabTemplateId))
+                                tabHTML = Apps.Util.GetContent(tabTemplateId);
 
                             //$("#templateTabColor-css3-tabstrip-0-2").next().append("<span style='position:relative;color:red;top:3px;left3px;'>*</span>")
 
                             var newTabstripTabsHTML = '';
                             newTabstripTabsHTML += '<li class="tabstrip-li">';
                             newTabstripTabsHTML += '<input type="radio" typex="radio" class="tabstrip-radio" name="' + tabTemplateId + '-css3-tabstrip-0" checked="checked" id="' + tabTemplateId + '-css3-tabstrip-0-' + tabIndex + '" />';
-                            newTabstripTabsHTML += '<label class="tabstrip-label" onclick="Tabstrips.Select(\'' + tabstripId.trim() + '\', ' + tabIndex + ');" for="css3-tabstrip-0-' + tabIndex + '">' + tabTitle;
+                            newTabstripTabsHTML += '<label class="tabstrip-label" for="css3-tabstrip-0-' + tabIndex + '">' + tabTitle;
+                            // Deb removed:  onclick="Tabstrips.Select(\'' + tabstripId.trim() + '\', ' + tabIndex + ');"
                             newTabstripTabsHTML += '<span class="validationflagstyle">*</span>';
                             newTabstripTabsHTML += '</label>';
                             newTabstripTabsHTML += '<div id="' + tabTemplateId + 'Content">' + tabHTML + '</div>';
@@ -111,16 +109,22 @@ define(['./util.js'], function (Util) {
             //calling "ServerSelect" and NOT using select callback
 
 
-                var tabstripTabs = $("." + tabstripId + "-tabstrip-custom").find("input[typex='radio']");
+            var tabstripTabs = $("." + tabstripId + "-tabstrip-custom").find("input[typex='radio']");
 
-                $.each(tabstripTabs, function (index, tab) {
+            $.each(tabstripTabs, function (index, tab) {
+                let checked = index === tabIndex;
+                $(tab).prop("checked", checked);
+                if (!checked)
+                    $(tab).removeProp('checked'),
+                        $(tab).parent().removeClass('active'); // Deb added
+                else
+                    $(tab).parent().addClass('active'); // Deb added
 
-                    $(tab).prop("checked", index === tabIndex);
-                });
+            });
 
 
-                if (Me.SelectCallback)
-                    Me.SelectCallback(tabstripId, tabIndex);
+            if (Me.SelectCallback)
+                Me.SelectCallback(tabstripId, tabIndex);
         },
         ServerSelect: function (tabstripId, tabIndex) {
             var tabstripTabs = $("." + tabstripId + "-tabstrip-custom").find("input[typex='radio']");

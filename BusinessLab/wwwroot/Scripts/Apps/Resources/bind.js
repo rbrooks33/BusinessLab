@@ -163,13 +163,30 @@ Apps.Define([], function () {
                             //var objWire = objCreateSelect;
                             var isIntWire = isIntCreate;
 
-                            if (isIntWire)
-                                isCollection ? eval("obj" + propertyCollectionName + " = " + $(this).val()) : eval("obj." + propertyName + " = " + parseInt($(this).val()));
-                            else
-                                isCollection ? eval("obj" + propertyCollectionName + " = '" + $(this).val() + "'") : eval("obj." + propertyName + " = '" + $(this).val() + "'");
+                            //if (isIntWire)
+                            //    isCollection ? eval("obj" + propertyCollectionName + " = " + $(this).val()) : eval("obj." + propertyName + " = " + parseInt($(this).val()));
+                            //else
+                            //    isCollection ? eval("obj" + propertyCollectionName + " = '" + $(this).val() + "'") : eval("obj." + propertyName + " = '" + $(this).val() + "'");
+
+
+                            //    if (changedCallback)
+                            //        changedCallback($(boundElement), propertyName, $(this).val(), collectionIndex);
+
+                            let boundName = '';
+                            let isColl = false;
+                            if (propertyCollectionName) {
+                                boundName = propertyCollectionName;
+                                isColl = true;
+                                eval("obj." + propertyCollectionName + " = '" + $(this).val() + "'");
+                            }
+                            else {
+                                boundName = propertyName;
+                                eval("obj." + propertyName + " = '" + $(this).val() + "'");
+                            }
 
                             if (changedCallback)
-                                changedCallback($(boundElement), propertyName, $(this).val(), collectionIndex);
+                                changedCallback($(boundElement), boundName, $(this).val(), collectionIndex, isColl);
+
                         });
 
                     }
@@ -204,15 +221,30 @@ Apps.Define([], function () {
                             $(boundElement).off().on('change keyup paste', function () {
 
                                 //var objWire = objCreate;
-                                isCollection ? eval("obj" + propertyCollectionName + " = '" + $(this).val() + "'") : eval("obj." + propertyName + " = '" + $(this).val() + "'");
+                                //isCollection ? eval("obj" + propertyCollectionName + " = '" + $(this).val() + "'") : eval("obj." + propertyName + " = '" + $(this).val() + "'");
 
                                 //if (propertyValueIsInt && propertyValueIsInt === true)
                                 //    eval("objWire." + propertyName + " = '" + parseInt(Apps.$(this).val()) + "'");
                                 //else
                                 //    eval("objWire." + propertyName + " = '" + Apps.$(this).val() + "'");
 
+                                let boundName = '';
+                                let isColl = false;
+                                if (propertyCollectionName) {
+                                    boundName = propertyCollectionName;
+                                    isColl = true;
+                                    eval("obj." + propertyCollectionName + " = '" + $(this).val() + "'");
+                                }
+                                else {
+                                    boundName = propertyName;
+                                    eval("obj." + propertyName + " = '" + $(this).val() + "'");
+                                }
+
                                 if (changedCallback)
-                                    changedCallback($(boundElement), propertyName, $(this).val(), collectionIndex);
+                                    changedCallback($(boundElement), boundName, $(this).val(), collectionIndex, isColl);
+
+                                //    if (changedCallback)
+                                //        changedCallback($(boundElement), propertyName, $(this).val(), collectionIndex);
                             });
 
                             //CLICK EVENT ??
@@ -230,10 +262,22 @@ Apps.Define([], function () {
 
                                 //var objWire = objCreateCheckbox;
 
-                                isCollection ? eval("obj" + propertyCollectionName + " = " + $(this).prop("checked")) : eval("obj." + propertyName + " = " + $(this).prop("checked"));
+                                //isCollection ? eval("obj" + propertyCollectionName + " = " + $(this).prop("checked")) : eval("obj." + propertyName + " = " + $(this).prop("checked"));
+
+                                let boundName = '';
+                                let isColl = false;
+                                if (propertyCollectionName) {
+                                    boundName = propertyCollectionName;
+                                    isColl = true;
+                                    eval("obj." + propertyCollectionName + " = " + $(this).prop('checked'));
+                                }
+                                else {
+                                    boundName = propertyName;
+                                    eval("obj." + propertyName + " = " + $(this).prop('checked'));
+                                }
 
                                 if (changedCallback)
-                                    changedCallback($(boundElement), propertyName, $(this).prop("checked"), collectionIndex);
+                                    changedCallback($(boundElement), boundName, $(this).prop("checked"), collectionIndex, isColl);
 
                             });
 
@@ -249,9 +293,24 @@ Apps.Define([], function () {
                             $(boundElement).val(propertyValue);
                             $(boundElement).change(function () {
                                 //var objWire = objNumber;
-                                isCollection ? eval("obj" + propertyCollectionName + " = '" + $(this).val() + "'") : eval("obj." + propertyName + " = '" + $(this).val() + "'");
+                                //isCollection ? eval("obj" + propertyCollectionName + " = '" + $(this).val() + "'") : eval("obj." + propertyName + " = '" + $(this).val() + "'");
+                                let boundName = '';
+                                let isColl = false;
+                                if (propertyCollectionName) {
+                                    boundName = propertyCollectionName;
+                                    isColl = true;
+                                    eval("obj." + propertyCollectionName + " = " + $(this).val());
+                                }
+                                else {
+                                    boundName = propertyName;
+                                    eval("obj." + propertyName + " = " + $(this).val());
+                                }
+
+                                //HACKZILLA: Handle collections better
+                                let collectionIndex = propertyCollectionName.substring(propertyCollectionName.indexOf('[') + 1, propertyCollectionName.indexOf(']'));
+
                                 if (changedCallback)
-                                    changedCallback($(boundElement), propertyName, $(this).val(), collectionIndex);
+                                    changedCallback($(boundElement), boundName, $(this).val(), collectionIndex, isColl);
                             });
                         }
                     }
@@ -346,27 +405,36 @@ Apps.Define([], function () {
                         Apps.Components.Helpers.HandleException(err);
                     }
                 },
-                function (selector, propertyName, newValue) {
-                    //Changed 
-                    Me.Validate(bindType, controlsObject, selector, data);
+                function (selector, propertyName, newValue, collIndex, isColl) {
 
-                    //let control = controlsObject[propertyName]; // eval('Me.Controls.' + propertyName);
-                    let control = eval('controlsObject.' + propertyName); //handles multi-level objects
+                    if (!isColl) {
 
-                    if (control) {
+                        //Changed
+                        Me.Validate(bindType, controlsObject, selector, data);
 
-                        control.Selector = selector;
-                        control.Data = data;
+                        //let control = controlsObject[propertyName]; // eval('Me.Controls.' + propertyName);
+                        let control = eval('controlsObject.' + propertyName); //handles multi-level objects
 
-                        if (control.Cleanse) {
-                            control.Cleanse(newValue);
+                        if (control) {
+
+                            control.Selector = selector;
+                            control.Data = data;
+
+                            if (control.Cleanse) {
+                                control.Cleanse(newValue);
+                            }
+                            if (control.Changed) {
+                                control.Changed(propertyName, newValue);
+                            }
                         }
-                        if (control.Changed) {
-                            control.Changed(propertyName, newValue);
-                        }
+                        if (Me.ChangeCallback)
+                            Me.ChangeCallback(selector, propertyName, newValue);
                     }
-                    if (Me.ChangeCallback)
-                        Me.ChangeCallback(selector, propertyName, newValue);
+                    else {
+                        //TODO: handle collections some way, for now, fire the (now expected) "Controls.Changed"" function
+                        if (controlsObject['Changed'])
+                            controlsObject.Changed(selector, propertyName, newValue, collIndex, isColl);
+                    }
                 }
             );
             //Me.Validate(bindType, controlsObject);
@@ -1015,9 +1083,9 @@ Apps.Define([], function () {
                             selector = selector.parent();   // selector is a td so move classes to its parent
                         }
                         switch (stateNumber) {
-                            case 1: selector.addClass('pending').removeClass('issue').removeClass('passed'); break;
-                            case 2: selector.addClass('issue').removeClass('pending').removeClass('passed'); break;
-                            case 3: selector.addClass('passed').removeClass('pending').removeClass('issue'); break;
+                            case 1: selector.addClass('pending').removeClass('issue').removeClass('passed').parent().addClass('pending').removeClass('issue').removeClass('passed'); break;
+                            case 2: selector.addClass('issue').removeClass('pending').removeClass('passed').parent().addClass('issue').removeClass('pending').removeClass('passed'); break;
+                            case 3: selector.addClass('passed').removeClass('pending').removeClass('issue').parent().removeClass('issue').removeClass('pending'); break;
                         }
                     }
                 }
