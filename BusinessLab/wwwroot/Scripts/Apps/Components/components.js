@@ -101,6 +101,16 @@
             "Initialize": true,
             "Components": [
                 {
+                    "Name": "Dashboard",
+                    "Load": true,
+                    "Initialize": true
+                },
+                {
+                    "Name": "Tasks",
+                    "Load": true,
+                    "Initialize": true
+                },
+                {
                     "Name": "Plan",
                     "Load": true,
                     "UI": true,

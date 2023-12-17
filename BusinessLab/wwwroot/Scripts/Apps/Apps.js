@@ -402,8 +402,8 @@
 
                 if (fileName == 'require.js') {
 
-                    Apps.Require = requirejsAJS;
-                    Apps.Define = window.defineAJS;
+                    Apps.Require = requirejs;
+                    Apps.Define = window.define;
 
                     //    requirejs.config({
                     //        baseUrl: '/Scripts/Apps/Resources',
@@ -2561,7 +2561,7 @@ Apps.ComponentTemplate = function (settings) {
             //this.Content = Selector.html(newHtml);
         }
 
-        currentHtml = Apps.Bind.BindHTML(currentHtml);
+        //currentHtml = Apps.Bind.BindHTML(currentHtml);
         //currentHtml = Apps.Bind.BindIslands(currentHtml);
 
         ////process component model/controls

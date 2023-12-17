@@ -1,0 +1,22 @@
+﻿<script id="Admin_Dashboard_Container" type="text/template">
+
+    <div data-bind-property="Areas" data-bind-collection="true">
+
+        <div data-bind-property="Areas[0].AreaName"></div>
+        <div class="smaller" data-bind-property="Areas[0].AreaDescription"></div>
+        
+        <div data-bind-property="Areas[0].Workflows" data-bind-collection="true">
+
+        </div>
+
+    </div>
+
+</script>
+
+<script id="Admin_Dashboard_AreaContainer" type="text/template">
+
+    <div>
+        <div>Area</div>
+    </div>
+
+</script>
