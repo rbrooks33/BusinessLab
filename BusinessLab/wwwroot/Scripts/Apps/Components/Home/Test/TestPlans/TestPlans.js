@@ -1,4 +1,4 @@
-﻿define(['./ResultsInterval/ResultsInterval.js'], function (resultsinterval) {
+﻿Apps.Define(['./ResultsInterval/ResultsInterval.js'], function (resultsinterval) {
     var Me = {
         ResultsInterval: resultsinterval,
         CurrentTestPlanRow: null,

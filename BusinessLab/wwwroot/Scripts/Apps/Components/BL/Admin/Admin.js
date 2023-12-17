@@ -1,14 +1,14 @@
 ﻿Apps.Define([], function () {
-    var Me = {
+    let Me = {
         Initialize: function (callback) {
-
             callback();
         },
-        UniqueID: function () {
+        Show: function () {
 
         },
-        VariableDelimiter: function () { },
-        EditorType: function () { }
+        Model: {
+
+        }
     };
     return Me;
-})
+});

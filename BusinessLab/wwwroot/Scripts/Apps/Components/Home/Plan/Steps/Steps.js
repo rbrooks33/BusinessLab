@@ -1,4 +1,4 @@
-﻿define([], function () {
+﻿Apps.Define([], function () {
     var Me = {
         WorkflowID: 0,
         ParentName: '',

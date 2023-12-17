@@ -1,0 +1,110 @@
+{
+	"PaymentSectionHTML": "",
+	"Type": "cc",
+	"CardInfo": {
+		"CardNumber": "",
+		"ExpirationMonth": "",
+		"ExpirationYear": ""
+	},
+	"CardHolderName": "",
+	"CardHolderEmail": "",
+	"AccountsPayableEmail": "",
+	"CardCCV": "",
+	"Payment": {
+		"CardInfo": {
+			"CardNumber": "345456567",
+			"ExpirationMonth": "11",
+			"ExpirationYear": "29"
+		},
+		"CardCCV": "222",
+		"CardHolderEmail": "rbrooks@atecorp.com",
+		"CardHolderName": "Rodney",
+		"CCAddressInfo": {
+			"AddressLine1": "123 Anystreet",
+			"AddressCity": "San Diego",
+			"AddressStateID": "73",
+			"StateCode": "CA",
+			"AddressZip": "92154",
+			"AddressCountryID": "271",
+			"CountryTwoLetterCode": "US"
+		}
+	},
+	"BillingAddress": {
+		"AddressID": 23126,
+		"AddressName": "195 Elder Ave 213 Imperial Beach",
+		"AddressLine1": "195 Elder Ave",
+		"AddressLine2": "213",
+		"AddressCity": "Imperial Beach",
+		"AddressZip": "91932",
+		"AddressPhone": "",
+		"AddressCustomerID": 21641,
+		"AddressCountryID": 271,
+		"AddressStateID": 73,
+		"AddressPersonalName": "",
+		"AddressGUID": "",
+		"AddressLastModified": "2012-10-18T15:39:07",
+		"DUNS": "",
+		"StateCode": "CA",
+		"CountryTwoLetterCode": "US"
+	},
+	"ShippingAddress": {
+		"AddressID": 23130,
+		"AddressName": "10401 ROSELLE ST  SAN DIEGO",
+		"AddressLine1": "10401 ROSELLE ST",
+		"AddressLine2": "",
+		"AddressCity": "SAN DIEGO",
+		"AddressZip": "92121",
+		"AddressPhone": "",
+		"AddressCustomerID": 21641,
+		"AddressCountryID": 271,
+		"AddressStateID": 73,
+		"AddressPersonalName": "",
+		"AddressGUID": "",
+		"AddressLastModified": "2012-10-18T15:39:07",
+		"DUNS": "",
+		"StateCode": "CA",
+		"CountryTwoLetterCode": "US"
+	},
+	"SelectedProducts": [
+		{
+			"DocumentName": "?Siemens ELTPHB Test Kit",
+			"ATECorpCRMID": "SIEM-ELTPHB",
+			"Image": "~/ATECorp/media/ProductImages/Siemens-ELTPHB.jpg",
+			"SKUPrice": 0,
+			"SKURetailPrice": 5251,
+			"QuantityAvailable": 0,
+			"BiWeeklyPrice": 299,
+			"ShipWeight": "",
+			"SKUWidth": "",
+			"SKUDepth": "",
+			"SKUHeight": ""
+		},
+		{
+			"DocumentName": "Fluke 1735 Three-Phase Power Logger",
+			"ATECorpCRMID": "FLUK-1735",
+			"Image": "~/ATECorp/media/ProductImages/Fluke-1735.jpg",
+			"SKUPrice": 0,
+			"SKURetailPrice": 3899.95,
+			"QuantityAvailable": 0,
+			"BiWeeklyPrice": 329,
+			"ShipWeight": 14,
+			"SKUWidth": 21,
+			"SKUDepth": 13,
+			"SKUHeight": 21
+		}
+	],
+	"Customer": {
+		"CustomerID": 21641,
+		"CustomerCompany": "Brooks Landscaping Test Company",
+		"CustomerPhone": "6195001611",
+		"CustomerEmail": "rbrooks@atecorp.com",
+		"AteCorpCustomerPhoneExtension": null,
+		"CustomerFirstName": "Brooks",
+		"CustomerLastName": "Land"
+	},
+	"RequestId": "123",
+	"LineItemPrice": "1.23",
+	"ShipPrice": "4.56",
+	"TotalTax": "3.45",
+	"OrderType": "2"
+}
