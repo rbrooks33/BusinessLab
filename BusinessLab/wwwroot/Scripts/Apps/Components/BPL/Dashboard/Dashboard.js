@@ -3,6 +3,7 @@
         Initialize: function (callback) {
             callback();
         },
+
         Model: {
 
         }

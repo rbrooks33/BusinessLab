@@ -1,5 +1,9 @@
-﻿
-<script id="BPLHeaderx" type="text/template">
+﻿<div data-bind-template="BPLHeader"></div>
+<div class="Home_Stage_Title">
+    Home
+</div>
+
+<script id="BPLHeader" type="text/template">
     <div class="Home_Container">
 
         <div class="HeaderContainer_DivStyle">
@@ -39,10 +43,10 @@
         </div>
 
         <div class="btn-group HeadsUp_StageButtons">
-            <div class="btn btn-secondary StageButtons_Dashboard Home_StageButtons_First" onclick="Apps.Components.Home.Show();">Dashboard</div>
+            <div class="btn btn-secondary StageButtons_Dashboard Home_StageButtons_First" onclick="Apps.Components.BPL.Show();">Dashboard</div>
             <div class="btn btn-secondary StageButtons_Apps" onclick="Apps.Components.Home.Plan.Show();">Apps</div>
-            <div class="btn btn-secondary StageButtons_Actions" onclick="Apps.Components.Home.Create.Show();">Actions</div>
-            <div class="btn btn-secondary StageButtons_Areas" onclick="Apps.Components.Home.Test.Show();">Areas</div>
+            <div class="btn btn-secondary StageButtons_Actions" onclick="Apps.Components.BPL.Actions.Show();">Actions</div>
+            <div class="btn btn-secondary StageButtons_Areas" onclick="Apps.Components.BPL.Areas.Show();">Areas</div>
             <div class="btn btn-secondary StageButtons_Logs" onclick="Apps.Components.Home.Publish.Show();">Logs</div>
             <div class="btn btn-secondary StageButtons_Projects" onclick="Apps.Components.Home.Track.Show();">Projects</div>
             <div class="btn btn-secondary StageButtons_Tasks" onclick="Apps.Components.Home.Track.Show();">Tasks</div>
@@ -55,8 +59,5 @@
     </div>
 </script>
 
-<div class="HomeContent_Container Stage_Container">
-    <div class="Home_Stage_Title">
-        Home
-    </div>
-</div>
+
+

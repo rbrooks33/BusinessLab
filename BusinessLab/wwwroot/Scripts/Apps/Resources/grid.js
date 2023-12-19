@@ -399,7 +399,7 @@ SETTINGS:
         },
 
 */
-define(['./util.js'], function (Util) {
+Apps.Define(['./util.js'], function (Util) {
     var Me = {
 
         Initialize: function () {

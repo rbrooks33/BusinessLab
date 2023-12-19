@@ -302,6 +302,9 @@
             Me.Opened = false;
             if (Me.CloseCallback)
                 Me.CloseCallback();
+        },
+        CloseAll: function () {
+
         }
 
     };

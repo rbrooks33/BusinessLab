@@ -2,9 +2,25 @@
     "Components": [
        
         {
-            "Name": "BL",
+            "Name": "BPL",
             "Load": true,
-            "Initialize":true
+            "Initialize": true,
+            "UI":true,
+            "Components": [
+                {
+                    "Name": "Areas",
+                    "Load": true,
+                    "Initialize": true,
+                    "UI":true
+                },
+                {
+                    "Name": "Actions",
+                    "Load": true,
+                    "Initialize": true,
+                    "UI": true
+                }
+
+            ]
         },
         {
             "Name": "Helpers",
@@ -22,7 +38,7 @@
                 {
 
                     "Name": "UserSettings",
-                    "Load": true,
+                    "Load": false,
                     "UI": false,
                     "Initialize": true
                 },
@@ -50,7 +66,7 @@
                 {
 
                     "Name": "Auth",
-                    "Load": true,
+                    "Load": false,
                     "UI": true,
                     "Initialize": true,
                     "Components": [
@@ -100,23 +116,23 @@
         },
         {
             "Name": "Home",
-            "Load": true,
+            "Load": false,
             "UI": true,
             "Initialize": true,
             "Components": [
                 {
                     "Name": "Dashboard",
-                    "Load": true,
+                    "Load": false,
                     "Initialize": true
                 },
                 {
                     "Name": "Tasks",
-                    "Load": true,
+                    "Load": false,
                     "Initialize": true
                 },
                 {
                     "Name": "Plan",
-                    "Load": true,
+                    "Load": false,
                     "UI": true,
                     "Initialize": true,
                     "Components": [
@@ -139,7 +155,7 @@
                 },
                 {
                     "Name": "Create",
-                    "Load": true,
+                    "Load": false,
                     "UI": true,
                     "Initialize": true,
                     "Components": [
@@ -153,7 +169,7 @@
                 },
                 {
                     "Name": "Test",
-                    "Load": true,
+                    "Load": false,
                     "UI": true,
                     "Initialize": true,
                     "Components": [
@@ -171,7 +187,7 @@
                             "Components": [
                                 {
                                     "Name": "Tests",
-                                    "Load": true,
+                                    "Load": false,
                                     "Initialize": true,
                                     "UI": false,
                                     "Components": [
@@ -203,13 +219,13 @@
                 },
                 {
                     "Name": "Publish",
-                    "Load": true,
+                    "Load": false,
                     "UI": true,
                     "Initialize": true
                 },
                 {
                     "Name": "Track",
-                    "Load": true,
+                    "Load": false,
                     "UI": true,
                     "Initialize": true
                 }

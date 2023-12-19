@@ -402,8 +402,8 @@
 
                 if (fileName == 'require.js') {
 
-                    Apps.Require = requirejs;
-                    Apps.Define = window.define;
+                    Apps.Require = requireAJS;
+                    Apps.Define = window.defineAJS;
 
                     //    requirejs.config({
                     //        baseUrl: '/Scripts/Apps/Resources',
@@ -678,8 +678,6 @@
 
                 $.each(templates, function (index, template) {
                     component.UI.Templates[template.id] = new Apps.ComponentTemplate({ id: configName + '_' + template.id, content: template.innerHTML });
-
-
                 });
 
 
@@ -887,7 +885,7 @@
     CountDownComponents: {
         count: 0,
         check: function () {
-            //console.log('component count: ' + this.count);
+            console.log('component count: ' + this.count);
             this.count--;
             if (this.count === 0) {
                 this.calculate();
@@ -2093,7 +2091,7 @@ Apps.Template = function (settings) {
             let templateNode = document.createElement('div');
             templateNode.id = this.TemplateID;
             templateNode.style.display = "none";
-            document.body.appendChild(templateNode); //Put template on dom first
+            //document.body.appendChild(templateNode); //Put template on dom first
 
             this.Selector = document.getElementById(this.TemplateID);
 
@@ -2102,7 +2100,7 @@ Apps.Template = function (settings) {
             this.Template.type = "text/template";
             this.Template.innerHTML = content;
 
-            this.Selector.appendChild(this.Template); //Puts template inside div container (not template inner html)
+            document.body.appendChild(this.Template); //Puts template inside div container (not template inner html)
         }
     };
 
@@ -2111,7 +2109,6 @@ Apps.Template = function (settings) {
         // var content = Apps.Util.DropTemplate(this.TemplateID);
         if (!document.getElementById('content' + this.TemplateID)) {
 
-            this.Selector = document.getElementById(this.TemplateID);
 
             if (this.Template) {
                 //Gets html from template and puts inside container div (exposing it)
@@ -2126,7 +2123,9 @@ Apps.Template = function (settings) {
                 contentDiv.classList = this.TemplateID + 'ContentStyle';
                 contentDiv.innerHTML = content;
 
-                this.Selector.appendChild(contentDiv);
+                document.body.appendChild(contentDiv);
+
+                this.Selector = $(contentDiv); // document.getElementById(this.TemplateID);
             }
         }
 
@@ -2179,16 +2178,37 @@ Apps.Template = function (settings) {
         //if (this.Selector.length === 0)
         this.Drop(); //Drops the inner template content
 
-        ////hide data island templates (TODO)
-        //let bindElements = $(this.Selector).find('[data-bind-template]');
+        //Find this components template references
+        let bindElements = $(document.body).find('[data-bind-template]'); //) $(this.Template.innerHTML).find('[data-bind-template]');
 
-        //$.each(bindElements, function (index, element) {
-        //    $(element).hide();
-        //});
+        //Iterate through each template reference in this component
+        $.each(bindElements, function (index, element) {
+
+            let templateReferenceName = $(element).attr('data-bind-template');
+
+            //Iterate and find in other components
+            $.each(Apps.ComponentList, function (index, component) {
+
+                if (component.UI && component.UI.Templates) {
+
+                    let templateNames = Object.keys(component.UI.Templates);
+
+                    $.each(templateNames, function (i, t) {
+
+                        if (t == templateReferenceName)
+                            $(element).html(component.UI.Templates[t].HTML());
+
+                    });
+                }
+
+            });
+
+        });
+
 
         // this.Selector.style.opacity = 0;
         if (this.Selector)
-            this.Selector.style.display = 'block';
+            this.Selector.show(); //.style.display = 'block';
 
 
         return this;
@@ -2199,11 +2219,28 @@ Apps.Template = function (settings) {
         //    this.Drop();
 
         //this.Selector.style.display = 'none';
-        let mySelector = $('#' + this.TemplateID);
-        if (mySelector)
-            mySelector.hide(speed); //this.Selector.style.display = 'none';
+        //let mySelector = $('#' + this.TemplateID);
+        //if (mySelector)
+        //    mySelector.hide(speed); //this.Selector.style.display = 'none';
+
+        if(this.Selector)
+            this.Selector.hide(speed);
 
         return this;
+    };
+    //Show me, hide all else
+    this.HideAll = function (speed) {
+        var thisTemplateId = this.TemplateID;
+        this.Show(speed);
+        $.each(Apps.ComponentList, function (index, component) {
+
+            if (component.UI && component.UI.Templates) {
+                if(component.UI.TemplateID != thisTemplateId)
+                    component.UI.Hide(speed);
+            }
+
+        });
+
     };
     this.Remove = function () {
 

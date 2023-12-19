@@ -15,6 +15,9 @@
     <!--Font Awesome-->
     <script src="https://kit.fontawesome.com/27d5012c3e.js" crossorigin="anonymous"></script>
 
+    <!--Tiny MCE-->
+    <script src="Scripts/Apps/Resources/tinymce/tinymce.js"></script>
+
     <script>
 
         var connection = new signalR.HubConnectionBuilder().withUrl("/pushhub").build();
@@ -50,7 +53,7 @@
 
             Apps.Components.Helpers.PushHub.Connect();
 
-            Apps.Components.Home.Show();
+            Apps.Components.BPL.Show();
 
             if (Apps.ActiveDeployment.Debug)
                 Apps.Components.Helpers.Debug.Init();

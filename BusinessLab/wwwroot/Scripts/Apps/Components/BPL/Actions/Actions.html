@@ -1,0 +1,37 @@
+﻿<div data-bind-template="BPLHeader"></div>
+<div class="Home_Stage_Title">Actions</div>
+<div class="BPL_Actions_Table_Container"></div>
+
+<script id="Actions_Table" type="text/template">
+    <!--
+        0 = area rows
+    -->
+    <table class="table">
+        <tr>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>ID</th>
+            <th>Name</th>
+        </tr>
+        {0}
+    </table>
+</script>
+
+<script id="Actions_Row" type="text/template">
+    <!--
+        0 = area id
+        1 = area name
+        2 = actions html
+    -->
+    <tr>
+        <td>{2}</td>
+        <td><div class="btn btn-sm btn-success" onclick="Apps.Components.BPL.Areas.ViewAreaWorkflows({0});">Workflows</div></td>
+        <td>{0}</td>
+        <td>{1}</td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <div id="areaworkflows_{0}" style="display:none;"></div>
+        </td>
+    </tr>
+</script>

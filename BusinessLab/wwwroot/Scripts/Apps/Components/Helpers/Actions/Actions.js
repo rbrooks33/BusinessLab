@@ -61,7 +61,7 @@
         },
         GetActions: function (selector) {
 
-            let post = Apps.Components.Home.Main;
+            let post = Apps.Components.BPL.Data.Posts.Main;
 
             let args = {
                 "Params":
