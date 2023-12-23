@@ -385,6 +385,31 @@
             //if (clickcallback)
             //    clickcallback() //$(document).on("change", "#" + cboID, clickcallback);
         },
+        GetSelectOptions: function (collection, selectedValue, selectText, idFieldName, textFieldName, returnOptionsCallback) {
+
+            var options = ''; //var select = $('#' + cboID).empty();
+
+            options += "<option value='-1'>" + selectText + "</option>"; //).appendTo($('#' + cboID));
+
+            $.each(collection, function (index, rtr) {
+
+                var id = eval("rtr." + idFieldName);
+                var name = eval("rtr." + textFieldName);
+                var selected = '';
+                if (id === selectedValue) {
+                    options += ' selected ';
+                }
+                options += '<option value="' + id + '"' + selected + '>' + name + '</option>'; //).appendTo($('#' + cboID));
+
+
+            });
+
+            if (returnOptionsCallback)
+                returnOptionsCallback(options);
+
+            //if (clickcallback)
+            //    clickcallback() //$(document).on("change", "#" + cboID, clickcallback);
+        },
 
         GetQueryString: function () {
             var qs_vars = [], hash;

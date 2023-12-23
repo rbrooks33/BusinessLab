@@ -37,7 +37,7 @@ namespace BusinessLab
         ";
         public static void RunAction(int actionId, ref Result result)
         {
-			System.Collections.Generic.List<BusinessLab.Param> params2 = result.Params.Where(p => p.Name == "FirstName").ToList();
+			System.Collections.Generic.List<BusinessLab.Result.Param> params2 = result.Params.Where(p => p.Name == "FirstName").ToList();
 
 			result.Success = false; //reset
 

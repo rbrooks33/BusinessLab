@@ -3,14 +3,56 @@
     <div id="divDebug" class="debugContainerStyle">
         <div class="btn-group debugbuttongroup">
             <!--<div class="btn btn-primary" onclick="Apps.Components.Debug.ShowComponents();">Components</div>-->
-            <div class="btn btn-success" onclick="Apps.Components.Helpers.Debug.Event('design');">Trace</div>
-            <div class="btn btn-warning" onclick="Apps.Components.Kentico.Sales.SalesWizard.Test();">Test</div>
-            <!--<div class="btn btn-primary" onclick="Apps.Components.Debug.ShowTopology();">Topology</div>-->
+            <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Debug.Event('design');">Trace</div>
+            <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Debug.RunTests();">Run Tests</div>
+            <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Debug.ShowBinding();">Binding</div>
+            <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Debug.ShowComponents();">Components</div>
+            <div class="btn btn-danger" onclick="Apps.Components.Kentico.Sales.SalesWizard.ClearSalesWizardOrder();">Clear Sales Wizard Order</div>
+            <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Debug.ShowTasks();">Tasks</div>
+            <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Debug.ShowApp(9);">Sales Admin</div>
+
         </div>
+        <div class="btn btn-secondary" style="float: right; margin-top: 10px; margin-right: 10px;" onclick="Apps.Components.Helpers.Debug.CloseDebugBar();">Close</div>
     </div>
+
+    <div id="Debug_Test_Results" class="TestResultsContentStyle">
+        <div id="Debug_TestResults_Header"></div>
+        <div id="Debug_TestResults_Content"></div>
+    </div>
+
 </script>
 
+<script id="TestStep" type="text/template">
 
+    <!--
+        0 = step name
+        1 = step description
+        2 = passed
+        3 = notes
+        4 = color
+        5 = index
+        6 = fail message
+    -->
+    <div id="Debug_TestStep_IndexNumber{5}" style="padding-left:5px; font-size:12px;">{5}</div>
+    <div id="Debug_TestStep_StepName{5}" style="padding-left: 5px; width: 80px; font-size: 12px; font-weight: bold;">{0}</div>
+    <div id="Debug_TestStep_StepDescription{5}" style="padding-left: 5px; width: 100px; font-size: 12px; font-style: italic;">{1}</div>
+    <div id="Debug_TestStep_FailMessage{5}" style="display:none;padding-left: 5px; width: 100px; font-size: 12px; font-style: italic;">{6}</div>
+
+    <!--<div>{3}</div>-->
+    <div id="Debug_SUT_Step{5}_PassedDiv" style=" position: absolute; right: 7px; background-color:{4};width:20px;height:20px;margin:6px"></div>
+</script>
+
+<script id="Debug_TestRunner_Buttons" type="text/template">
+
+    <!--
+        0 = escaped result html
+    -->
+    <div class="btn-group" style="position: relative; margin-left: 70px; margin-top: 5px;">
+        <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Debug.OpenTestRunnerResults('{0}');">Results</div>
+        <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Debug.CloseTestRunner();">Close</div>
+    </div>
+
+</script>
 
 <script id="Window" type="text/template">
 
@@ -21,7 +63,7 @@
     -->
     <table>
         <tr>
-            <td>{0}</td>
+            <td valign="top">{0}</td>
             <td valign="top" style="padding-left:10px;">{1}</td>
             <td valign="top" style="padding-left:10px;"><div id="debug_PreviewContainer">{2}</div></td>
         </tr>
@@ -34,7 +76,7 @@
         0 = iFrame source
     -->
     <div id="debug_PreviewIframe">
-        <iframe src="{0}" style="width: 850px; height: 600px;"></iframe>
+        <iframe src="{0}" style="width: 100vw; height: 100vh;"></iframe>
     </div>
 </script>
 

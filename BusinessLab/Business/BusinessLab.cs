@@ -15,6 +15,43 @@ namespace BusinessLab
 		public Business(WorkflowScheduler scheduler) {
             _scheduler = scheduler;
         }
+
+
+		//Databases
+		public static void GetDatabases(ref Result result)
+		{
+			result.Data = Data.Execute($"SELECT * FROM Databases");
+			result.Success = true;
+		}
+
+		public static void UpsertDatabase(ref Result result)
+		{
+            result.ValidateData();
+            if (result.ParamExists("DatabaseID", Result.ParamType.Int)
+                && result.ParamExists("DatabaseName")
+                && result.ParamExists("ConnectionString"))
+            {
+                var databases = Data.Execute($"SELECT * FROM Databases WHERE DatabaseID = {result.GetParam("DatabaseID")}");
+                if(databases.Rows.Count == 1)
+                {
+                    //Update
+                    Data.Execute($"UPDATE Databases SET DatabaseName = '{result.GetParam("DatabaseName")}', ConnectionString = '{result.GetParam("ConnectionString")}' WHERE DatabaseID = {result.GetParam("DatabaseID")}");
+                }
+                else
+                {
+                    //Insert
+                    Data.Execute($"INSERT INTO Databases (DatabaseName, ConnectionString) VALUES ('{result.GetParam("DatabaseName")}', '{result.GetParam("ConnectionString")}'");
+                }
+                result.Success = true;
+            }
+		}
+
+		public static void DeleteDatabase(ref Result result)
+		{
+			result.Data = Data.Execute($"SELECT * FROM Databases");
+			result.Success = true;
+		}
+
 		public static void GetTemplates(ref Result result)
 		{
 			result.Data = Data.Execute($"SELECT * FROM Templates");
@@ -198,7 +235,7 @@ namespace BusinessLab
 
                 string correlationId = Guid.NewGuid().ToString();
 
-                result.Params.Add(new Param {  Name = "CorrelationID", Value = correlationId });
+                result.Params.Add(new Result.Param {  Name = "CorrelationID", Value = correlationId });
 
                 var action = Data.GetAction(actionId.Value, ref result);
                 
@@ -252,8 +289,8 @@ namespace BusinessLab
         public static void SendJobTraceMessage(string message)
         {
             var messageResult = new Result();
-            messageResult.Params.Add(new Param { Name = "PushName", Value = "TestJob" });
-            messageResult.Params.Add(new Param { Name = "RequestName", Value = "SendMessage" });
+            messageResult.Params.Add(new Result.Param { Name = "PushName", Value = "TestJob" });
+            messageResult.Params.Add(new Result.Param { Name = "RequestName", Value = "SendMessage" });
 			messageResult.Message = message; // $"Starting to execute job {actionId}";
             PushHub.SendMessageByService(messageResult);
            

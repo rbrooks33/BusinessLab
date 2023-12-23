@@ -402,7 +402,7 @@
 
                 if (fileName == 'require.js') {
 
-                    Apps.Require = requireAJS;
+                    Apps.Require = requirejsAJS;
                     Apps.Define = window.defineAJS;
 
                     //    requirejs.config({
@@ -664,7 +664,10 @@
 
     },
     LoadUI: function (configName, component, callback) {
+
         if (!component['UI']) {
+
+            component['UI'] = {};
 
             Apps.Download(component.Path + '/' + configName + '.html?version=' + Apps.ActiveDeployment.Version, function (data) {
 
@@ -678,6 +681,8 @@
 
                 $.each(templates, function (index, template) {
                     component.UI.Templates[template.id] = new Apps.ComponentTemplate({ id: configName + '_' + template.id, content: template.innerHTML });
+
+
                 });
 
 
@@ -882,10 +887,25 @@
                 Apps.ResourcesReady();
         }
     },
+    CountDownStarts: {
+        count: 0,
+        check: function () {
+
+            console.log('start component count: ' + this.count);
+            this.count--;
+            if (this.count === 0) {
+                this.calculate();
+            }
+        },
+        calculate: function () {
+            if (Apps.AllStarted)
+                Apps.AllStarted();
+        }
+    },
     CountDownComponents: {
         count: 0,
         check: function () {
-            console.log('component count: ' + this.count);
+            //console.log('component count: ' + this.count);
             this.count--;
             if (this.count === 0) {
                 this.calculate();
@@ -910,7 +930,7 @@
                 Apps.LoadDocumentIslands();
 
                 //Start
-                Apps.StartComponents();
+                //Apps.StartComponents();
 
                 if (Apps.ActiveDeployment.Debug)
                     Apps.Notify('warning', 'Debug configuration is enabled.');
@@ -935,6 +955,34 @@
             }
         }
     },
+    //StartComponents: function () {
+
+    //    let startComponents = Enumerable.From(Apps.ComponentList).Where(c => c.Start && c.Config.Start && c.Config.Start === true).ToArray();
+    //    $.each(startComponents, function (index, component) {
+    //         component.Start(function () {
+    //            //Apps.CountDownStarts.check();
+    //        });
+    //       //Apps.StartComponent(component);
+    //    });
+    //    if(Apps.AllStarted)
+    //        Apps.AllStarted();
+    //},
+    //StartComponent: function (c) {
+
+    //    //Look for island destinations on document
+
+    //    Apps.CountDownStarts.count++;
+    //    console.debug('start count: ' + Apps.CountDownStarts.count);
+
+    //    //if (c.Start && c.Config.Start && c.Config.Start === true) {
+
+    //       // console.debug('starting ' + c.Path);
+
+    //    //}
+    //    //else
+    //    //    Apps.CountDownStarts.check();
+
+    //},
     GetBoundTemplate: function (caller) {
         //Get template whose data-bin-property is '[property]'
         //Apps.LoadBoundTemplates(property);
@@ -944,7 +992,6 @@
         $.each(Apps.ComponentList, function (index, component) {
 
             if (component.UI && component.UI.Templates) {
-
 
                 let templateNames = Object.keys(component.UI.Templates);
 
@@ -1002,6 +1049,40 @@
 
         });
 
+        //Check all properties for missing bindings
+        $.each(Apps.ComponentList, function (i, c) {
+
+            if (c.Model) {
+                let props = Object.keys(c.Model);
+
+                $.each(props, function (i, p) {
+
+                    let propBoundCount = Enumerable.From(Apps.AutoBindReferences).Where(ab => ab.Name == p).ToArray().length;
+                    if (propBoundCount == 0)
+                        console.log(`%cNo auto-bind reference for ${c.Config.Name}.Model.${p}`, 'color:orange');
+
+                });
+            }
+            else
+                console.warn('No model exists for component ' + c.Config.Name);
+
+        });
+
+        $.each(Apps.ComponentList, function (i, c) {
+
+            if (c.Model) {
+                let props = Object.keys(c.Model);
+
+                $.each(props, function (i, p) {
+
+                    let propDOMCount = $('[data-bind-property="' + p + '"]').length;
+                    if (propDOMCount == 0)
+                        console.log(`%cNo corresponding DOM element for ${c.Config.Name}.Model.${p}`, 'color:red');
+                });
+            }
+
+        });
+
     },
     AutoBindComponent: function (bindpropname, c) {
 
@@ -1016,7 +1097,7 @@
             let instances = modelString.match(bindpropname);
             if (instances && instances.length == 1) {
 
-                Apps.AutoBindModel(bindpropname, c);
+                Apps.AutoBindModel(bindpropname, c, true);
                 //Save to do only once
                 //    }
                 //    else
@@ -1038,12 +1119,31 @@
                 //        Apps.AutoBindReferences.push({ Name: bindpropname, ControlCount: c.Controls.length });
             }
             else if (instances && instances.length > 1)
-                Apps.Notify('info', 'More than one property exists for ' + bindpropname + '!');
+                console.log('More than one property exists for ' + bindpropname + '!');
 
         }
 
     },
-    AutoBindModel: function (bindpropname, c) {
+    BindComponent: function (c) {
+        let props = Object.keys(c);
+        $.each(props, function (i, p) {
+
+            let templates = Object.keys(c.UI.Templates);
+            $.each(templates, function (i, t) {
+
+                let html = c.UI.Templates[t].HTML();
+                let binds = $(html).find('[data-bind-property]');
+
+                $.each(binds, function (i, b) {
+
+                    Apps.AutoBindModel(b.attributes['data-bind-property'].value, c);
+
+                });
+
+            });
+        });
+    },
+    AutoBindModel: function (bindpropname, c, forceBind) {
 
         let references = Apps.AutoBindReferences;
 
@@ -1080,6 +1180,9 @@
 
                     //Add reference and create binding if not already exists
                     let existing = Enumerable.From(references).Where(r => r.Name == bindpropname).ToArray();
+
+                    if (forceBind == undefined)
+                        forceBind = true;
 
                     if (existing.length == 0 || forceBind) {
 
@@ -1137,14 +1240,15 @@
         }
 
     },
-    OpenDialog: function (component, id, title, content, topbuttons, bottombuttons) {
+    OpenDialog: function (component, id, title, content, topbuttons, bottombuttons, cancelbutton) {
 
         Apps.Components.Helpers.Dialogs.CloseAll();
 
         Apps.Components.Helpers.Dialogs.Register(id, {
             title: title,
             topbuttons: topbuttons,
-            buttons: bottombuttons
+            buttons: bottombuttons,
+            cancelbutton: cancelbutton
         });
 
         Apps.Components.Helpers.Dialogs.Content(id, content);
@@ -1179,6 +1283,8 @@
                     if (elementType == 'div' || elementType == 'span') {
                         if (contentType == 'html')
                             e.innerHTML = propertyValue;
+                        else if (contentType == 'text')
+                            e.innerText = propertyValue;
                         else if (contentType == 'bool' || contentType == 'none') {
                             //nada
                         }
@@ -1191,7 +1297,9 @@
                     else if (elementType == 'option') {
                         e.innerText = propertyValue; // eval(componentString);
                     }
-
+                    else if (elementType == 'select') {
+                        $(e).val(propertyValue);
+                    }
                     //Add reference and create binding if not already exists
                     let existing = Enumerable.From(references).Where(r => r.Name == bindpropname).ToArray();
 
@@ -1412,20 +1520,6 @@
             template.Islands.push(island);
         });
 
-    },
-    StartComponents: function () {
-        $.each(Apps.ComponentList, function (index, component) {
-            Apps.StartComponent(component);
-        });
-    },
-    StartComponent: function (c) {
-        console.debug('start ' + c.Path);
-
-        //Look for island destinations on document
-        if (c.Start && c.Config.Start && c.Config.Start === true) {
-
-            c.Start();
-        }
     },
 
     //BindComponents: function () {
@@ -2088,17 +2182,18 @@ Apps.Template = function (settings) {
 
         if (!document.getElementById(this.TemplateID)) {
 
-            let templateNode = document.createElement('div');
-            templateNode.id = this.TemplateID;
-            templateNode.style.display = "none";
+            //let templateNode = document.createElement('div');
+            //templateNode.id = this.TemplateID;
+            //templateNode.style.display = "none";
             //document.body.appendChild(templateNode); //Put template on dom first
 
-            this.Selector = document.getElementById(this.TemplateID);
 
             this.Template = document.createElement('script');
             this.Template.id = 'template' + this.TemplateID;
             this.Template.type = "text/template";
             this.Template.innerHTML = content;
+
+            this.Selector = $(this.Template);
 
             document.body.appendChild(this.Template); //Puts template inside div container (not template inner html)
         }
@@ -2123,9 +2218,9 @@ Apps.Template = function (settings) {
                 contentDiv.classList = this.TemplateID + 'ContentStyle';
                 contentDiv.innerHTML = content;
 
-                document.body.appendChild(contentDiv);
-
                 this.Selector = $(contentDiv); // document.getElementById(this.TemplateID);
+
+                document.body.appendChild(contentDiv);
             }
         }
 
@@ -2223,7 +2318,7 @@ Apps.Template = function (settings) {
         //if (mySelector)
         //    mySelector.hide(speed); //this.Selector.style.display = 'none';
 
-        if(this.Selector)
+        if (this.Selector)
             this.Selector.hide(speed);
 
         return this;
@@ -2235,7 +2330,7 @@ Apps.Template = function (settings) {
         $.each(Apps.ComponentList, function (index, component) {
 
             if (component.UI && component.UI.Templates) {
-                if(component.UI.TemplateID != thisTemplateId)
+                if (component.UI.TemplateID != thisTemplateId)
                     component.UI.Hide(speed);
             }
 
@@ -2426,7 +2521,7 @@ Apps['AppDialogs'] = {
 
         str += '                            <button type="button" class="close-dialog" onclick="Apps.AppDialogs.Close(\'{2}\')">&times;</button>';
         str += '                        </div>';
-        str += '                        <div class="dialog-body">';
+        str += '                        <div class="dialog-body original-load">';
         str += '                            <div id="myDialog_{2}_Content">{0}</div>';
         str += '                        </div>';
         str += '                        <div class="dialog-footer">';
@@ -2529,17 +2624,17 @@ Apps.ComponentTemplate = function (settings) {
             //$(templateNode).append(currentHtml);
             this.Selector.append(currentHtml);
 
-            ////Execute referenced methods
-            //let bindElements = this.Selector.find('[data-template-load]');
+            //Execute referenced methods
+            let bindElements = this.Selector.find('[data-template-load]');
 
-            //$.each(bindElements, function (index, element) {
-            //    let elementSelector = $(element);
+            $.each(bindElements, function (index, element) {
+                let elementSelector = $(element);
 
-            //    //Put referenced html below element
-            //    let content = eval(elementSelector.attr('data-template-load'));
-            //    elementSelector.html(content);
+                //Put referenced html below element
+                let content = eval(elementSelector.attr('data-template-load'));
+                elementSelector.html(content);
 
-            //});
+            });
 
             //Execute referenced methods on drop
             //this.Execute('data-template-ondrop');
@@ -2598,7 +2693,7 @@ Apps.ComponentTemplate = function (settings) {
             //this.Content = Selector.html(newHtml);
         }
 
-        //currentHtml = Apps.Bind.BindHTML(currentHtml);
+        currentHtml = Apps.Bind.BindHTML(currentHtml);
         //currentHtml = Apps.Bind.BindIslands(currentHtml);
 
         ////process component model/controls

@@ -8,13 +8,67 @@
             "UI":true,
             "Components": [
                 {
+                    "Name": "Actions",
+                    "Load": true,
+                    "Initialize": true,
+                    "UI": true
+                },
+                {
+                    "Name": "Admin",
+                    "Load": true,
+                    "Initialize": true,
+                    "UI": true
+                },
+                {
+                    "Name": "Apps",
+                    "Load": true,
+                    "Initialize": true,
+                    "UI": true
+                },
+                {
                     "Name": "Areas",
+                    "Load": true,
+                    "Initialize": true,
+                    "UI": true
+                },
+                {
+                    "Name": "Dashboard",
+                    "Load": true,
+                    "Initialize": true,
+                    "UI": true
+                },
+                {
+                    "Name": "Jobs",
                     "Load": true,
                     "Initialize": true,
                     "UI":true
                 },
                 {
-                    "Name": "Actions",
+                    "Name": "Logs",
+                    "Load": true,
+                    "Initialize": true,
+                    "UI": true
+                },
+                {
+                    "Name": "Notes",
+                    "Load": true,
+                    "Initialize": true,
+                    "UI": true
+                },
+                {
+                    "Name": "Projects",
+                    "Load": true,
+                    "Initialize": true,
+                    "UI": true
+                },
+                {
+                    "Name": "Tasks",
+                    "Load": true,
+                    "Initialize": true,
+                    "UI": true
+                },
+                {
+                    "Name": "Visuals",
                     "Load": true,
                     "Initialize": true,
                     "UI": true

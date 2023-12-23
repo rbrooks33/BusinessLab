@@ -85,6 +85,8 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 				case "AddWorkflow": Business.AddWorkflow(ref result); break;
                 case "SendMessage": PushHub.SendMessage(hub, result, result.Message); break;
 
+				case "GetDatabases": Business.GetDatabases(ref result); break;
+
 				//case "GetTemplates": Business.GetTemplates(ref result); break;
 				case "GetTemplate": Business.GetTemplates(ref result); break;
 

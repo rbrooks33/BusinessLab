@@ -14,9 +14,21 @@
         },
         Show: function () {
 
-            Me.UI.HideAll();
+            //Me.UI.HideAll();
+            Me.Dashboard.Show();
+
+            Me.StartComponents();
 
             Apps.AutoBind();
+
+            Apps.Components.Helpers.PushHub.Subscriber().Publish('AppLoaded', true); //Notify app finished loading
+
+        },
+        StartComponents: function () {
+            let startComponents = Enumerable.From(Apps.ComponentList).Where(c => c.Start && c.Config.Start && c.Config.Start === true).ToArray();
+            $.each(startComponents, function (index, component) {
+                component.Start();
+            });
         },
         HandleError: function (result) {
 

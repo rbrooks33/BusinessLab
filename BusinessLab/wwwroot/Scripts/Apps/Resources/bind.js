@@ -131,14 +131,30 @@ Apps.Define([], function () {
 
                             $(boundElement).text(propertyValue);
 
+                            let boundName = '';
+                            let isColl = false;
+                            if (propertyCollectionName) {
+                                boundName = propertyCollectionName;
+                                isColl = true;
+                            }
+                            else {
+                                boundName = propertyName;
+                            }
+
+
                             //Note: Non-editable elements' change event must be fired programmatically
                             //(e.g. "Apps.$('element').change()")
                             $(boundElement).off().on('change', function () {
 
-                                eval("obj." + propertyName + " = '" + $(this).text() + "'");
+                                eval("obj." + boundName + " = '" + $(this).text() + "'");
 
                                 //if (Me.ChangedCallback)
                                 //    Me.ChangedCallback(propertyName, Apps.$(this).text());
+                            });
+
+                            $(boundElement).off().on('click', function () {
+                                if (changedCallback)
+                                    changedCallback($(boundElement), boundName, $(this).val(), collectionIndex, isColl, 'click');
                             });
                         }
                         else if (contentType == 'html') {
@@ -405,7 +421,7 @@ Apps.Define([], function () {
                         Apps.Components.Helpers.HandleException(err);
                     }
                 },
-                function (selector, propertyName, newValue, collIndex, isColl) {
+                function (selector, propertyName, newValue, collIndex, isColl, event) {
 
                     if (!isColl) {
 
@@ -425,6 +441,9 @@ Apps.Define([], function () {
                             }
                             if (control.Changed) {
                                 control.Changed(propertyName, newValue);
+                            }
+                            if (event && event == 'click' && control.Clicked) {
+                                control.Clicked(propertyName);
                             }
                         }
                         if (Me.ChangeCallback)

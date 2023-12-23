@@ -31,10 +31,10 @@
 
             Me.Connection = new signalR.HubConnectionBuilder()
                 .withUrl(url, {
-                    skipNegotiation : true,
+                    skipNegotiation: true,
                     transport: signalR.HttpTransportType.WebSockets
                 })
-                .configureLogging(signalR.LogLevel.Debug)                
+                .configureLogging(signalR.LogLevel.Debug)
                 .build();
 
 
@@ -52,8 +52,7 @@
             //    await start();
             //});
 
-            Me.Connection.on('SendToUser', function (message)
-            {
+            Me.Connection.on('SendToUser', function (message) {
                 Me.Receive(message);
             });
 
@@ -181,12 +180,12 @@
             catch (err) {
                 console.log('Common (PA context) not present.');
             }
-        //    let messageResult = Me.MessageValue2(message, "MessageType");
-        //    if (messageResult.Success) {
+            //    let messageResult = Me.MessageValue2(message, "MessageType");
+            //    if (messageResult.Success) {
 
-        //        Apps.Components.Common.PushNotification.Subscriber().Publish(messageResult.Data, message);
+            //        Apps.Components.Common.PushNotification.Subscriber().Publish(messageResult.Data, message);
 
-        //    }
+            //    }
         },
         MessageValue2: function (message, messageName) {
             let result = new Apps.Result();

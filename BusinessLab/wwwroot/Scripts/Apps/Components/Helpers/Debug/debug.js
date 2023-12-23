@@ -4,8 +4,6 @@
         Color: 'brown',
         Initialize: function (callback) {
 
-            Apps.Components.Helpers.Debug.Trace(this);
-
             Me.UI.Show();
 
             Apps.Data.RegisterMyGET(Me, 'AddComponent', '/api/CLI/AddComponent?relativePath={0}&name={1}', null, true);
@@ -23,11 +21,9 @@
         },
         Init: function () {
 
-            Apps.Components.Helpers.Debug.Trace(this, 'Register debug dialog');
-
             Apps.Components.Helpers.Dialogs.Register('Helpers_Debug_Dialog', {
 
-                title: 'Debug Dialog',
+                title: 'Stack Trace',
                 size: 'full-width',
                 templateid: 'templateMyDialog1',
                 buttons: [
@@ -39,10 +35,263 @@
                 ]
             });
 
+            Apps.Components.Helpers.Dialogs.Register('Helpers_Debug_Test_Dialog', {
+
+                title: 'Tests Results',
+                size: 'full-width',
+                templateid: 'templateMyDialog1',
+                buttons: [
+                    {
+                        id: 'Apps_EditSystem_Dialog_Test_Cancel',
+                        text: 'Ok',
+                        action: 'Apps.Components.Helpers.Dialogs.Close(\'Helpers_Debug_Test_Dialog\')'
+                    }
+                ]
+            });
+        },
+        CountDownTests: {
+            count: 0,
+            check: function () {
+                this.count--;
+                if (this.count === 0) {
+                    if (this.done)
+                        this.done();
+                }
+            },
+            done: null
+        },
+        ShowApp: function (appId) {
+
+            let appWindow = window.open('https://192.168.168.68:8099', '_blank', 'height=800,width=800');
+
+
+        },
+        ShowTasks: function () {
+
+            let taskWindow = window.open(Apps.ActiveDeployment.WebRoot + '/Scripts/Apps/Components/Helpers/Debug/Tasks/index.html', '_blank', 'height=800,width=800');
+
+        },
+        TestPlanUnderTest: null,
+        RunTests: function () {
+
+            Me.Init();
+
+            Apps.Components.Helpers.TestPlans.SalesWizardTests.Sunny_Day.Load();
+
+            F.speed = 400;
+
+            if (Me.TestPlanUnderTest) {
+
+                var result = new Apps.Result2('Test plan' + Me.TestPlanUnderTest.Name);
+
+                Me.TestResults = [];
+
+                $('.TestResultsContentStyle').show();
+
+                $('#Debug_TestResults_Header').empty();
+                $('#Debug_TestResults_Content').empty();
+
+                let buttonHtml = Me.UI.Templates.Debug_TestRunner_Buttons.HTML([escape(JSON.stringify(result))]);
+
+                $('#Debug_TestResults_Header').prepend('<div style="display:flex;padding-left:5px;">' + Me.TestPlanUnderTest.Description + '</div>');
+                $('#Debug_TestResults_Header').prepend('<div style="display:flex;padding-left:5px; font-weight:bold;">' + Me.TestPlanUnderTest.Name + '</div>');
+                $('#Debug_TestResults_Header').prepend(buttonHtml);
+
+
+                if (Me.TestPlanUnderTest.Reset)
+                    Me.TestPlanUnderTest.Reset();
+
+
+                $.each(Me.TestPlanUnderTest.Steps, function (index, step) {
+
+                    step.Index = index + 1;
+
+                    try {
+
+                        result.AddMessage(step.Name, 'started.');
+
+                        if (step.Test)
+                            step.Test(step, result, Me.CountDownTests);
+                        else
+                            result.AddFail(step.Name, 'No test found.');
+
+                        result.AddMessage(step.Name, 'Finished.');
+                    }
+                    catch (error) {
+
+                        let timestamp = new Date().toLocaleTimeString();
+                        result.AddFail(step.Name, '<b>Exception Type</b>:</br> ' + error.name + '</br><b>Message</b></br>' + error.message + '</br><b>Stack</b></br>' + error.stack);
+
+                    }
+
+                    //Starting step condition (default)
+                    let color = 'lightgrey'; //Indeterminate/Incomplete/Pending // step.Passed ? 'green': 'red';
+                    let stepHtml = Me.UI.Templates.TestStep.HTML([step.Name, step.Description, step.Passed, '', color, step.Index, step.FailMessage]);
+                    $('#Debug_TestResults_Content').append('<div id="Debug_SUT_Step' + step.Index + '" style="display:flex;">' + stepHtml + '</div>');
+
+                });
+
+                //Fires after completion of all tests given countdowns set correctly
+                Me.CountDownTests.done = function () {
+
+                };
+
+            }
+
+        },
+        OpenTestRunnerResults: function (escapedResultString) {
+
+            let result = JSON.parse(unescape(escapedResultString));
+
+            //Merge success/fail and order by date
+            let messages = [];
+            $.each(result.FailedMessages, function (i, m) {
+                m['Success'] = false;
+                messages.push(m);
+            });
+            $.each(result.SuccessMessages, function (i, m) {
+                m['Success'] = true;
+                messages.push(m);
+            });
+            $.each(result.Messages, function (i, m) {
+                m['Success'] = null;
+                messages.push(m);
+            });
+
+            let messagesByDate = Enumerable.From(messages).OrderBy(m => m.Timestamp).ToArray();
+
+            var rowIndex = 1;
+
+            let resultsHtml = Apps.Components.Helpers.Controls.QuickTable.GetTable(messagesByDate,
+
+                //Header
+                function () {
+
+                    let header = `<tr><th>Index</th><th>Timestamp</th><th>Message</th><th>Data</th></tr>`;
+                    return header;
+                },
+                //Row data
+                function (row) {
+
+                    let successColor = 'blank';
+                    if (row.Success === true)
+                        successColor = 'green';
+                    else if (row.Success === false)
+                        successColor = 'red';
+
+                    let rowHtml = `<tr style="color:${successColor};"><td>${rowIndex++}</td><td>${row.Timestamp}</td><td>${row.Message}</td><td>${row.Data}</td></tr>`;
+                    return rowHtml;
+
+                });
+
+            Apps.Components.Helpers.OpenResponse(resultsHtml);
+
+        },
+        CloseTestRunner: function () {
+            $('.TestResultsContentStyle').hide();
+        },
+        SetTestSuccess: function (step, countdown) {
+            //let thisStep = Enumerable.From(Me.SystemUnderTest.Steps).Where(s => s.Name == testName).ToArray()[0];
+            countdown.count++;
+
+            //Border 
+            $('#Debug_SUT_Step' + step.Index).css('border', '1px solid green');
+
+            //Square icon
+            F('#Debug_SUT_Step' + step.Index + '_PassedDiv').exists(null, function () {
+                $(arguments[0].selector).css('background-color', 'green').css('border', '1px solid green');
+                countdown.check();
+            });
+
+            //Hide fail message
+            $('#Debug_TestStep_StepDescription' + step.Index).show();
+            $('#Debug_TestStep_FailMessage' + step.Index).hide();
+
+        },
+        SetTestIncomplete: function (step, countdown) { //Same as "Active"
+
+
+            countdown.count++;
+
+            //Border 
+            $('#Debug_SUT_Step' + step.Index).css('border', '2px solid yellow');
+
+            //Square icon
+            F('#Debug_SUT_Step' + step.Index + '_PassedDiv').exists(null, function () {
+                $(arguments[0].selector).css('background-color', 'yellow');
+                countdown.check();
+            });
+        },
+        SetTestFail: function (step, countdown) {
+
+            countdown.count++;
+
+            //Border 
+            $('#Debug_SUT_Step' + step.Index).css('border', '1px solid red');
+
+            //Square icon
+            F('#Debug_SUT_Step' + step.Index + '_PassedDiv').exists(null, function () {
+                $(arguments[0].selector).css('background-color', 'red');
+                countdown.check();
+            });
+
+            //Show fail message
+            $('#Debug_TestStep_StepDescription' + step.Index).hide();
+            $('#Debug_TestStep_FailMessage' + step.Index).show();
+        },
+
+        TestResults: [],
+        ShowBinding: function () {
+
+            let rowIndex = 1;
+            let controls = [];
+
+            //$.each(Object.keys(Apps.Bind.ControlTypes), function (it, t) {
+
+            //    $.each(Apps.Bind.ControlTypes[t].Controls, function (ic, c) {
+
+            //        controls.push({
+            //            RowIndex: rowIndex++,
+            //            TypeName: t,
+            //            ControlName: c.Name,
+            //            State: c.State,
+            //            Info: ''
+            //        });
+
+            //    });
+            //});
+
+            $.each(Apps.AutoBindReferences, function (i, ab) {
+
+                controls.push({
+                    RowIndex: rowIndex++,
+                    TypeName: '[Auto-Bind Property]',
+                    ControlName: ab.Name,
+                    State: 0,
+                    Info: 'Component: ' + ab.Component + '. Element: ' + ab.ElementType + ', ' + ab.ElementClass
+                });
+            });
+
+            let bindingsHtml = Apps.Components.Helpers.Controls.QuickTable.GetTable(controls,
+
+                //Header
+                function () {
+
+                    let header = `<tr><th>Index</th><th>Type</th><th>Control</th><th>State</th><th>Component</th></tr>`;
+                    return header;
+                },
+                //Row data
+                function (row) {
+
+                    let rowHtml = `<tr><td>${row.RowIndex++}</td><td>${row.TypeName}</td><td>${row.ControlName}</td><td>${row.State}</td><td>${row.Info}</td></tr>`;
+                    return rowHtml;
+
+                });
+
+            Apps.Components.Helpers.OpenResponse(bindingsHtml);
+
         },
         InitializeSmartTags: function () {
-            Apps.Components.Helpers.Debug.Trace(this);
-
             $('#chkDebugShowSmartTags').change(function (e) {
 
                 Apps.Pages.SmartTag.Event('show_tags');
@@ -52,18 +301,19 @@
         },
         BuildBar: function () {
 
-            Apps.Components.Helpers.Debug.Trace(this);
-
             //$(document.body).append('<div id="divDebugContainer"></div>');
 
             $('#contentDebug').html(Me.UI.Templates.Bar.HTML());
 
         },
+        CloseDebugBar: function () {
+            $('#contentDebug').hide();
+        },
         ShowComponentHTML: '',
         //ShowComponentNamespace: '',
         ShowComponents: function () {
 
-            Apps.Components.Helpers.Debug.Trace(this);
+            Me.Init();
 
             //Apps.LoadComponentsConfig(true, function (components) {
             Apps.Download(Apps.Settings.WebRoot + '/' + Apps.Settings.AppsRoot + '/Components/components.js?version=' + new Date().getTime(), function (response) {
@@ -81,9 +331,9 @@
                     //Top-level component
                     let parentnamespace = c.Name;
                     Me.ShowComponentHTML += '<li id="debug_component_' + c.Name + '" class="noliststyle" style="font-size:15px;cursor:pointer;" ';
-                    Me.ShowComponentHTML += 'onmouseover="Apps.Components.Debug.ComponentMouseOver(\'debug_component_' + c.Name + '\');" ';
-                    Me.ShowComponentHTML += 'onmouseout="Apps.Components.Debug.ComponentMouseOut(\'debug_component_' + c.Name + '\');" ';
-                    Me.ShowComponentHTML += 'onclick="Apps.Components.Debug.ComponentClick(\'' + c.Name + '\', \'' + parentnamespace + '\');" ';
+                    Me.ShowComponentHTML += 'onmouseover="Apps.Components.Helpers.Debug.ComponentMouseOver(\'debug_component_' + c.Name + '\');" ';
+                    Me.ShowComponentHTML += 'onmouseout="Apps.Components.Helpers.Debug.ComponentMouseOut(\'debug_component_' + c.Name + '\');" ';
+                    Me.ShowComponentHTML += 'onclick="Apps.Components.Helpers.Debug.ComponentClick(\'' + c.Name + '\', \'' + parentnamespace + '\');" ';
                     Me.ShowComponentHTML += '>';
                     Me.ShowComponentHTML += c.Name + '&nbsp;';
                     /*
@@ -135,7 +385,9 @@
                     .html(dataHtml);
 
 
-                Me.Dialogs.Components.Open(componentListHtml);
+                Apps.Components.Helpers.Dialogs.Content('Helpers_Debug_Dialog', componentListHtml);
+                Apps.Components.Helpers.Dialogs.Open('Helpers_Debug_Dialog');
+
                 Apps.Tabstrips.Initialize('ComponentEditorTabstrip');
                 Apps.Tabstrips.Select('ComponentEditorTabstrip', 0);
 
@@ -174,8 +426,6 @@
         },
         ShowSubComponents: function (namespace, c) {
 
-            Apps.Components.Helpers.Debug.Trace(this);
-
             if (c.Components) {
                 let subcomponents = c.Components;
 
@@ -185,9 +435,9 @@
                     c['PreviewPath'] = c.PreviewPath + '/' + c.Name;
                     let mynamespace = namespace + '.' + c.Name;
                     Me.ShowComponentHTML += '<li id="debug_component_' + c.Name + '" class="noliststyle" style="font-size:15px;cursor:pointer;" ';
-                    Me.ShowComponentHTML += 'onmouseover="Apps.Components.Debug.ComponentMouseOver(\'debug_component_' + c.Name + '\');" ';
-                    Me.ShowComponentHTML += 'onmouseout="Apps.Components.Debug.ComponentMouseOut(\'debug_component_' + c.Name + '\');" ';
-                    Me.ShowComponentHTML += 'onclick="Apps.Components.Debug.ComponentClick(\'' + c.Name + '\', \'' + mynamespace + '\');">';
+                    Me.ShowComponentHTML += 'onmouseover="Apps.Components.Helpers.Debug.ComponentMouseOver(\'debug_component_' + c.Name + '\');" ';
+                    Me.ShowComponentHTML += 'onmouseout="Apps.Components.Helpers.Debug.ComponentMouseOut(\'debug_component_' + c.Name + '\');" ';
+                    Me.ShowComponentHTML += 'onclick="Apps.Components.Helpers.Debug.ComponentClick(\'' + c.Name + '\', \'' + mynamespace + '\');">';
                     Me.ShowComponentHTML += c.Name + '&nbsp;';
                     //Me.ShowComponentHTML +=     '<i class="fa fa-plus" style="cursor:pointer;" onclick="Apps.Components.Debug.AddComponent(\'' + mynamespace + '\',\'' + c.Name + '\');"></i>&nbsp;';
                     //Me.ShowComponentHTML +=     '<i class="fa fa-minus" style="cursor:pointer;" onclick="Apps.Components.Debug.RemoveComponent(\'' + mynamespace + '\',\'' + c.Name + '\');"></i>';
@@ -213,16 +463,15 @@
         },
         ComponentClick(configString, componentNamespace) {
 
-            Apps.Components.Helpers.Debug.Trace(this);
-
             //let config = JSON.parse(configString);
             //let component = eval('Apps.Components.' + componentNamespace);
 
             //Apps.Notify('success', 'hiya');
             //let name = id.split('_')[2]; //e.g. debug_component_[name]
+            let componentPath = componentNamespace.replaceAll('.', '/');
 
             //$('#ComponentEditor_HTMLTabContent').html('hiya ' + id);
-            let path = previewPath + '/Preview.html';
+            let path = Apps.ActiveDeployment.WebRoot + '/Scripts/Apps/Components/' + componentPath + '/Preview.html';
             let previewHtml = Me.UI.Templates.Preview.HTML([path]);
             $('#debug_PreviewContainer').html(previewHtml);
 
@@ -236,7 +485,6 @@
             event.stopPropagation();
         },
         ShowTopology: function () {
-            Apps.Components.Helpers.Debug.Trace(this);
         },
         AddComponent: function (parentPath, name) {
             //Apps.Notify('warning', parentPath);
@@ -264,14 +512,12 @@
             if (Apps.ActiveDeployment.Debug === true) {
                 var stack = (new Error).stack;
                 desc = desc ? ' (' + desc + ')' : '';
-                var traceText = '<span title="' + stack + '" style="color:' + caller.Color + ';">' + (caller.Name ? caller.Name : '') + '.' + arguments.callee.caller.name + '</span><i>' + desc + '</i>';
+                var traceText = '<span title="' + stack + '" style="color:' + caller.Color + ';">' + (caller.Config ? caller.Config.Name : '') + '.' + arguments.callee.caller.name + '</span><i>' + desc + '</i>';
                 Me.Traces.push({ traceindex: Me.TraceIndex, caller: traceText });
                 Me.TraceIndex++;
             }
         },
         Build: function (name, key, coll) {
-
-            Apps.Components.Helpers.Debug.Trace(this);
 
             var count = Object.keys(coll).length;
 
@@ -311,8 +557,6 @@
 
         },
         BuildData: function () {
-
-            Apps.Components.Helpers.Debug.Trace(this);
 
             let datas = [];
 
@@ -355,12 +599,9 @@
             $('.data.second-level-menu').css('top', offset2 + 'px');
         },
         BuildPages: function () {
-            Apps.Components.Helpers.Debug.Trace(this);
 
         },
         ShowData: function (dataName, data) {
-
-            Apps.Components.Helpers.Debug.Trace(this);
 
             //make a table
             var dataTable = Apps.Binder.GetTable({
@@ -401,17 +642,12 @@
         CloseData() {
             Apps.Dialogs.Close('dialogDebugShowData');
 
-            Apps.Components.Helpers.Debug.Trace(this);
         },
         Event: function (sender, args) {
-
-            Apps.Components.Helpers.Debug.Trace(this);
 
             switch (sender) {
 
                 case 'settings':
-
-                    Apps.Components.Helpers.Debug.Trace(this, 'settings');
 
                     Apps.ReadConfig(function () {
 
@@ -436,8 +672,6 @@
 
                 case 'save_config':
 
-                    Apps.Components.Helpers.Debug.Trace(this, 'save_config');
-
                     Apps.Settings.WebRoot = $('#txtDevWebRoot').val();
                     //Apps.Config.ProductionWebRoot = $('#txtProductionWebRoot').val();
                     Apps.Settings.VirtualFolder = $('#txtDevVirtualFolder').val();
@@ -452,8 +686,6 @@
                     break;
 
                 case 'design':
-
-                    Apps.Components.Helpers.Debug.Trace(this, 'design');
 
                     var pageContent = '';
                     var pages = Object.keys(Apps.Components);
@@ -564,15 +796,11 @@
 
                 case 'new_component':
 
-                    Apps.Components.Helpers.Debug.Trace(this, 'new_component');
-
                     Apps.CreateComponent($('#txtNewComponentName').val());
 
                     break;
 
                 case 'test':
-
-                    Apps.Components.Helpers.Debug.Trace(this, 'test');
 
                     Apps.ReloadComponentsReady = function () {
 
@@ -598,8 +826,6 @@
             }
         },
         Find: function (filterText, searchText) {
-
-            Apps.Components.Helpers.Debug.Trace(this);
 
             var myElementFilterText = filterText; // 'Combo Panel';
             var myElementSearchText = searchText; // 'Combo Panel (Table)';
@@ -628,9 +854,6 @@
         },
         FoundElements: [],
         FindAndReplace: function (searchText, replacement, searchNode) {
-
-            Apps.Components.Helpers.Debug.Trace(this);
-
 
             if (!searchText || typeof replacement === 'undefined') {
                 // Throw error here if you want...
@@ -670,8 +893,6 @@
 
         GetArgs: function (func) {
 
-            Apps.Components.Helpers.Debug.Trace(this);
-
             // First match everything inside the function argument parens.
             var args = '';
             if (func) {
@@ -692,8 +913,6 @@
             return args;
         },
         HandleError: function (settings) {
-
-            Apps.Components.Helpers.Debug.Trace(this);
 
             var resultText = '';
 
@@ -744,8 +963,6 @@
             }
         },
         HandleError2: function (error, errorMessage, errorDetails, successMessage, successCallback) {
-
-            Apps.Components.Helpers.Debug.Trace(this);
 
             if (!$.notify) {
                 //require([Apps.Settings.WebRoot + '/' + Apps.Settings.AppsRoot + '/references/notify.min.js'], function (notify) {
@@ -833,8 +1050,6 @@
         },
 
         SetErrorDialogContent: function (content, tooltipposition) {
-            Apps.Components.Helpers.Debug.Trace(this);
-
             Me.Initialize(); //Loads error dialog
 
             Apps.Dialogs.Content('AppsErrorDialog', '<textarea style="width:100%;height:158px;">' + content + '</textarea>');
@@ -849,13 +1064,9 @@
 
         },
         ShowErrorDialog: function () {
-            Apps.Components.Helpers.Debug.Trace(this);
-
             Apps.Dialogs.Open('AppsErrorDialog');
         },
         Notify: function (type, message, delay) {
-
-            Apps.Components.Debug.Trace(this);
 
             var myDelay = 0;
             if (delay)
