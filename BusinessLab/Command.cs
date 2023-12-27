@@ -9,6 +9,18 @@ namespace BusinessLab
     {
         public static void Exec(string fileName, string command, Dictionary<string, string> args, string workingDirectory, ref Result outResult)
         {
+            ////commit
+            //AppsDesktop.Command.Exec("git", "add", new Dictionary<string, string>() { { "-A", "" } }, workingFolder, ref result);
+
+            //SaveMessages("add", result, ref allerrormessages, ref allsuccessmessages);
+
+            //AppsDesktop.Command.Exec("git", "commit", new Dictionary<string, string>() { { "-m", "\"" + message + "\"" } }, workingFolder, ref result);
+
+            //SaveMessages("commit", result, ref allerrormessages, ref allsuccessmessages);
+
+            //AppsDesktop.Command.Exec("git", "push", new Dictionary<string, string>() { { "origin", "HEAD:main" } }, workingFolder, ref result);
+
+
             var result = new Result(); // AppsClient.AppsResult();
 
             try
