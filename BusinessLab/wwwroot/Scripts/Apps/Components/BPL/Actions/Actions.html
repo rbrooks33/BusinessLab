@@ -1,37 +1,219 @@
 ﻿<div data-bind-template="BPLHeader"></div>
-<div class="Home_Stage_Title">Actions</div>
-<div class="BPL_Actions_Table_Container"></div>
+<div class="Home_Stage_Title">
+    Actions
+</div>
 
-<script id="Actions_Table" type="text/template">
+<div data-bind-property="BPLActionsHomePage"></div>
+
+<script id="BPL_Actions_EditPage_Template" type="text/template">
+
     <!--
-        0 = area rows
-    -->
-    <table class="table">
-        <tr>
-            <th>&nbsp;</th>
-            <th>&nbsp;</th>
-            <th>ID</th>
-            <th>Name</th>
-        </tr>
-        {0}
-    </table>
+
+    0 = actionid
+    1 = action name
+    3 = unique id
+        -->
+    <h4>Action #{0}: {1}</h4>
+    <p>{2}</p>
+
+    <h4>Unique ID</h4>
+    <input type="text" data-bind-property="EditedAction.UniqueID" class="form-control" />
+
+    <h4>Variable Delimiter</h4>
+    <input type="text" data-bind-property="EditedAction.VariableDelimiter" class="form-control" />
+
+    <!-- Editor Type Radios-->
+    <span>SQL</span>
+    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[0]" value="sql" checked />
+    <span>CSharp</span>
+    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[1]" value="csharp" />
+    <span>CMD</span>
+    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[2]" value="csharp" />
+    <span>PS</span>
+    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[3]" value="csharp" />
+
+    <h4 data-bind-property="EditedAction.EditorTypeTitle">SQL</h4> <!--switches in code-->
+    <!--Editor Types-->
+    <div data-bind-property="EditedAction.SQLEditor" class="ActionEditor"></div>
+    <div data-bind-property="EditedAction.CSharpEditor" class="ActionEditor"></div>
+    <div data-bind-property="EditedAction.CMDEditor" class="ActionEditor"></div>
+    <div data-bind-property="EditedAction.PSEditor" class="ActionEditor"></div>
+
+    <div class="btn-group" style="margin-top:10px;">
+        <div class="btn btn-warning" data-bind-property="EditedAction.ActionSave">Save &amp; Generate Examples</div>
+        <div class="btn btn-secondary" onclick="Apps.Components.BPL.Actions.TestCode({0});">Test Code</div>
+        <div class="btn btn-secondary" onclick="Apps.Components.BPL.Actions.TestSql({0});">Test SQL</div>
+        <button type="button" class="btn btn-secondary" {6} onclick="Apps.Components.BPL.Actions.TestJob({0});">Test Job</button>
+    </div>
+
+    <!-- Trigger Types -->
+    <h3>Output</h3>
+    <textarea data-bind-property="ActionsOutput" class="form-control" style="width:100%;"></textarea>
+
+    <h3>JavaScript/Postman</h3>
+    <textarea data-bind-collection-property="ActionTriggerTypes.Code[0]"
+              class="form-control"
+              style="width:100%;margin-bottom:10px;"></textarea>
+    <div class="btn btn-success"
+         data-bind-collection-property="ActionTriggerTypes.Run[0]"
+         style="margin-bottom:10px;">Run</div>
+
+    <h3>T-SQL</h3>
+    <textarea data-bind-collection-property="ActionTriggerTypes.Code[1]"
+              class="form-control"
+              style="width:100%;margin-bottom:10px;"></textarea>
+    <div data-bind-collection-property="ActionTriggerTypes.Run[1]
+         class=" btn btn-success"">Run</div>
+
+    <!--<h3>C#</h3>
+    <textarea data-bind-property="CSHARPActions" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
+    <div class="btn-group" style="margin-bottom:10px;">
+        <div class="btn btn-success" onclick="Apps.Components.BPL.Actions.ReportsTable.CSHARPRun({0});;">Run</div>
+    </div>-->
+    <!-- Save/Execute Results-->
+    <h4>Execution Result</h4>
+    <textarea data-bind-property="ActionSaveResult" class="form-control" style="width:100%;"></textarea>
+
 </script>
 
-<script id="Actions_Row" type="text/template">
+
+<script id="Admin_Editor_Actions_Max" type="text/template">
+
     <!--
-        0 = area id
-        1 = area name
-        2 = actions html
+        0 = action type id
+        1 = action type name
+        2 = action type description
+        3 = is job
+        4 = sql
+        5 = c#
+        6 = job disabled button
     -->
-    <tr>
-        <td>{2}</td>
-        <td><div class="btn btn-sm btn-success" onclick="Apps.Components.BPL.Areas.ViewAreaWorkflows({0});">Workflows</div></td>
-        <td>{0}</td>
-        <td>{1}</td>
-    </tr>
-    <tr>
-        <td colspan="4">
-            <div id="areaworkflows_{0}" style="display:none;"></div>
-        </td>
-    </tr>
+
+
+        <h4>Action #{0}: {1}</h4>
+        <p>{2}</p>
+
+        <h4>Unique ID</h4>
+        <input type="text"
+               id="Admin_Editor_Actions_UniqueID"
+               data-bind-type="Action"
+               data-bind-property="UniqueID"
+               class="form-control" />
+
+        <h4>Variable Delimiter</h4>
+        <input type="text"
+               id="Admin_Editor_Actions_VariableDelimiter"
+               data-bind-type="Action"
+               data-bind-property="VariableDelimiter"
+               class="form-control" />
+
+        <span>SQL</span>
+        <input type="radio"
+               id="Admin_Editor_Action_SqlRadio"
+               name="editortype"
+               data-bind-type="Action"
+               data-bind-property="EditorType"
+               value="sql" checked style="transform: scale(2); margin: 10px; font-size: 20px; cursor:pointer;"
+               onclick="Apps.Components.Helpers.Actions.SwitchType({0},'sql');" />
+        <span>C#</span>
+        <input type="radio"
+               id="Admin_Editor_Action_CSharpRadio"
+               name="editortype"
+               data-bind-type="Action"
+               data-bind-property="EditorType"
+               value="csharp"
+               style="transform: scale(2); margin: 10px; font-size: 20px; cursor:pointer;"
+               onclick="Apps.Components.Helpers.Actions.SwitchType({0},'csharp');" />
+
+        <h4 id="Admin_Editor_Actions_EditorTypeLabel">SQL</h4> <!--switches in code-->
+        <!--Editor Types-->
+        <div id="Admin_Editor_Actions_Editor_SQL" class="EditorRadioStyle" style="width:100%;height:300px;">{4}</div>
+        <div id="Admin_Editor_Actions_Editor_CSHARP" class="EditorRadioStyle" style="width:100%;height:300px;">{5}</div>
+
+        <div class="btn-group" style="margin-top:10px;">
+            <div class="btn btn-warning" onclick="Apps.Components.BPL.Actions.Save({0});">Save &amp; Generate Examples</div>
+            <div class="btn btn-secondary" onclick="Apps.Components.BPL.Actions.TestCode({0});">Test Code</div>
+            <div class="btn btn-secondary" onclick="Apps.Components.BPL.Actions.TestSql({0});">Test SQL</div>
+            <button type="button" class="btn btn-secondary" {6} onclick="Apps.Components.BPL.Actions.TestJob({0});">Test Job</button>
+        </div>
+
+        <!--<div style="display: inline; font-size: 22px; vertical-align: bottom; margin-left: 6px;">
+            Is Job <input id="Actions_IsJob_Checkbox" type="checkbox" {3} />
+        </div>-->
+
+        <h3>Output</h3>
+        <textarea id="Admin_Editor_Actions_Output" class="form-control" style="width:100%;"></textarea>
+
+        <h3>JavaScript/Postman</h3>
+        <textarea id="Admin_Editor_Actions_JS" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
+        <div class="btn btn-success" style="margin-bottom:10px;" onclick="Apps.Components.Helpers.Actions.RunJS({0});">Run</div>
+
+        <h3>T-SQL</h3>
+        <textarea id="Admin_Editor_Actions_TSQL" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
+        <div class="btn-group" style="margin-bottom:10px;">
+            <div class="btn btn-success" onclick="Apps.Components.BPL.ReportsTable.TSQLRun({0});;">Run</div>
+        </div>
+
+        <h3>C#</h3>
+        <textarea id="Admin_Editor_Actions_CSHARP" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
+        <div class="btn-group" style="margin-bottom:10px;">
+            <div class="btn btn-success" onclick="Apps.Components.BPL.Actions.ReportsTable.CSHARPRun({0});;">Run</div>
+        </div>
+
+        <h4>Execution Result</h4>
+        <textarea id="Admin_Editor_EditSaveResult" class="form-control" style="width:100%;"></textarea>
+
+
 </script>
+
+<!--<script id="Admin_Editor_Max" type="text/template">-->
+<!--
+    0 = report id
+    1 = workflow id
+    2 = report name
+    3 = report description
+    4 = sql (added in code)
+    5 = c# (added in code)
+-->
+<!--<div id="Admin_Editor_Max_Container_{0}" class="Admin_Editor_Max_Container">
+    <div style="float: right; margin-right: 20px; margin-top: 20px; color: #009500; font-weight: 700; cursor:pointer;"
+         onclick="Apps.Components.Admin.Editor.CloseMax();">X</div>
+
+    <h4>Visual #{0}: {2}</h4>
+    <p>{3}</p>
+
+    <h4>Format</h4>
+    <input type="text" class="form-control" style="width:400px;display:inline;" value="render" />
+
+    <h4>SQL</h4>
+    <div id="Admin_Editor_Edit_Sql" class="form-control" style="width:100%;height:300px;">{4}</div>
+    <div class="btn-group" style="margin-top:10px;">
+        <div class="btn btn-warning" onclick="Apps.Components.Admin.Editor.ReportSave({0});">Save &amp; Generate Examples</div>-->
+<!--<div class="btn btn-success" onclick="Apps.Components.Admin.Editor.ReportsTable.ReportRun({0});;">Run</div>-->
+<!--</div>
+
+        <h3>Power Apps/JavaScript/Postman</h3>
+        <textarea id="Admin_Editor_PACall" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
+        <div class="btn btn-success" style="margin-bottom:10px;" onclick="Apps.Components.Admin.Editor.ReportsTable.ReportRunPACall({0});">Run</div>
+
+        <h3>Visual Server</h3>
+        <textarea id="Admin_Editor_VisualCall" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
+        <div class="btn-group" style="margin-bottom:10px;">
+            <div class="btn btn-success" onclick="Apps.Components.Admin.Editor.ReportsTable.ReportRun({0},'render');;">Render</div>
+            <div class="btn btn-success" onclick="Apps.Components.Admin.Editor.ReportsTable.ReportRun({0},'html');">HTML</div>
+        </div>
+
+        <h3>T-SQL</h3>
+        <textarea id="Admin_Editor_TSQLCall" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
+        <div class="btn btn-success" style="margin-bottom:10px;" onclick="Apps.Components.Admin.Editor.ReportsTable.ReportRunTSQLCall({0});">Run</div>
+
+        <h3>Output</h3>
+        <div id="Admin_Editor_EditRunData" class="form-control" style="width:100%;"></div>
+
+        <h4>Execution Result</h4>
+        <textarea id="Admin_Editor_EditSaveResult" class="form-control" style="width:100%;"></textarea>
+
+
+
+    </div>
+</script>-->

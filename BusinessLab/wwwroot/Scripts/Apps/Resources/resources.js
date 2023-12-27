@@ -204,6 +204,13 @@
       "ModuleName": "Util",
       "FileName": "util.js",
       "Description": "Apps JS Utilities."
-    }
+      },
+      {
+          "Name": "FuncUnit",
+          "Enabled": true,
+          "ModuleType": "require",
+          "FileName": "funcunit.js",
+          "Description": "Assists in finding and testing dom elements and behavior."
+      }
   ]
 }

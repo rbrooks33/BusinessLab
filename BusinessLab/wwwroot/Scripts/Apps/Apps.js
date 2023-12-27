@@ -1049,6 +1049,7 @@
 
         });
 
+
         //Check all properties for missing bindings
         $.each(Apps.ComponentList, function (i, c) {
 
@@ -1266,11 +1267,23 @@
     BindHTML: function (selector, c, forceBind) {
 
         let references = Apps.AutoBindReferences;
-        let innerElements = selector.find('[data-bind-property]');
+        let innerElements = selector.find('[data-bind-property], [data-bind-collection-property]');
 
         $.each(innerElements, function (i, e) {
 
-            var bindpropname = $(e).attr('data-bind-property'); // "ShippingAddressHTML";
+
+            let bindpropname = '';
+            var propertyName = $(e).attr('data-bind-property'); // "ShippingAddressHTML";
+            var collectionName = $(e).attr('data-bind-collection-property');
+
+            let isColl = false;
+            if (collectionName) {
+                bindpropname =  collectionName;
+                isColl = true;
+            }
+            else {
+                bindpropname = propertyName;
+            }
 
             try {
                 if (c.Model) {
@@ -2120,6 +2133,56 @@ Apps.Data = {
         };
 
     },
+    GetPostArgs: function (requestName) {
+        let args = {
+            "Params":
+                [
+                    { "Name": "RequestName", "Value": requestName }
+                ]
+        };
+        return args;
+    },
+    ExecutePostArgs: function (args, successcallback) {
+        Apps.Data.GlobalPOST.Execute(args, function () {
+
+            if (Apps.Data.GlobalPOST.Success) {
+                successcallback(Apps.Data.GlobalPOST);
+            }
+            else
+                Apps.Components.Home.HandleError(Apps.Data.GlobalPOST.Result);
+        });
+
+    },
+    RegisterGlobalPOST: function (postUrl, args, sync) {
+
+        Apps.Data.GlobalPOST = {
+            Success: false,
+            Path: postUrl,
+            Data: {},
+            Execute: function (obj, callback) {
+
+                let newPath = this.Path.SearchAndReplace.apply(Apps.Data.GlobalPOST.Path, args);
+
+                let refreshPost = sync ? Apps.PostSync : Apps.Post;
+                refreshPost(newPath, JSON.stringify(obj), function (result) {
+
+                    if (result.Success) {
+                        Apps.Data.GlobalPOST.Success = true; //!error && result.Success;
+                        Apps.Data.GlobalPOST.Data = result.Data;
+                    }
+                    else {
+                        Apps.Data.GlobalPOST.Success = false;
+                        Apps.Data.HandleException(result);
+                    }
+                    Apps.Data.GlobalPOST.Result = result;
+
+                    if (callback)
+                        callback();
+                });
+            },
+        };
+
+    },
 
     Post: function (dataName, obj, callback) {
 
@@ -2170,7 +2233,7 @@ Apps.Data = {
         //    else {
         //        Apps.Notify('error', 'Unable to contact web server.');
         //    }
-    }
+    },
 };
 Apps.Template = function (settings) {
 

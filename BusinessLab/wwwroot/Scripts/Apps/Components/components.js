@@ -29,7 +29,23 @@
                     "Name": "Areas",
                     "Load": true,
                     "Initialize": true,
-                    "UI": true
+                    "UI": true,
+                    "Start":true,
+                    "Components": [
+                        {
+                            "Name": "Workflows",
+                            "Load": true,
+                            "Initialize": true,
+                            "Components": [
+                                {
+                                    "Name": "Steps",
+                                    "Load": true,
+                                    "Initialize": true,
+                                    "UI":true
+                                }
+                            ]
+                        }
+                    ]
                 },
                 {
                     "Name": "Dashboard",
@@ -59,13 +75,28 @@
                     "Name": "Projects",
                     "Load": true,
                     "Initialize": true,
-                    "UI": true
+                    "UI": true,
+                    "Start": true,
+                    "Components": [
+                        {
+                            "Name": "ProjectTable",
+                            "Load": true,
+                            "Initialize": false
+                        }
+                    ]
                 },
                 {
                     "Name": "Tasks",
                     "Load": true,
                     "Initialize": true,
-                    "UI": true
+                    "UI": true,
+                    "Components": [
+                        {
+                            "Name": "TaskTable",
+                            "Load": true,
+                            "Initialize": false
+                        }
+                    ]
                 },
                 {
                     "Name": "Visuals",
@@ -170,7 +201,7 @@
         },
         {
             "Name": "Home",
-            "Load": false,
+            "Load": true,
             "UI": true,
             "Initialize": true,
             "Components": [
@@ -186,7 +217,7 @@
                 },
                 {
                     "Name": "Plan",
-                    "Load": false,
+                    "Load": true,
                     "UI": true,
                     "Initialize": true,
                     "Components": [

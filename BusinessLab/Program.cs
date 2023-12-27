@@ -76,7 +76,6 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 				case "TestActionCode": Actions.TestCode(scheduler, ref result); break;
 
                 case "TriggerJob": business.TriggerJob(ref result); break;
-				case "GetAreas": Business.GetAreas(ref result); break;
 				case "GetWorkflows": Business.GetWorkflows(ref result); break;
 				case "GetSteps": Business.GetSteps(ref result); break;
 				case "SaveWorkflow": Business.SaveWorkflow(ref result); break;
@@ -85,10 +84,24 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 				case "AddWorkflow": Business.AddWorkflow(ref result); break;
                 case "SendMessage": PushHub.SendMessage(hub, result, result.Message); break;
 
+				case "GetAreas": Business.GetAreas(ref result); break;
+				case "UpsertArea": Business.UpsertArea(ref result); break;	
+
 				case "GetDatabases": Business.GetDatabases(ref result); break;
+				case "UpsertDatabase": Business.UpsertDatabase(ref result); break;
 
 				//case "GetTemplates": Business.GetTemplates(ref result); break;
 				case "GetTemplate": Business.GetTemplates(ref result); break;
+
+				case "GetProjects": Business.GetProjects(ref result); break;
+				case "UpsertProject": Business.UpdateProject(ref result); break;
+				case "DeleteProject": Business.DeleteProject(ref result); break;
+				case "AddProject": Business.AddProject(ref result); break;
+
+				case "GetTasks": Business.GetTasks(ref result); break;
+				case "UpdateTask": Business.UpdateTask(ref result); break;
+				case "DeleteTask": Business.DeleteTask(ref result); break;
+				case "AddTask": Business.AddTask(ref result); break;
 
 				default: result.FailMessages.Add("No handler for requestname value " + requestName.Single().Value); 
                     break;

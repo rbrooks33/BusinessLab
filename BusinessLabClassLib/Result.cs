@@ -1,4 +1,6 @@
-﻿using System.Dynamic;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
+using System.Dynamic;
 
 namespace BusinessLab
 {
@@ -10,6 +12,7 @@ namespace BusinessLab
 			FailMessages = new List<string>();
 			Codes = new List<Code>();
 			Params = new List<Param>();
+			SqliteParams = new List<SqliteParameter>();
 			DataPropertyValidations = new List<DataPropertyValidation>();
 		}
 		public enum ParamType
@@ -27,6 +30,7 @@ namespace BusinessLab
 		public List<string> FailMessages { get; set; }
 		public List<Code> Codes { get; set; }
 		public List<Param> Params { get; set; }
+		public List<SqliteParameter> SqliteParams { get; set; }
 		public List<DataPropertyValidation> DataPropertyValidations { get; set; }
 		public object Data { get; set; }
 		public ExpandoObject ExpandoData { get; set; }
@@ -34,6 +38,14 @@ namespace BusinessLab
 		public void AddParam(string name, string value)
 		{
 			Params.Add(new Param { Name = name, Value = value });
+		}
+		public void AddSqliteParam(string name, string value)
+		{
+			SqliteParams.Add(new SqliteParameter(name, value));
+		}
+		public SqliteParameter[]? GetSqliteParamArray()
+		{
+			return SqliteParams.ToArray();
 		}
 		public bool ParamExists(string paramName)
 		{

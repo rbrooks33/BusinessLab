@@ -14,12 +14,19 @@
 		{
 			try
 			{
-				FormattableString sql = $@"
+				result.SqliteParams.Clear();
+				result.AddSqliteParam("@StepID", stepId.ToString());
+				result.AddSqliteParam("@Title", title.Replace("'","''"));
+				result.AddSqliteParam("@Description", description.Replace("'","''"));
+				result.AddSqliteParam("@UniqueID", uniqueId.Replace("'", "''"));
+				result.AddSqliteParam("@LogSeverity", severity.ToString());
+
+				string sql = $@"
 
 					INSERT INTO Logs (StepID, Title, Description, LogSeverity, UniqueID) 
-					VALUES ({stepId}, '{title.Replace("'", "''")}', '{description.Replace("'", "''")}', {(int)severity}, '{uniqueId.Replace("'", "''")}')";
+					VALUES (@StepID, @Title, @Description, @LogSeverity, @UniqueID)";
 
-				Data.Execute(sql);
+				Data.Execute(sql, result.GetSqliteParamArray());
 			}
 			catch (Exception ex) { 
 				result.FailMessages.Add(ex.ToString());

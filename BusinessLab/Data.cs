@@ -73,13 +73,13 @@ namespace BusinessLab
 
 			for (int x = 0; x < args.Count(); x++)
 			{
-				sqlString = sqlString.Replace($"{{{x}}}", $"@arg{x}");
+				sqlString = sqlString.Replace("{" + x + "}", "@arg" + x);
 				parameters.Add(new SqliteParameter($"@arg{x}", args[x]));
 			}
 
 			return Execute(sqlString, parameters.ToArray());
 		}
-		private static DataTable Execute(string sql, SqliteParameter[]? parameters)
+		public static DataTable Execute(string sql, SqliteParameter[]? parameters)
 		{
 			var dt = new DataTable();
 			using (var conn = new SqliteConnection(Resource.SqliteConnectionString))

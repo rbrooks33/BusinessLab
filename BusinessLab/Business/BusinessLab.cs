@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.FileProviders.Composite;
 using Newtonsoft.Json;
 using Quartz;
@@ -12,40 +14,67 @@ namespace BusinessLab
     {
         WorkflowScheduler _scheduler;
 
-		public Business(WorkflowScheduler scheduler) {
+        public Business(WorkflowScheduler scheduler) {
             _scheduler = scheduler;
         }
 
 
-		//Databases
-		public static void GetDatabases(ref Result result)
-		{
-			result.Data = Data.Execute($"SELECT * FROM Databases");
-			result.Success = true;
-		}
+        //Databases
+        public static void GetDatabases(ref Result result)
+        {
+            result.Data = Data.Execute($"SELECT * FROM Databases");
+            result.Success = true;
+        }
 
-		public static void UpsertDatabase(ref Result result)
-		{
+        public static void UpsertDatabase(ref Result result)
+        {
             result.ValidateData();
-            if (result.ParamExists("DatabaseID", Result.ParamType.Int)
-                && result.ParamExists("DatabaseName")
-                && result.ParamExists("ConnectionString"))
+            result.SqliteParams.Clear();
+
+            if (result.ParamExists("DatabaseID", Result.ParamType.Int))
             {
-                var databases = Data.Execute($"SELECT * FROM Databases WHERE DatabaseID = {result.GetParam("DatabaseID")}");
-                if(databases.Rows.Count == 1)
+                result.AddSqliteParam("@DatabaseID", (string)result.DynamicData.DatabaseID);
+
+                var databases = Data.Execute($@" 
+                    SELECT * FROM Databases 
+                    WHERE DatabaseID = @DatabaseID
+                ", result.GetSqliteParamArray());
+
+                if (databases.Rows.Count == 1)
                 {
                     //Update
-                    Data.Execute($"UPDATE Databases SET DatabaseName = '{result.GetParam("DatabaseName")}', ConnectionString = '{result.GetParam("ConnectionString")}' WHERE DatabaseID = {result.GetParam("DatabaseID")}");
+                    result.SqliteParams.Clear();
+                    result.AddSqliteParam("@DatabaseName", (string)result.DynamicData.DatabaseName);
+                    result.AddSqliteParam("@ConnectionString", (string)result.DynamicData.ConnectionString);
+                    result.AddSqliteParam("@DatabaseID", (string)result.DynamicData.DatabaseID);
+
+                    Data.Execute($@"
+                        UPDATE Databases 
+                        SET DatabaseName = @DatabaseName, 
+                        ConnectionString = @ConnectionString 
+                        WHERE DatabaseID = @DatabaseID
+                    ", result.GetSqliteParamArray());
+
+                    result.Success = true;
                 }
                 else
                 {
                     //Insert
-                    Data.Execute($"INSERT INTO Databases (DatabaseName, ConnectionString) VALUES ('{result.GetParam("DatabaseName")}', '{result.GetParam("ConnectionString")}'");
-                }
-                result.Success = true;
-            }
-		}
+                    result.SqliteParams.Clear();
+                    result.AddSqliteParam("@DatabaseName", (string)result.DynamicData.DatabaseName);
+                    result.AddSqliteParam("@ConnectionString", (string)result.DynamicData.ConnectionString);
 
+                    Data.Execute($@"
+                        INSERT INTO Databases 
+                            (DatabaseName, ConnectionString) 
+                        VALUES 
+                            (@DatabaseName, @ConnectionString
+                    ", result.GetSqliteParamArray());
+
+                    result.Success = true;
+                }
+            }
+        }
 		public static void DeleteDatabase(ref Result result)
 		{
 			result.Data = Data.Execute($"SELECT * FROM Databases");
@@ -72,16 +101,62 @@ namespace BusinessLab
 			result.Data = Data.Execute($"SELECT * FROM Areas");
 			result.Success = true;
 		}
-        //public static void GetTemplates(ref Result result)
-        //{
-        //    string sql = "SELECT * FROM Templates";
-        //    Data.Execute(sql, ref result);
-        //    result.Success = true;
-        //}
+        public static void UpsertArea(ref Result result)
+        {
+			result.ValidateData();
+			result.SqliteParams.Clear();
 
-        public static void GetWorkflows(ref Result result)
+			if (result.ParamExists("AreaID", Result.ParamType.Int))
+			{
+				result.AddSqliteParam("@AreaID", (string)result.DynamicData.AreaID);
+
+				var databases = Data.Execute($@" 
+                    SELECT * FROM Areas 
+                    WHERE AreaID = @AreaID
+                ", result.GetSqliteParamArray());
+
+				if (databases.Rows.Count == 1)
+				{
+					//Update
+					result.SqliteParams.Clear();
+					result.AddSqliteParam("@AreaName", (string)result.DynamicData.AreaName);
+					result.AddSqliteParam("@AreaID", (string)result.DynamicData.AreaID);
+
+					Data.Execute($@"
+                        UPDATE Areas 
+                        SET AreaName = @AreaName
+                        WHERE AreaID = @AreaID
+                    ", result.GetSqliteParamArray());
+
+					result.Success = true;
+				}
+				else
+				{
+					//Insert
+					result.SqliteParams.Clear();
+					result.AddSqliteParam("@AreaName", "[New Area]");
+
+					Data.Execute($@"
+                        INSERT INTO Areas 
+                            (AreaName) 
+                        VALUES 
+                            (@AreaName)
+                    ", result.GetSqliteParamArray());
+
+					result.Success = true;
+				}
+			}
+		}
+		//public static void GetTemplates(ref Result result)
+		//{
+		//    string sql = "SELECT * FROM Templates";
+		//    Data.Execute(sql, ref result);
+		//    result.Success = true;
+		//}
+
+		public static void GetWorkflows(ref Result result)
 		{
-			result.Data = Data.Execute($"SELECT * FROM Workflows");
+			result.Data = Data.Execute($"SELECT * FROM Workflows", null);
 			result.Success = true;
 		}
 		public static void GetSteps(ref Result result)
@@ -92,68 +167,72 @@ namespace BusinessLab
 
 		public static void GetActions(ref Result result)
 		{
-			result.Data = Data.Execute($"SELECT * FROM Steps ORDER BY StepOrder");
+			result.Data = Data.Execute($"SELECT * FROM Actions");
             result.Success = true;
 		}
         
         public static void SaveAction(ref Result result)
         {
-            if (result.Data != null)
+            if (result.ParamExists("ActionID", Result.ParamType.Int))
             {
-                var action = JsonConvert.DeserializeObject<Actions.Action>(result.Data.ToString());
 
-                if (action.Sql != null)
-                    action.Sql = action.Sql.Replace("'", "''");
+                if (result.Data != null)
+                {
+                    var action = JsonConvert.DeserializeObject<Actions.Action>(result.Data.ToString());
 
-                if (action.Code != null)
-                    action.Code = action.Code.Replace("'", "''");
+                    if (action.Sql != null)
+                        action.Sql = action.Sql.Replace("'", "''");
 
-                FormattableString sql = $@"
+                    if (action.Code != null)
+                        action.Code = action.Code.Replace("'", "''");
+
+                    FormattableString sql = $@"
                 
 
 
                 UPDATE Actions SET 
-                    ActionName = '{action.ActionName}',
-                    ActionDescription = '{action.ActionDescription}',
-                    Sql = '{action.Sql}', 
-                    Code = '{action.Code}', 
-                    VariableDelimiter = '{action.VariableDelimiter}', 
-                    UniqueID = '{action.UniqueID}', 
-                    EditorType = '{action.EditorType}',
-                    FailActionDescription = '{action.FailActionDescription}',
-                    SuccessActionDescription = '{action.SuccessActionDescription}',
+                    ActionName = {action.ActionName},
+                    ActionDescription = {action.ActionDescription},
+                    Sql = {action.Sql}, 
+                    Code = {action.Code}, 
+                    VariableDelimiter = {action.VariableDelimiter}, 
+                    UniqueID = {action.UniqueID}, 
+                    EditorType = {action.EditorType},
+                    FailActionDescription = {action.FailActionDescription},
+                    SuccessActionDescription = {action.SuccessActionDescription},
                     RepeatQuantity = {action.RepeatQuantity},
                     RepeatIntervalSeconds = {action.RepeatIntervalSeconds},
-                    CronSchedule = '{action.CronSchedule}'
+                    CronSchedule = {action.CronSchedule},
+                    CodeCMD = {action.CodeCMD},
+                    CodePS = {action.CodePS}
 
                 WHERE 
-                    ActionID = {action.ActionID}";
+                    ActionID = {result.GetParam("ActionID")}";
 
-                result.Data = Data.Execute(sql);
-				result.Success = true;
-			}
-            else
-                result.FailMessages.Add("Data obj is null");
+                    result.Data = Data.Execute(sql);
+                    result.Success = true;
+                }
+                else
+                    result.FailMessages.Add("Data obj is null");
+            }
         }
 		public static void SaveWorkflow(ref Result result)
 		{
-			if (result.Data != null)
-			{
-				var workflow = JsonConvert.DeserializeObject<dynamic>(result.Data.ToString());
+			result.ValidateData();
+			result.SqliteParams.Clear();
+
+			var workflow = JsonConvert.DeserializeObject<dynamic>(result.Data.ToString());
 
 				FormattableString sql = @$"
                 
                 UPDATE Workflows SET 
-                    WorkflowName = '{workflow.WorkflowName.Value}',
-                    WorkflowDescription = '{workflow.WorkflowDescription.Value}'
+                    WorkflowName = {workflow.WorkflowName.Value},
+                    WorkflowDescription = {workflow.WorkflowDescription.Value}
                 WHERE 
                     WorkflowID = {workflow.WorkflowID.Value}";
 
 				result.Data = Data.Execute(sql);
 				result.Success = true;
-			}
-			else
-				result.FailMessages.Add("Data obj is null");
 		}
         /// <summary>
         /// df sdf sdf sdfsdf
@@ -163,28 +242,30 @@ namespace BusinessLab
         /// 
 		public static void SaveStep(ref Result result)
 		{
-			if (result.Data != null)
+			result.ValidateData();
+			result.SqliteParams.Clear();
+
+			if (result.ParamExists("StepID", Result.ParamType.Int))
 			{
-				var step = JsonConvert.DeserializeObject<dynamic>(result.Data.ToString());
+				result.AddSqliteParam("@StepID", (string)result.DynamicData.StepID);
+				result.AddSqliteParam("@StepName", (string)result.DynamicData.StepName);
+				result.AddSqliteParam("@StepDescription", (string)result.DynamicData.StepDescription);
+				result.AddSqliteParam("@FunctionalSpecs", (string)result.DynamicData.FunctionalSpecs);
+				result.AddSqliteParam("@StepOrder", (string)result.DynamicData.StepOrder);
+				result.AddSqliteParam("@Archived", (string)result.DynamicData.Archived);
 
-                int stepOrder = 1;
-                int.TryParse(step.StepOrder.ToString(), out stepOrder);
+				Data.Execute($@"
+                        UPDATE Steps 
+                        SET StepName = @StepName, 
+                        StepDescription = @StepDescription,
+                        FunctionalSpecs = @FunctionalSpecs,
+                        StepOrder = @StepOrder,
+                        Archived = @Archived
+                        WHERE StepID = @StepID
+                    ", result.GetSqliteParamArray());
 
-				FormattableString sql = @$"
-                
-                UPDATE Steps SET 
-                    StepName = '{step.StepName.Value}',
-                    StepDescription = '{step.StepDescription.Value}',
-                    FunctionalSpecs = '{step.FunctionalSpecs}',
-                    StepOrder = '{stepOrder.ToString()}'
-                WHERE 
-                    StepID = {step.StepID.Value}";
-
-				result.Data = Data.Execute(sql);
 				result.Success = true;
 			}
-			else
-				result.FailMessages.Add("Data obj is null");
 		}
 
 		public static void AddAction(ref Result result)
@@ -309,5 +390,98 @@ namespace BusinessLab
 			}
             
 		}
-    }
+        public static void GetProjects(ref Result result) {
+            result.Data = Data.Execute("SELECT * FROM Projects", null);
+            result.Success = true;
+        }
+		public static void AddProject(ref Result result)
+		{
+            Data.Execute("INSERT INTO Projects (ProjectName, ProjectDescription) VALUES ('[New Project]', '[Project Description]')", null);
+            result.Success = true;
+		}
+        public static void UpdateProject(ref Result result)
+        {
+            result.ValidateData();
+            result.SqliteParams.Clear();
+
+            if (result.ParamExists("ProjectID", Result.ParamType.Int))
+            {
+                result.AddSqliteParam("@ProjectID", (string)result.DynamicData.ProjectID);
+                result.AddSqliteParam("@ProjectName", (string)result.DynamicData.ProjectName);
+                result.AddSqliteParam("@ProjectDescription", (string)result.DynamicData.ProjectDescription);
+                result.AddSqliteParam("@Archived", (string)result.DynamicData.Archived);
+
+                Data.Execute($@"
+                        UPDATE Projects 
+                        SET ProjectName = @ProjectName, 
+                        ProjectDescription = @ProjectDescription,
+                        Archived = @Archived
+                        WHERE ProjectID = @ProjectID
+                    ", result.GetSqliteParamArray());
+
+                result.Success = true;
+            }
+        }
+		public static void DeleteProject(ref Result result)
+		{
+			result.ValidateData();
+			result.SqliteParams.Clear();
+
+            if (result.ParamExists("ProjectID", Result.ParamType.Int))
+            {
+                result.SqliteParams.Clear();
+                result.AddSqliteParam("@ProjectID", (string)result.DynamicData.ProjectID);
+                Data.Execute("UPDATE Projects SET Archived = 1 WHERE ProjectID = @ProjectID", null);
+                result.Success = true;
+            }
+		}
+		//Tasks
+		public static void GetTasks(ref Result result)
+		{
+			result.Data = Data.Execute("SELECT * FROM Tasks", null);
+			result.Success = true;
+		}
+		public static void AddTask(ref Result result)
+		{
+			Data.Execute("INSERT INTO Tasks (TaskName, TaskDescription) VALUES ('[New Task]', '[Task Description]')", null);
+			result.Success = true;
+		}
+		public static void UpdateTask(ref Result result)
+		{
+			result.ValidateData();
+			result.SqliteParams.Clear();
+
+			if (result.ParamExists("TaskID", Result.ParamType.Int))
+			{
+				result.AddSqliteParam("@TaskID", (string)result.DynamicData.TaskID);
+				result.AddSqliteParam("@TaskName", (string)result.DynamicData.TaskName);
+				result.AddSqliteParam("@TaskDescription", (string)result.DynamicData.TaskDescription);
+				result.AddSqliteParam("@Archived", (string)result.DynamicData.Archived);
+
+				Data.Execute($@"
+                        UPDATE Tasks 
+                        SET TaskName = @TaskName, 
+                        TaskDescription = @TaskDescription,
+                        Archived = @Archived
+                        WHERE TaskID = @TaskID
+                    ", result.GetSqliteParamArray());
+
+				result.Success = true;
+			}
+		}
+		public static void DeleteTask(ref Result result)
+		{
+			result.ValidateData();
+			result.SqliteParams.Clear();
+
+			if (result.ParamExists("ProjectID", Result.ParamType.Int))
+			{
+				result.SqliteParams.Clear();
+				result.AddSqliteParam("@ProjectID", (string)result.DynamicData.ProjectID);
+				Data.Execute("UPDATE Projects SET Archived = 1 WHERE ProjectID = @ProjectID", null);
+				result.Success = true;
+			}
+		}
+
+	}
 }

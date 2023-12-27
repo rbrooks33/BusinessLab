@@ -17,6 +17,8 @@ namespace BusinessLab
             public int ActionID { get; set; }
             public string EditorType { get; set; } = string.Empty;
             public string Code { get; set; } = String.Empty;
+            public string CodeCMD {  get; set; } = String.Empty;
+            public string CodePS {  get; set; } = String.Empty;
             public string VariableDelimiter { get; set; } = string.Empty;
             public string Sql { get; set; } = string.Empty;
             public string UniqueID { get; set; } = string.Empty;

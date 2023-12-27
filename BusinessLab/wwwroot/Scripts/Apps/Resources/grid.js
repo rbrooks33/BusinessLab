@@ -762,7 +762,9 @@ Apps.Define(['./util.js'], function (Util) {
 
                 if (editcontrol.hasClass('editor')) {
 
-
+                    if (Apps.JQTE)
+                        $.fn.jqte = Apps.JQTE;
+                        
                     editcontrol.jqte();
                     //editcontrol.jqteVal(editcontrol.html());
                 }
@@ -779,6 +781,69 @@ Apps.Define(['./util.js'], function (Util) {
                 else
                     callback();
             }
+            event.stopImmediatePropagation();
+        },
+        EditCallback2: function (callback, td) {
+
+            if (td) {
+                //Me.ShowHideCell(td[0], false);
+
+                var editcontrol = $(td).find(".editcontrol"); //Should only be one
+
+                //if (editcontrol.hasClass('codeeditor')) {
+                //    var aceEdit = ace.edit(editcontrol[0].id);
+                //    aceEdit.setTheme("ace/theme/monokai");
+                //    aceEdit.session.setMode("ace/mode/csharp");
+                //    aceEdit.renderer.onResize(true);
+
+                //    $(td).find('.ace_editor').css('height', '20px');
+                //    //aceEdit.setValue(fieldValue ? fieldValue : '');
+                //}
+
+                if (editcontrol.hasClass('editor')) {
+
+                    let html = '<div id="myeditcelldialog">' + editcontrol[0].outerHTML + '</div>';
+
+                    let bottombuttons = [
+                        {
+                            id: 'myeditcelldialog_save',
+                            text: 'Save',
+                            action: ''
+                        }
+                    ];
+                    Apps.OpenDialog(Me, 'editcelldialog', 'Edit', html);
+                    let area = $('#myeditcelldialog').find('textarea')[0];
+                    //tinymce.init({
+                    //    selector: '#myeditcelldialog > textarea',
+                    //    height: 500,
+                    //    menubar: false,
+                    //    plugins: [
+                    //        'advlist'
+                    //    ],
+                    //    toolbar: 'undo redo | formatselect | ' +
+                    //        'bold italic backcolor | alignleft aligncenter ' +
+                    //        'alignright alignjustify | bullist numlist outdent indent | ' +
+                    //        'removeformat | help',
+                    //    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                    //});
+                    if(Apps.JQTE)
+                        $.fn.jqte = Apps.JQTE;
+                    $(area).jqte();
+                    //$(area).jqteVal(editcontrol.html());
+                }
+
+                //$(editcontrol).select();
+                //var rowdata = unescape(td.parent().attr("rowdata"));
+                //var rowdataobj = JSON.parse(rowdata);
+            }
+
+        //    if (callback) {
+
+        //        if (td)
+        //            callback(td[0], rowdataobj, editcontrol[0]);
+        //        else
+        //            callback();
+        //    }
         },
         SaveCallback: function (callback, td, savecallback, fieldName) {
 
@@ -1175,8 +1240,10 @@ Apps.Define(['./util.js'], function (Util) {
 
 
                                 //VIEW (CLICK)
-                                if (field.editclick)
+                                if (field.editclick) {
                                     editclick = 'onclick="Apps.Grids.EditCallback(' + field.editclick.toString() + ', $(this).parent())"';
+                                    editclick2 = 'onclick="Apps.Grids.EditCallback2(' + field.editclick.toString() + ', $(this).parent())"';
+                                }
                                 else
                                     editclick = ''; //onclick="Grids.EditCallback(function(){}, $(this).parent())"';
 
@@ -1199,7 +1266,8 @@ Apps.Define(['./util.js'], function (Util) {
                                         if (fieldValue.length == 0)
                                             fieldValue = '[edit]';
 
-                                        viewSpan = '<span class="grid_view_span" title="' + tooltip(Me.RowData) + '" ' + editclick + '>' + fieldValue  + '</span>';
+                                        //let editlink = '<div style="font-size:10px;color:blue;cursor:pointer;" ' + editclick2 + '>Edit</div>';
+                                        viewSpan = '<div class="grid_view_span" title="' + tooltip(Me.RowData) + '" ' + editclick + '>' + fieldValue  + '</div>';
                                         break;
 
                                     case 'date':
@@ -1563,7 +1631,7 @@ Apps.Define(['./util.js'], function (Util) {
             save = function () {
                 //let mycallback = callback;
                 arguments[1][arguments[5]] = $(arguments[2]).val(); //save to obj property
-                arguments[4](arguments[1]);
+                arguments[4](arguments[1],arguments[5]);
             };
             //}
             return {

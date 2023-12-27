@@ -64,12 +64,12 @@ Apps.Define([], function () {
 
                     //var propertyValue = '';
                     var collectionIndex = 0;
-                    //if (propertyCollectionName) {
+                    if (propertyCollectionName) {
                     //    propertyValue = isCollection ? eval("Me.Obj" + propertyCollectionName) : eval("Me.Obj." + propertyName);
-                    //    let collectionIndexStart = propertyCollectionName.indexOf('[');
-                    //    let collectionIndexEnd = propertyCollectionName.indexOf(']');
-                    //    collectionIndex = propertyCollectionName.substr(collectionIndexStart + 1, collectionIndexEnd - (collectionIndexStart + 1));
-                    //}
+                        let collectionIndexStart = propertyCollectionName.indexOf('[');
+                        let collectionIndexEnd = propertyCollectionName.indexOf(']');
+                        collectionIndex = propertyCollectionName.substr(collectionIndexStart + 1, collectionIndexEnd - (collectionIndexStart + 1));
+                    }
                     //else {
                     //}
                     let propertyValue = '';
@@ -299,10 +299,29 @@ Apps.Define([], function () {
 
                         }
                         else if (boundElement.type === 'radio') {
-                            $(boundElement).change(function () {
+
+                            let boundName = '';
+                            let isColl = false;
+                            if (propertyCollectionName) {
+                                boundName = propertyCollectionName;
+                                isColl = true;
+                                eval("obj." + propertyCollectionName + " = " + $(this).prop('checked'));
+                            }
+                            else {
+                                boundName = propertyName;
+                                eval("obj." + propertyName + " = " + $(this).prop('checked'));
+                            }
+
+                            $(boundElement).off().on('change', function () {
                                 if (changedCallback)
-                                    changedCallback($(boundElement), propertyName, $(this).prop("checked"), collectionIndex);
+                                    changedCallback($(boundElement), boundName, $(this).prop("checked"), collectionIndex, isColl, 'change');
                             });
+
+                            $(boundElement).off().on('click', function () {
+                                if (changedCallback)
+                                    changedCallback($(boundElement), boundName, $(this).prop('checked'), collectionIndex, isColl, 'click');
+                            });
+
                         }
                         else if (boundElement.type === 'number') {
                             //var objNumber = Me.Obj; //Make avail to this scope
@@ -451,8 +470,16 @@ Apps.Define([], function () {
                     }
                     else {
                         //TODO: handle collections some way, for now, fire the (now expected) "Controls.Changed"" function
+                        //Try to find object name without the index
+                        let collectionObjectName = propertyName.substring(0, propertyName.indexOf('['));
+                        if (controlsObject[collectionObjectName]) {
+                            //Look for a changed handler
+                            if (controlsObject[collectionObjectName]['Changed']) {
+                                controlsObject[collectionObjectName]['Changed'](selector, propertyName, newValue, collIndex, isColl, event);
+                            }
+                        }
                         if (controlsObject['Changed'])
-                            controlsObject.Changed(selector, propertyName, newValue, collIndex, isColl);
+                            controlsObject.Changed(selector, propertyName, newValue, collIndex, isColl, event);
                     }
                 }
             );

@@ -9,14 +9,14 @@
                 data: Me.Parent.AreaList,
                 title: "Areas",
                 tablestyle: "padding-left:50px;padding-right:50px;",
-                savecallback: function () {
-                    Apps.Components.Helpers.Actions.ActionsTable.Save(arguments[0]);
+                savecallback: function (obj, fieldName) {
+                    Apps.Components.BPL.Areas.Save(obj, fieldName);
                 },
                 tableactions: [
                     {
                         text: 'Add Area',
                         actionclick: function () {
-                            Apps.Components.Helpers.Actions.ActionsTable.Add();
+                            Apps.Components.BPL.Areas.Add();
                         }
                     }
                 ],
@@ -30,9 +30,11 @@
                     }
                 ],
                 fields: [
+                    Apps.Grids.GetField('AreaID'),
                     Apps.Grids.GetField('AreaName')
                 ],
                 columns: [
+                    Apps.Grids.GetColumn('AreaID', 'ID'),
                     Apps.Grids.GetColumn("AreaName", "Area Name")
                 ]
             };
