@@ -39,6 +39,33 @@
     margin-left: 10px;
 }
 
+.EditorButtons {
+    border: 1px solid cornflowerblue;
+    width: 151px;
+    height: 30px;
+    margin: 3px;
+    text-align:center;
+    cursor:pointer;
+}
+.EditorViewers {
+    border: 1px solid cornflowerblue;
+    width: 622px;
+    height: 600px;
+    position: absolute;
+    left: 3px;
+}
+.PreviewViewer {
+    border: 1px solid cornflowerblue;
+    width: 650px;
+    position: absolute;
+    left: 650px;
+    height: 100%;
+    top: 36px;
+}
+.ViewerStyle{
+    width:620px;
+    height:600px;
+}
 .noliststyle {
     list-style: none;
     /*    cursor:pointer;

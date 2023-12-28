@@ -41,14 +41,14 @@
 
     <div class="btn-group" style="margin-top:10px;">
         <div class="btn btn-warning" data-bind-property="EditedAction.ActionSave">Save &amp; Generate Examples</div>
-        <div class="btn btn-secondary" onclick="Apps.Components.BPL.Actions.TestCode({0});">Test Code</div>
-        <div class="btn btn-secondary" onclick="Apps.Components.BPL.Actions.TestSql({0});">Test SQL</div>
-        <button type="button" class="btn btn-secondary" {6} onclick="Apps.Components.BPL.Actions.TestJob({0});">Test Job</button>
+        <div class="btn btn-secondary" data-bind-property="EditedAction.TestCode">Save &amp; Test</div>
+        <!--<div class="btn btn-secondary" onclick="Apps.Components.BPL.Actions.TestSql({0});">Test SQL</div>
+        <button type="button" class="btn btn-secondary" {6} onclick="Apps.Components.BPL.Actions.TestJob({0});">Test Job</button>-->
     </div>
 
     <!-- Trigger Types -->
     <h3>Output</h3>
-    <textarea data-bind-property="ActionsOutput" class="form-control" style="width:100%;"></textarea>
+    <div data-bind-property="EditedAction.ActionOutput" class="form-control" style="width:100%;"></div>
 
     <h3>JavaScript/Postman</h3>
     <textarea data-bind-collection-property="ActionTriggerTypes.Code[0]"
@@ -72,7 +72,7 @@
     </div>-->
     <!-- Save/Execute Results-->
     <h4>Execution Result</h4>
-    <textarea data-bind-property="ActionSaveResult" class="form-control" style="width:100%;"></textarea>
+    <textarea data-bind-property="EditedAction.ActionSaveResult" class="form-control" style="width:100%;"></textarea>
 
 </script>
 

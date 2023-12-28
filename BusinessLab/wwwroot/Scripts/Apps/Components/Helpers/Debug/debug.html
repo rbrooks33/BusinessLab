@@ -65,7 +65,7 @@
         <tr>
             <td valign="top">{0}</td>
             <td valign="top" style="padding-left:10px;">{1}</td>
-            <td valign="top" style="padding-left:10px;"><div id="debug_PreviewContainer">{2}</div></td>
+            <!--<td valign="top" style="padding-left:10px;"><div id="debug_PreviewContainer">{2}</div></td>-->
         </tr>
     </table>
 
@@ -80,29 +80,33 @@
     </div>
 </script>
 
-<script id="ComponentsTab" type="text/template">
-
-    <div id="ComponentsTabstrip" data-type="tabstrip">
-        <div data-tabstrip-tabtitle="Components" data-tabstrip-templateid="ComponentsTab_MainTab"></div>
-    </div>
-
-</script>
-
-<script id="PreviewTab" type="text/template">
-
-    <div id="PreviewTabstrip" data-type="tabstrip">
-        <div data-tabstrip-tabtitle="Preview" data-tabstrip-templateid="PreviewTab_MainTab"></div>
-    </div>
-
-</script>
-
 <script id="ComponentEditorTabs" type="text/template">
 
-    <div id="ComponentEditorTabstrip" data-type="tabstrip">
+    <!--
+    0 = preview iframe    
+    -->
+    <div style="position:absolute;">
+        <div style="display:flex">
+            <div class="EditorButtons" onclick="Apps.Components.Helpers.Debug.ShowHTML();">HTML</div>
+            <div class="EditorButtons" onclick="Apps.Components.Helpers.Debug.ShowJS();">JS</div>
+            <div class="EditorButtons" onclick="Apps.Components.Helpers.Debug.ShowCSS();">CSS</div>
+            <div class="EditorButtons" onclick="Apps.Components.Helpers.Debug.ShowDATA();">Data</div>
+            <div style="margin-left:20px;">Preview: Reload: <b>5s</b></div>
+        </div>
+        <div>
+            <div class="EditorViewers HTML"><div id="HTMLEditorViewer" class="ViewerStyle"></div></div>
+            <div class="EditorViewers JS"><div id="JSEditorViewer">there</div></div>
+            <div class="EditorViewers CSS"><div id="CSSEditorViewer">you</div></div>
+            <div class="EditorViewers DATA"><div id="DATAEditorViewer">guys</div></div>
+        </div>
+        <div class="PreviewViewer">{0}</div>
+    </div>
+
+    <!--<div id="ComponentEditorTabstrip" data-type="tabstrip">
         <div data-tabstrip-tabtitle="HTML" data-tabstrip-templateid="ComponentEditor_HTMLTab"></div>
         <div data-tabstrip-tabtitle="JS" data-tabstrip-templateid="ComponentEditor_JSTab"></div>
         <div data-tabstrip-tabtitle="DATA" data-tabstrip-templateid="ComponentEditor_DataTab"></div>
-    </div>
+    </div>-->
 
 </script>
 

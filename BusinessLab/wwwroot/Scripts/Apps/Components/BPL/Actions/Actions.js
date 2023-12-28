@@ -1,5 +1,6 @@
 ﻿Apps.Define(['./Controls/Editors.js','./Controls/ActionsTable.js'], function (editors, actionsTable) {
     var Me = {
+        Root: Apps.Components.BPL,
         Post: Apps.Data.GlobalPOST,
         Editors: editors,
         ActionsTable: actionsTable,
@@ -77,6 +78,50 @@
 
             });
 
+        },
+        TestCode: function () {
+
+            let action = Me.Model.EditedAction;
+            let args = Apps.Data.GetPostArgs('TestActionCode');
+            //args.Params.push({ Name: 'ActionID', Value: action.ActionID.toString() });
+
+            switch (Me.Model.EditedAction.EditorType) {
+
+                case 'PS':
+
+                    args.Data = Data = {
+                        ActionID: action.ActionID.toString(),
+                        Code: escape(Me.PSEditor.getValue())
+                    }
+
+                    break;
+
+                case 'SQL':
+
+                    args.Data = Data = {
+                        ActionID: action.ActionID.toString(),
+                        Code: Me.SqlEditor.getValue()
+                    }
+
+                    break;
+
+
+            }
+            Apps.Data.ExecutePostArgs(args, function (post) {
+
+                if (post.Result.FailMessages.length == 0) {
+
+                    if (Me.Model.EditedAction.EditorType == 'PS') {
+                        Me.Controls.EditedAction.ActionSaveResult.Selector.val(JSON.stringify(post.Result.SuccessMessages) + JSON.stringify(post.Result.FailMessages));
+                    }
+                    else if (Me.Model.EditedAction.EditorType == 'SQL') {
+                        let html = Apps.Components.Helpers.Controls.QuickTable.GetTable(post.Data);
+                        Me.Controls.EditedAction.ActionOutput.Selector.html(html);
+                    }
+                }
+                else
+                    Me.Controls.EditedAction.ActionSaveResult.Selector.val(JSON.stringify(post.Result.FailMessages));
+            });
         },
         ViewJob: function () {
             Apps.Notify('info', 'TBD');
@@ -312,27 +357,39 @@
                             }
                         });
 
-                        //JavaScript call
-                        let jscall = '';
-                        jscall += '{ "ActionID" : "' + action.ActionID + '",';
-                        jscall += '     "Method": "RunAction"';
+                        ////JavaScript call
+                        //let jscall = '';
+                        ////jscall += '{ "ActionID" : "' + action.ActionID + '",';
+                        ////jscall += '     "RequestName": "RunAction"';
 
-                        if (paramArray.length > 0) {
-                            jscall += '     , "Params":[';
-                            $.each(paramArray, function (index, pa) {
-                                let isInt = Apps.Util.IsNumber(pa);
-                                jscall += '{ "Name": "' + pa + '", "Value": "' + (isInt ? '123' : 'abc') + '" } ,';
-                            });
-                            jscall = jscall.substring(0, jscall.length - 1); //remove final comma
 
-                            jscall += "]";
-                        }
-                        else {
-                            jscall += ' ,"Params": []';
-                        }
-                        jscall += "}";
+                        //jscall += '{ "RequestName": "RunAction"';
+                        //jscall += '    , "Params" : [ { "Name" : "ActionID", "Value" : "' + action.ActionID + '" }';
+                        // if (paramArray.length > 0) {
+                        //    jscall += '     , ';
+                        //    $.each(paramArray, function (index, pa) {
+                        //        let isInt = Apps.Util.IsNumber(pa);
+                        //        jscall += '{ "Name": "' + pa + '", "Value": "' + (isInt ? '123' : 'abc') + '" } ,';
+                        //    });
+                        //    jscall = jscall.substring(0, jscall.length - 1); //remove final comma
 
-                        $('[data-bind-collection-property="ActionTriggerTypes.Code[0]"]').text(jscall);
+                        //    jscall += "]";
+                        //}
+                        //else {
+                        //    jscall += ' ,"Params": []';
+                        //}
+                        //jscall += "}";
+
+                        let jsRequest = Apps.Data.GetPostArgs('RunAction');
+                        jsRequest.Params.push({ Name: 'ActionID', Value: action.ActionID.toString() });
+                        $.each(paramArray, function (index, pa) {
+                            let isInt = Apps.Util.IsNumber(pa);
+
+                            jsRequest.Params.push({ Name: pa, Value: isInt ? '123' : 'abc' });
+
+                        });
+
+                        $('[data-bind-collection-property="ActionTriggerTypes.Code[0]"]').text(JSON.stringify(jsRequest));
 
                         $('#Admin_Editor_EditSaveResult').text('');
 
@@ -367,6 +424,22 @@
 
                         });
 
+                    }
+                },
+                TestCode: {
+                    Defaults: function () {
+                        this.Selector.html('Save &amp; Test');
+                    },
+                    Clicked: function () {
+                        Me.TestCode();
+                    }
+                },
+                ActionOutput: {
+
+                },
+                ActionSaveResult: {
+                    Bound: function () {
+                        this.Selector.val(unescape(this.Data.CodePS));
                     }
                 }
             }

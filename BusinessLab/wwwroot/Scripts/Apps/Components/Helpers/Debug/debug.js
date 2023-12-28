@@ -23,7 +23,7 @@
 
             Apps.Components.Helpers.Dialogs.Register('Helpers_Debug_Dialog', {
 
-                title: 'Stack Trace',
+                title: 'Component Editors',
                 size: 'full-width',
                 templateid: 'templateMyDialog1',
                 buttons: [
@@ -321,7 +321,7 @@
                 var components = JSON.parse(response).Components;
 
                 //var compObj = Object.keys(Apps.Components);
-                Me.ShowComponentHTML = '<div id="divComponentsContainer" style="border: 3px solid cornflowerblue; margin-left: 8px; margin-top:-5px; border-top-right-radius: 5px;">';
+                Me.ShowComponentHTML = '<div id="divComponentsContainer" style="border: 1px solid cornflowerblue; ">';
                 Me.ShowComponentHTML += '<ul>';
 
                 $.each(components, function (index, c) {
@@ -370,59 +370,83 @@
                 Me.ShowComponentHTML += '</div>';
 
                 let componentTree = Me.ShowComponentHTML;
-                let tabs = Me.UI.Templates.ComponentEditorTabs.HTML();
 
                 //Preview HTML
-                let preview = Me.UI.Templates.Preview.HTML(['https://localhost:54321/index.html']);
-                let previewTab = Me.UI.Templates.PreviewTab.HTML();
+                let preview = Me.UI.Templates.Preview.HTML(['https://localhost:54322/index.html']);
+                let tabs = Me.UI.Templates.ComponentEditorTabs.HTML([preview]);
 
-                let componentListHtml = Me.UI.Templates.Window.HTML([componentTree, tabs, previewTab + preview]);
+
+                let componentListHtml = Me.UI.Templates.Window.HTML([componentTree, tabs]);
 
                 //Fill Data tab
                 let dataHtml = 'hiya';
 
-                $('#ComponentEditor_DataTabContent')
-                    .html(dataHtml);
+                $('#ComponentEditor_DataTabContent').html(dataHtml);
 
 
                 Apps.Components.Helpers.Dialogs.Content('Helpers_Debug_Dialog', componentListHtml);
                 Apps.Components.Helpers.Dialogs.Open('Helpers_Debug_Dialog');
 
-                Apps.Tabstrips.Initialize('ComponentEditorTabstrip');
-                Apps.Tabstrips.Select('ComponentEditorTabstrip', 0);
+                
+                let editor = ace.edit('HTMLEditorViewer', {
+                    autoScrollEditorIntoView: false,
+                    selectionStyle: "text"
+                });
+                editor.setTheme("ace/theme/chrome");
+                mode = ace.require("ace/mode/html").Mode;
+                editor.session.setMode(new mode());
+                editor.setValue('hiya');
 
-                Apps.Tabstrips.Initialize('ComponentsTabstrip');
-                Apps.Tabstrips.Select('ComponentsTabstrip', 0);
+                //Apps.Tabstrips.Initialize('ComponentEditorTabstrip');
+                //Apps.Tabstrips.Select('ComponentEditorTabstrip', 1);
+
+                //Apps.Tabstrips.Initialize('ComponentsTabstrip');
+                //Apps.Tabstrips.Select('ComponentsTabstrip', 0);
 
                 //move components to tab content
                 //$('#ComponentsTab_MainTabContent').html($('#divComponentsContainer').detach());
-                $('#ComponentsTab_MainTabContent').hide(); //rather, hide it because list gets wacky when put into tabstrip
+                //$('#ComponentsTab_MainTabContent').hide(); //rather, hide it because list gets wacky when put into tabstrip
 
-                $('.ComponentEditorTabstrip-tabstrip-custom').css('width', '800px');
+                //$('.ComponentEditorTabstrip-tabstrip-custom').css('width', '800px');
 
-                Apps.Tabstrips.Initialize('PreviewTabstrip');
-                Apps.Tabstrips.Select('PreviewTabstrip', 0);
+                //Apps.Tabstrips.Initialize('PreviewTabstrip');
+                //Apps.Tabstrips.Select('PreviewTabstrip', 0);
 
                 //move preview to preview tab content
-                $('#PreviewTab_MainTabContent').html($('#debug_PreviewIframe').detach());
+                //$('#PreviewTab_MainTabContent').html($('#debug_PreviewIframe').detach());
 
                 //Expand the html tab
-                $('#ComponentEditor_HTMLTabContent')
-                    .css('width', '100%')
-                    .css('border', '3px solid cornflowerblue')
-                    .css('border-top-right-radius', '5px');
+                //$('#ComponentEditor_HTMLTabContent')
+                //    .css('width', '100%')
+                //    .css('border', '3px solid cornflowerblue')
+                //    .css('border-top-right-radius', '5px');
 
 
-                //PreviewTab_MainTabContent
-                $('#PreviewTab_MainTabContent')
-                    .css('width', '100%')
-                    .css('border', '3px solid cornflowerblue')
-                    .css('border-top-right-radius', '5px');
+                ////PreviewTab_MainTabContent
+                //$('#PreviewTab_MainTabContent')
+                //    .css('width', '100%')
+                //    .css('border', '3px solid cornflowerblue')
+                //    .css('border-top-right-radius', '5px');
 
             });
 
 
-
+        },
+        ShowHTML: function () {
+            $('.EditorViewers').hide();
+            $('.EditorViewers.HTML').show();
+        },
+        ShowJS: function () {
+            $('.EditorViewers').hide();
+            $('.EditorViewers.JS').show();
+        },
+        ShowCSS: function () {
+            $('.EditorViewers').hide();
+            $('.EditorViewers.CSS').show();
+        },
+        ShowDATA: function () {
+            $('.EditorViewers').hide();
+            $('.EditorViewers.DATA').show();
         },
         ShowSubComponents: function (namespace, c) {
 

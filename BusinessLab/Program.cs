@@ -73,6 +73,7 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 				case "GetTemplates": Business.GetTemplates(ref result); break;
 				case "SaveAction": Business.SaveAction(ref result); break;
 				case "AddAction": Business.AddAction(ref result); break;
+				case "RunAction": Actions.RunAction(ref result); break;
 				case "TestActionCode": Actions.TestCode(scheduler, ref result); break;
 
                 case "TriggerJob": business.TriggerJob(ref result); break;

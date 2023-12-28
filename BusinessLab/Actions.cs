@@ -37,6 +37,15 @@ namespace BusinessLab
             using System.Collections.Generic;
             using Newtonsoft.Json;
         ";
+
+        public static void RunAction(ref Result result)
+        {
+            //End point call
+            if(result.ParamExists("ActionID", Result.ParamType.Int))
+            {
+                RunAction(Convert.ToInt32(result.GetParam("ActionID")), ref result);
+            }
+        }
         public static void RunAction(int actionId, ref Result result)
         {
 			System.Collections.Generic.List<BusinessLab.Result.Param> params2 = result.Params.Where(p => p.Name == "FirstName").ToList();
@@ -97,21 +106,36 @@ namespace BusinessLab
                         {
                             string sql = action.Sql;
 
-                            //var parameters = new List<Microsoft.Data.Sqlite.SqliteParameter>();
+                            var parameters = new List<Microsoft.Data.Sqlite.SqliteParameter>();
 
-                            //foreach (var p in result.Params)
-                            //{
-                            //    var param = new Microsoft.Data.Sqlite.SqliteParameter(action.VariableDelimiter + p.Name.ToString(), p.Value.ToString());
-                            //    parameters.Add(param);
-                            //}
+                            foreach (var p in result.Params)
+                            {
+                                if (p.Name != "RequestName" && p.Name != "ActionID")
+                                {
+                                    var param = new Microsoft.Data.Sqlite.SqliteParameter(action.VariableDelimiter + p.Name.ToString(), p.Value.ToString());
+                                    parameters.Add(param);
+                                }
+                            }
 
-                            result.Data = Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(sql, new List<SqlParameter>()));
+                            result.Data = Data.Execute(sql, parameters.ToArray());
                             result.Success = true;
                         }
                         else result.FailMessages.Add("Arg Code null or empty.");
 
                     }
-                    else
+                    else if(editorType == "cmd")
+                    {
+                        //TODO: Find a way to handle "file name"
+                        //Command.Exec(action.CodeCMD, ref result); 
+                        //result.Success = true;
+                    }
+                    else if(editorType == "ps")
+                    {
+                        //BusinessLab.Command.Exec("git", "add", new Dictionary<string, string>() { { "-A", "" } }, workingFolder, ref result);
+                        Command.ExecuteCommand(action.CodePS, ref result);
+                        result.Success = true;
+					}
+					else
                         result.FailMessages.Add("action type " + action.ActionName + " has no handler.");
 
                 }
@@ -128,23 +152,24 @@ namespace BusinessLab
             {
                 var action = JsonConvert.DeserializeObject<Actions.Action>(result.Data.ToString());
 
-                if (!String.IsNullOrEmpty(action.Code))
-                {
-                    dynamic script = CSScriptLib.CSScript.Evaluator.LoadMethod(
-                    $@"
-                    {_myusings}
+                Actions.RunAction(action.ActionID, ref result);
+                //if (!String.IsNullOrEmpty(action.Code))
+                //{
+                //    dynamic script = CSScriptLib.CSScript.Evaluator.LoadMethod(
+                //    $@"
+                //    {_myusings}
 
-                    public string Product(BusinessLab.Actions.Action action, BusinessLab.WorkflowScheduler scheduler, BusinessLab.Result result)
-                    {{
-                        {action.Code}           
-                    }}      
-                ");
+                //    public string Product(BusinessLab.Actions.Action action, BusinessLab.WorkflowScheduler scheduler, BusinessLab.Result result)
+                //    {{
+                //        {action.Code}           
+                //    }}      
+                //");
 
-                    result.Data = script.Product(action, scheduler, result);
-                    result.Success = true;
-                }
-                else
-                    result.FailMessages.Add("Arg sCode empty.");
+                //    result.Data = script.Product(action, scheduler, result);
+                //    result.Success = true;
+                //}
+                //else
+                //    result.FailMessages.Add("Arg sCode empty.");
 
             }
             else

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -99,5 +100,21 @@ namespace BusinessLab
                 //new AppFlows.Helpers.AppsSystem.Exception(ex, ref outResult);
             }
         }
-    }
+		public static void ExecuteCommand(string command, ref Result result)
+		{
+			var processStartInfo = new ProcessStartInfo();
+			processStartInfo.FileName = "powershell.exe";
+			processStartInfo.Arguments = $"-Command \"{command}\"";
+			processStartInfo.UseShellExecute = false;
+			processStartInfo.RedirectStandardOutput = true;
+            //processStartInfo.RedirectStandardError = true;
+
+			using var process = new Process();
+			process.StartInfo = processStartInfo;
+			process.Start();
+			result.SuccessMessages.Add(process.StandardOutput.ReadToEnd());
+            //result.FailMessages.Add(process.StandardError.ReadToEnd());
+			//Console.Writeline(output);
+		}
+	}
 }
