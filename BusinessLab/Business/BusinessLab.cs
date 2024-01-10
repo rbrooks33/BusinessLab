@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Simpl;
+using System.IO.Compression;
+using System.Net;
 using static Quartz.Logging.OperationName;
 
 namespace BusinessLab
@@ -170,7 +172,28 @@ namespace BusinessLab
 			result.Data = Data.Execute($"SELECT * FROM Actions");
             result.Success = true;
 		}
-        
+        public static void GetPreview(ref Result result)
+        {
+            if (result.ParamExists("URL"))
+            {
+                var url = result.GetParam("URL"); // "http://www.morningstar.com/";
+                var httpClient = new HttpClient();
+
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml");
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate");
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0");
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "ISO-8859-1");
+
+                var response = httpClient.GetAsync(new Uri(url)).Result;
+                response.EnsureSuccessStatusCode();
+                using (var responseStream = response.Content.ReadAsStreamAsync().Result)
+                using (var decompressedStream = new GZipStream(responseStream, CompressionMode.Decompress))
+                using (var streamReader = new StreamReader(decompressedStream))
+                {
+                    result.Data = streamReader.ReadToEnd();
+                }
+            }
+		}
         public static void SaveAction(ref Result result)
         {
             if (result.ParamExists("ActionID", Result.ParamType.Int))
@@ -474,11 +497,122 @@ namespace BusinessLab
 			result.ValidateData();
 			result.SqliteParams.Clear();
 
-			if (result.ParamExists("ProjectID", Result.ParamType.Int))
+			if (result.ParamExists("TaskID", Result.ParamType.Int))
 			{
 				result.SqliteParams.Clear();
-				result.AddSqliteParam("@ProjectID", (string)result.DynamicData.ProjectID);
-				Data.Execute("UPDATE Projects SET Archived = 1 WHERE ProjectID = @ProjectID", null);
+				result.AddSqliteParam("@TaskID", (string)result.DynamicData.TaskID);
+				Data.Execute("UPDATE Tasks SET Archived = 1 WHERE TaskID = @TaskID", null);
+				result.Success = true;
+			}
+		}
+		//Software
+		public static void GetSoftware(ref Result result)
+		{
+			result.Data = Data.Execute("SELECT * FROM Software", null);
+			result.Success = true;
+		}
+		public static void AddSoftware(ref Result result)
+		{
+			Data.Execute("INSERT INTO Software (SoftwareName, SoftwareDescription) VALUES ('[New Software]', '[Software Description]')", null);
+			result.Success = true;
+		}
+		public static void UpdateSoftware(ref Result result)
+		{
+			result.ValidateData();
+			result.SqliteParams.Clear();
+
+			if (result.ParamExists("SoftwareID", Result.ParamType.Int))
+			{
+				result.AddSqliteParam("@SoftwareID", (string)result.DynamicData.SoftwareID);
+				result.AddSqliteParam("@SoftwareName", (string)result.DynamicData.SoftwareName);
+				result.AddSqliteParam("@SoftwareDescription", (string)result.DynamicData.SoftwareDescription);
+				result.AddSqliteParam("@Archived", (string)result.DynamicData.Archived);
+
+				Data.Execute($@"
+                        UPDATE Software 
+                        SET SoftwareName = @SoftwareName, 
+                        SoftwareDescription = @SoftwareDescription,
+                        Archived = @Archived
+                        WHERE SoftwareID = @SoftwareID
+                    ", result.GetSqliteParamArray());
+
+				result.Success = true;
+			}
+		}
+		public static void DeleteSoftware(ref Result result)
+		{
+			result.ValidateData();
+			result.SqliteParams.Clear();
+
+			if (result.ParamExists("SoftwareID", Result.ParamType.Int))
+			{
+				result.SqliteParams.Clear();
+				result.AddSqliteParam("@SoftwareID", (string)result.DynamicData.SoftwareID);
+				Data.Execute("UPDATE Software SET Archived = 1 WHERE SoftwareID = @SoftwareID", null);
+				result.Success = true;
+			}
+		}
+		//Software Versions
+		public static void GetSoftwareVersions(ref Result result)
+		{
+			result.ValidateData();
+			result.SqliteParams.Clear();
+
+            if (result.ParamExists("SoftwareID", Result.ParamType.Int))
+            {
+                result.SqliteParams.Clear();
+                result.AddSqliteParam("@SoftwareID", (string)result.DynamicData.SoftwareID);
+
+                result.Data = Data.Execute("SELECT * FROM SoftwareVersions WHERE SoftwareID = @SoftwareID", null);
+                result.Success = true;
+            }
+		}
+		public static void AddSoftwareVersion(ref Result result)
+		{
+			result.ValidateData();
+			result.SqliteParams.Clear();
+
+            if (result.ParamExists("SoftwareID", Result.ParamType.Int))
+            {
+                result.SqliteParams.Clear();
+                result.AddSqliteParam("@SoftwareID", (string)result.DynamicData.SoftwareID);
+                Data.Execute("INSERT INTO SoftwareVersions (SoftwareID, SoftwareVersionName, SoftwareVersionDescription) VALUES (@SoftwareID, '[New Software]', '[Software Description]')", null);
+                result.Success = true;
+            }
+		}
+		public static void UpdateSoftwareVersion(ref Result result)
+		{
+			result.ValidateData();
+			result.SqliteParams.Clear();
+
+			if (result.ParamExists("SoftwareVersionID", Result.ParamType.Int))
+			{
+				result.AddSqliteParam("@SoftwareVersionID", (string)result.DynamicData.SoftwareVersionID);
+				result.AddSqliteParam("@SoftwareVersionName", (string)result.DynamicData.SoftwareVersionName);
+				result.AddSqliteParam("@SoftwareVersionDescription", (string)result.DynamicData.SoftwareVersionDescription);
+				result.AddSqliteParam("@Archived", (string)result.DynamicData.Archived);
+
+				Data.Execute($@"
+                        UPDATE SoftwareVersions 
+                        SET SoftwareVersionName = @SoftwareVersionName, 
+                        SoftwareVersionDescription = @SoftwareVersionDescription,
+                        Archived = @Archived
+                        WHERE SoftwareVersionID = @SoftwareVersionID
+                    ", result.GetSqliteParamArray());
+
+				result.Success = true;
+			}
+		}
+		public static void DeleteSoftwareVersion(ref Result result)
+		{
+			result.ValidateData();
+			result.SqliteParams.Clear();
+
+			if (result.ParamExists("SoftwareVersionID", Result.ParamType.Int))
+			{
+				result.SqliteParams.Clear();
+				result.AddSqliteParam("@SoftwareVersionID", (string)result.DynamicData.SoftwareID);
+				Data.Execute("UPDATE SoftwareVersions SET Archived = 1 WHERE SoftwareVersionID = @SoftwareVersionID", null);
 				result.Success = true;
 			}
 		}

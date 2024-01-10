@@ -1012,8 +1012,8 @@ Apps.Define(['./util.js'], function (Util) {
                     rows += '<tr>';
 
                 if (settings.title) {
-
-                    rows += '<td valign="top" colspan="' + columns.length + '" style="border-top:0px;"><h2>' + title;
+                    let colspan = columns.length + (settings.rowactions ? 1 : 0) + (settings.rowbuttons ? settings.rowbuttons.length : 0);
+                    rows += '<td valign="top" colspan="' + colspan + '" style="border-top:0px;"><h2>' + title;
                     if (settings.add)
                         rows += '&nbsp;<input id="add' + settings.id + '" onclick="Apps.Grids.AddCallback(' + settings.add.addclick.toString() + ')" value="' + settings.add.text + '" type="button" class="btn btn-sm btn-primary" />';
                 }

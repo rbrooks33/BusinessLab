@@ -6,23 +6,22 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Content Remove="wwwroot\Scripts\Apps\Components\BPL\Actions\Actions.js" />
+  <!--<ItemGroup>
     <Content Remove="wwwroot\Scripts\Apps\Components\BPL\Actions\Controls\ActionsTable.js" />
     <Content Remove="wwwroot\Scripts\Apps\Components\BPL\Areas\Workflows\Steps\Steps.js" />
     <Content Remove="wwwroot\Scripts\Apps\Components\BPL\Areas\Workflows\Workflows.js" />
     <Content Remove="wwwroot\Scripts\Apps\Components\Home\Plan\AreasTable.js" />
     <Content Remove="wwwroot\Scripts\Apps\Components\Home\Plan\Steps\Steps.js" />
     <Content Remove="wwwroot\Scripts\Apps\Components\Home\Plan\Workflows\Workflows.js" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
     <None Remove="START_ME_UP.bat" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\Scripts\Apps\Components\BPL\Actions\Controls\ActionsTable.js" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
     <Content Include="PushHub.cs" />
@@ -31,8 +30,7 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="wwwroot\Scripts\Apps\Components\BPL\Actions\Actions.js" />
+  <!--<ItemGroup>
     <None Include="wwwroot\Scripts\Apps\Components\BPL\Actions\Controls\ActionsTable.js" />
     <None Include="wwwroot\Scripts\Apps\Components\BPL\Areas\Workflows\Steps\Steps.js" />
     <None Include="wwwroot\Scripts\Apps\Components\BPL\Areas\Workflows\Workflows.js" />
@@ -62,10 +60,11 @@
     <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\TestManager\TestManagerTests\TestManagerTests_History\TestManagerTests_History.js" />
     <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\TestSUT\TestSUT.js" />
     <None Include="wwwroot\Scripts\Apps\Components\Home\Test\TestPlans\VitaTest\VitaTest.js" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
     <PackageReference Include="CS-Script" Version="4.8.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.9" />
     <PackageReference Include="Quartz" Version="3.6.3" />
@@ -86,7 +85,7 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <Content Update="wwwroot\Scripts\Apps\Components\BPL\Actions\Actions.css">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -95,7 +94,10 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-  </ItemGroup>
+    <Content Update="wwwroot\Scripts\Apps\Components\BPL\Actions\Actions.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>-->
 
   <ItemGroup>
     <EmbeddedResource Update="Resource.resx">
@@ -108,6 +110,11 @@
     <None Update="businesslab.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Software\" />
+    <Folder Include="wwwroot\Scripts\Apps\Components\BPL\Admin\Software\Git\" />
   </ItemGroup>
 
 </Project>

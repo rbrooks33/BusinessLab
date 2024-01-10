@@ -120,7 +120,7 @@ namespace BusinessLab
                             result.Data = Data.Execute(sql, parameters.ToArray());
                             result.Success = true;
                         }
-                        else result.FailMessages.Add("Arg Code null or empty.");
+                        else result.FailMessages.Add("Either Sql or Variable Delimiter empty.");
 
                     }
                     else if(editorType == "cmd")

@@ -2,3 +2,28 @@
 <div class="Home_Stage_Title">
     Visuals
 </div>
+
+<div style="position:absolute;">
+    <div>
+        <div style="margin-left:20px;">Preview: Reload: <b>5s</b></div>
+    </div>
+    <div>
+        <select data-bind-property="VisualsConnections" class="form-control"></select>
+    </div>
+    <div style="display:flex">
+        <div class="EditorButtons" onclick="Apps.Components.BPL.Visuals.ShowCOMPONENTS();">Component Tree</div>
+        <div class="EditorButtons" onclick="Apps.Components.BPL.Visuals.ShowHTML();">HTML</div>
+        <div class="EditorButtons" onclick="Apps.Components.BPL.Visuals.ShowJS();">JS</div>
+        <div class="EditorButtons" onclick="Apps.Components.BPL.Visuals.ShowCSS();">CSS</div>
+        <div class="EditorButtons" onclick="Apps.Components.BPL.Visuals.ShowDATA();">Data</div>
+        <div class="EditorButtons" onclick="Apps.Components.BPL.Visuals.ShowPREVIEW();">Preview</div>
+    </div>
+    <div>
+        <div class="EditorViewers COMPONENTS"><div class="ComponentTree"></div></div>
+        <div class="EditorViewers HTML"><div id="HTMLEditorViewer" class="ViewerStyle">hiya</div></div>
+        <div class="EditorViewers JS"><div id="JSEditorViewer" class="ViewerStyle">there</div></div>
+        <div class="EditorViewers CSS"><div id="CSSEditorViewer" class="ViewerStyle">you</div></div>
+        <div class="EditorViewers DATA"><div id="DATAEditorViewer">guys</div></div>
+    </div>
+  
+</div>

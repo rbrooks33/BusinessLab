@@ -1,1 +1,22 @@
-﻿
+﻿.EditorButtons {
+    border: 1px solid cornflowerblue;
+    width: 151px;
+    height: 30px;
+    margin: 3px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.EditorViewers {
+    border: 1px solid cornflowerblue;
+    width: 935px;
+    height: 600px;
+    position: absolute;
+    left: 3px;
+}
+
+
+.ViewerStyle {
+    width: 932px;
+    height: 598px;
+}

@@ -11,7 +11,7 @@
         SelectedAction: null,
         Initialize: function (callback) {
 
-            Me.UI.Drop(); //This allows auto-binding to see me
+            //Me.UI.Drop(); //This allows auto-binding to see me
             Me.Resize();
             $(window).resize(Me.Resize);
             if (callback)
@@ -24,7 +24,9 @@
             }
         },
         Show: function () {
+            Me.UI.Drop();
             Me.UI.HideAll(); //Hides all but me and debug
+            Apps.BindHTML(Me.UI.Selector, Me, true);
             Apps.Components.Helpers.Debug.UI.Show();
 
         },
@@ -121,6 +123,26 @@
                 }
                 else
                     Me.Controls.EditedAction.ActionSaveResult.Selector.val(JSON.stringify(post.Result.FailMessages));
+            });
+        },
+        Run: function (actionId, callback, argParams) {
+            let args = {
+                Params: [
+                    { Name: 'RequestName', Value: 'RunAction' },
+                    { Name: 'ActionID', Value: actionId.toString() }
+                ]
+            };
+            if (argParams) {
+                $.each(argParams, function (i, a) {
+                    args.Params.push(a);
+                });
+            }
+            Apps.Data.ExecutePostArgs(args, function (post) {
+                if (post.Success)
+                    callback(post.Data);
+                else {
+                    Apps.Components.BPL.HandleError(post.Result);
+                }
             });
         },
         ViewJob: function () {

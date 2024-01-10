@@ -17,7 +17,28 @@
                     "Name": "Admin",
                     "Load": true,
                     "Initialize": true,
-                    "UI": true
+                    "UI": true,
+                    "Components": [
+                        {
+                            "Name": "Software",
+                            "Load": true,
+                            "Initialize": true,
+                            "UI": true,
+                            "Components": [
+                                {
+                                    "Name": "SoftwareTable",
+                                    "Load": true,
+                                    "Initialize": true
+                                }
+                            ]
+                        },
+                        {
+                            "Name": "ConnectionsTable",
+                            "Load": true,
+                            "Initialize": true
+                        }
+
+                    ]
                 },
                 {
                     "Name": "Apps",

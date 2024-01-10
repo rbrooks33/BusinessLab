@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Quartz;
 using System.Linq;
 using System.Collections.Generic;
+using System.Reflection.PortableExecutable;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,8 +42,14 @@ builder.Services.AddCors(options =>
 						  policy.WithOrigins("https://localhost:44381").AllowAnyHeader();
 					  });
 });
+builder.Services.AddApplicationInsightsTelemetry();
 
 var app = builder.Build();
+//app.Use(async (context, next) =>
+//{
+//	context.Response.Headers.Add("X-Frame-Options", "ALLOW");
+//	await next();
+//});
 
 app.UseHttpsRedirection();
 app.UseDefaultFiles(new DefaultFilesOptions { DefaultFileNames = new List<string> { "index.html" } });
@@ -51,7 +58,6 @@ app.MapHub<PushHub>("/pushhub");
 app.UseCors(MyAllowSpecificOrigins);
 
 app.Urls.Add("https://localhost:54322/");
-
 
 app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]IHubContext <PushHub> hub, [FromBody] Result result) =>
 {
@@ -68,6 +74,7 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
         {
             switch (requestName.Single().Value)
             {
+				case "GetPreview": Business.GetPreview(ref result); break;
 				//Actions
                 case "GetActions": Business.GetActions(ref result); break;
 				case "GetTemplates": Business.GetTemplates(ref result); break;
@@ -94,17 +101,28 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 				//case "GetTemplates": Business.GetTemplates(ref result); break;
 				case "GetTemplate": Business.GetTemplates(ref result); break;
 
+				//Projects
 				case "GetProjects": Business.GetProjects(ref result); break;
 				case "UpsertProject": Business.UpdateProject(ref result); break;
 				case "DeleteProject": Business.DeleteProject(ref result); break;
 				case "AddProject": Business.AddProject(ref result); break;
 
+				//Tasks
 				case "GetTasks": Business.GetTasks(ref result); break;
 				case "UpdateTask": Business.UpdateTask(ref result); break;
 				case "DeleteTask": Business.DeleteTask(ref result); break;
 				case "AddTask": Business.AddTask(ref result); break;
 
-				default: result.FailMessages.Add("No handler for requestname value " + requestName.Single().Value); 
+				//Software
+				case "GetSoftware": Business.GetSoftware(ref result); break;
+				case "UpdateSoftware": Business.UpdateSoftware(ref result); break;
+				case "DeleteSoftware": Business.DeleteSoftware(ref result); break;
+				case "AddSoftware": Business.AddSoftware(ref result); break;
+
+				case "GetContent": Editors.GetContent(ref result); break;
+                    
+
+                default: result.FailMessages.Add("No handler for requestname value " + requestName.Single().Value); 
                     break;
             }
         }

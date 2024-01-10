@@ -2,3 +2,134 @@
 <div class="Home_Stage_Title">
     Dashboard
 </div>
+<div>
+    <div data-bind-property="DashboardHTML" data-bind-type="html"></div>
+</div>
+
+<script id="Apps_AppThumbnail" type="text/template">
+
+    <!--
+        0 = app name
+        1 = app description
+        2 = app id
+        3 = stringified app obj
+        4 = opacity
+    -->
+
+    <div style="position:relative; width: 177px; height: 100px; border: 1px solid #1961AE; margin:5px;opacity:{4}">
+
+        <div class="dropdown" style="position: absolute; right: -1px; top: -8px;">
+            <i class="fa-solid fa-ellipsis"></i>
+            <div class="dropdown-content">
+                <a href="#" onclick="Apps.Components.Home.Apps.ShowApp('{3}');">Open</a>
+                <a href="#" onclick="Apps.Components.Home.Apps.ShowSettings('{3}',0);">Settings</a>
+                <a href="#" onclick="Apps.Components.ATEC.IT.MySpecialty.Icon('{3}');">Pin Icon</a>
+                <a href="#" onclick="Apps.Components.ATEC.IT.MySpecialty.Mid('{3}');">Pin Medium View</a>
+            </div>
+        </div>
+
+
+
+        <div style="font-size: 15px; font-weight: bold; padding-left: 5px; padding-right: 5px; padding-top: 5px; overflow: auto; max-height: 50px;">#{2} {0}</div>
+        <div style="font-size:x-small;padding-left:5px; padding-right:5px; padding-bottom:5px;">{1}</div>
+
+        <!--<img id="MySpecialty_Thumbnail_Image_{1}" src="{2}" title="{0} Thumbnail" style="display:{4}; width: 10vw; height: 10vh;" />-->
+        <div id="MySpecialty_MiniAppStatus_Container_{2}" style="position:absolute; display:flex;bottom:0px;">
+
+            <div id="MySpecialty_MiniAppStatus_Good_{2}"
+                 class="Apps_Thumbnail_MiniStatus"
+                 style="background: #42b947; "
+                 onclick="Apps.Components.Home.Apps.ShowLogs('{3}', 0);"></div>
+
+            <div id="MySpecialty_MiniAppStatus_Bad_{2}"
+                 class="Apps_Thumbnail_MiniStatus"
+                 style="background: #ff460c; "
+                 onclick="Apps.Components.Home.Apps.ShowLogs('{3}', 1);"></div>
+
+            <div id="MySpecialty_MiniAppStatus_Ugly_{2}"
+                 class="Apps_Thumbnail_MiniStatus" style="background: #ffff29;"
+                 onclick="Apps.Components.Home.Apps.ShowLogs('{3}', 2);"></div>
+
+            <div id="MySpecialty_MiniAppStatus_Info_{2}"
+                 class="Apps_Thumbnail_MiniStatus"
+                 style="background: white; border-top: 1px #80808069 solid; border-left: 1px #80808069 solid; border-right: 1px #80808069 solid; "
+                 onclick="Apps.Components.Home.Apps.ShowLogs('{3}', 3);"></div>
+
+            <div id="MySpecialty_MiniAppStatus_Issue_{2}"
+                 class="Apps_Thumbnail_MiniStatus"
+                 style="background: #3d3dbf; "
+                 onclick="Apps.Components.Home.Apps.ShowLogs('{3}', 4);"></div>
+        </div>
+    </div>
+
+
+
+</script>
+
+<script id="Apps_Max" type="text/template">
+
+    <!--
+        0 = apps id
+        1 = app name
+        2 = url
+    -->
+
+    <div id="MySpecialty_Max_Container_{0}" class="MySpecialty_Max_Container MySpecialty_ShowApp_Container">
+
+        <div class="ShowApp_CloseButton"
+             onclick="Apps.Components.Home.Apps.CloseMax();">X</div>
+
+        <h1>{1}</h1>
+        <div style="cursor:pointer;" onclick="Apps.Components.Home.Apps.PinToFavoritesChange({0});">
+            <input id="chkPinToFavorites" type="checkbox" /><span style="margin-left:10px;">Pin To Favorites</span>
+        </div>
+
+        <!--Refresh-->
+        <div style="cursor:pointer;" onclick="Apps.Components.Home.Apps.RefreshChange({0});">
+            <input id="chkEnableRefresh" type="checkbox" /><span style="margin-left:10px;">Refresh</span>
+        </div>
+
+
+        <div id="MySpecialty_Max_AppDisplay">
+            <h3>Today's Logs</h3>
+            <div id="MySpecialty_Max_LogContainer"></div>
+        </div>
+
+    </div>
+</script>
+
+<script id="Apps_ShowApp" type="text/template">
+
+    <!--
+        0 = apps id
+        1 = app name
+        2 = url
+        3 = app html
+    -->
+
+    <div id="MySpecialty_ShowApp_Container_{0}" class="MySpecialty_Max_Container MySpecialty_ShowApp_Container">
+
+        <div class="ShowApp_CloseButton"
+             onclick="Apps.Components.Home.Apps.CloseMax();">X</div>
+
+        <h1>{1}</h1>
+
+        <div>
+            {3}
+        </div>
+
+    </div>
+</script>
+
+<script id="MySpecialty_Max_Logs" type="text/template">
+
+    <div id="tabstripMaxLogs" data-type="tabstrip">
+        <div data-tabstrip-tabtitle="Good" data-tabstrip-templateid="templateTabGood"></div>
+        <div data-tabstrip-tabtitle="Bad" data-tabstrip-templateid="templateTabBad"></div>
+        <div data-tabstrip-tabtitle="Ugly" data-tabstrip-templateid="templateTabUgly"></div>
+        <div data-tabstrip-tabtitle="Info" data-tabstrip-templateid="templateTabInfo"></div>
+        <div data-tabstrip-tabtitle="Issues" data-tabstrip-templateid="templateTabIssues"></div>
+    </div>
+
+
+</script>
