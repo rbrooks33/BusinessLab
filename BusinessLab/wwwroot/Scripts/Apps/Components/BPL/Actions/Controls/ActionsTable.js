@@ -15,7 +15,7 @@
                     {
                         text: 'Add Action',
                         actionclick: function () {
-                            Apps.Components.Helpers.Actions.ActionsTable.Add();
+                            Apps.Components.BPL.Actions.Add();
                         }
                     }
                 ],
@@ -66,7 +66,7 @@
             };
 
             return Apps.Grids.GetTable(settings);
-        }
+        },
     };
     return Me;
 })

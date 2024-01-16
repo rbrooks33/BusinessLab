@@ -27,7 +27,7 @@
             Me.UI.Drop();
             Me.UI.HideAll(); //Hides all but me and debug
             Apps.BindHTML(Me.UI.Selector, Me, true);
-            Apps.Components.Helpers.Debug.UI.Show();
+            //Apps.Components.Helpers.Debug.UI.Show();
 
         },
         Edit: function (action) {
@@ -41,27 +41,11 @@
 
         },
         Add: function () {
-
-            let post = Apps.Components.Home.Main;
-
-            let myargs = {
-                Params: [
-                    { Name: "RequestName", Value: "AddAction" }
-                ]
-
-            };
-
-            post.Refresh(myargs, [], function () {
-
-                if (post.Success) {
-                    Apps.Components.Helpers.Actions.GetActions();
-                    Apps.Notify('success', 'Action added!');
-                }
-                else {
-                    Apps.Components.Home.HandleError(post.Result);
-                }
+            Me.Root.Actions.Run(16, function () {
+                Me.Show();
             });
         },
+
         Save: function (action) {
 
             let args = Apps.Data.GetPostArgs('SaveAction');
@@ -81,6 +65,29 @@
             });
 
         },
+
+        ////Add: function () {
+
+        ////    let post = Apps.Components.Home.Main;
+
+        ////    let myargs = {
+        ////        Params: [
+        ////            { Name: "RequestName", Value: "AddAction" }
+        ////        ]
+
+        ////    };
+
+        ////    post.Refresh(myargs, [], function () {
+
+        ////        if (post.Success) {
+        ////            Apps.Components.Helpers.Actions.GetActions();
+        ////            Apps.Notify('success', 'Action added!');
+        ////        }
+        ////        else {
+        ////            Apps.Components.Home.HandleError(post.Result);
+        ////        }
+        ////    });
+        ////},
         TestCode: function () {
 
             let action = Me.Model.EditedAction;
