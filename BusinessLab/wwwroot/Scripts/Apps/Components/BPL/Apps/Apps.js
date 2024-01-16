@@ -7,12 +7,20 @@
         },
         Show: function () {
             Me.UI.HideAll(); //Hides all but me
+            Apps.BindHTML(Me.UI.Selector, Me, true);
         },
         Model: {
-
+            AppsHTML: ''
         },
         Controls: {
-
+            AppsHTML: {
+                Bound: function () {
+                    this.Refresh();
+                },
+                Refresh: function () {
+                    Me.AppsTable.Refresh(this.Selector);
+                }
+            }
         }
     };
     return Me;

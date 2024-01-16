@@ -61,7 +61,14 @@
                     "Name": "Apps",
                     "Load": true,
                     "Initialize": true,
-                    "UI": true
+                    "UI": true,
+                    "Components": [
+                        {
+                            "Name": "AppsTable",
+                            "Load": true,
+                            "Initialize":true
+                        }
+                    ]
                 },
                 {
                     "Name": "Areas",
