@@ -15,7 +15,6 @@
 
         },
         Model: {
-            Connections: [],
             ConnectionsHTML: '',
             SoftwareHTML: ''
         },
@@ -23,7 +22,7 @@
             ConnectionsHTML: {
                 Bound: function () {
                     let thisSelector = this.Selector;
-                    Me.ConnectionsTable.Refresh(function (tableHtml) {
+                    Me.Connections.ConnectionsTable.Refresh(function (tableHtml) {
                         thisSelector.html(tableHtml);
                     });
 

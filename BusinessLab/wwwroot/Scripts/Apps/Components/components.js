@@ -33,9 +33,26 @@
                             ]
                         },
                         {
+                            "Name": "Connections",
+                            "Load": true,
+                            "Initialize": true,
+                            "UI": true,
+                            "Components": [
+                                {
                             "Name": "ConnectionsTable",
                             "Load": true,
+                                    "Initialize": true,
+                                    "Components": [
+                                        {
+                                            "Name": "ConnectionProperties",
+                                            "Load": true,
                             "Initialize": true
+                        }
+
+                    ]
+                                }
+
+                            ]
                         }
 
                     ]
