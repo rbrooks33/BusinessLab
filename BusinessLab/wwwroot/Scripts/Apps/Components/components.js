@@ -222,7 +222,7 @@
         },
         {
             "Name": "Home",
-            "Load": true,
+            "Load": false,
             "UI": true,
             "Initialize": true,
             "Components": [
