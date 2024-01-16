@@ -1623,7 +1623,7 @@ Apps.Define(['./util.js'], function (Util) {
 
             return result;
         },
-        GetField: function (name, edittype) {
+        GetField: function (name, edittype, editclick) {
 
             //var callback = objCallback;
             //var save = null;
@@ -1633,10 +1633,14 @@ Apps.Define(['./util.js'], function (Util) {
                 arguments[1][arguments[5]] = $(arguments[2]).val(); //save to obj property
                 arguments[4](arguments[1],arguments[5]);
             };
+
+            if (editclick !== false)
+                editclick = function () { };
+
             //}
             return {
                 name: name,
-                editclick: function () { },
+                editclick: editclick,
                 saveclick: save,
                 edittype: edittype ? edittype : 'text'
             }
