@@ -2,8 +2,6 @@
     var Me = {
         Name: 'BPLHome',
         Color: '#1961AE',
-        Reports: null,
-        Controls: null,
         Initialize: function (callback) {
 
             Apps.Data.RegisterMyPOST(Me, 'Main', Apps.ActiveDeployment.WebRoot + '/api', [], true);
@@ -21,7 +19,7 @@
 
             Me.StartComponents();
 
-            Apps.AutoBind();
+            //Apps.AutoBind();
 
             Apps.Components.Helpers.PushHub.Subscriber().Publish('AppLoaded', true); //Notify app finished loading
 
@@ -30,7 +28,46 @@
             Apps.Components.Helpers.Debug.UI.Show(400);
 
             //Apps.Require(['/Scripts/Apps/Resources/funcunit.js'], function (funcunit) { });
+            if (Me.Model.LoggedInAs == 0)
+                Me.ShowUsersDialog();
+        },
+        ShowUsersDialog: function () {
 
+            Me.Actions.Run(15, function (users) {
+
+                Me.Model.Users = users;
+
+                let table = Apps.Bind.GetTable({
+                    data: users,
+                    tableid: 'tablewithnoid',
+                    theadbinding: function (firstRow) {
+                        let th = '<th></th>';
+                        $.each(Object.keys(firstRow), function (i, column) {
+                            th += '<th>' + column + '</th>';
+                        });
+                        return th;
+                    },
+                    rowbinding: function (row) {
+                        let td = '<tr>';
+                        td += '<td><div class="btn btn-warning" onclick="Apps.Components.BPL.SetWorkingAs(' + row.UserID + ');">Me</div></td>'
+                        $.each(Object.keys(row), function (i, column) {
+                            td += '<td>' + row[column] + '</td>';
+                        });
+                        td += '</tr>';
+                        return td;
+                    }
+
+                });
+
+
+                Apps.OpenDialog(Me, 'WorkingAs_Dialog', 'I am working as...', Me.UI.Templates.WorkingAs.HTML([table[0].outerHTML]));
+            });
+        },
+        SetWorkingAs: function (userId) {
+            Me.Model.LoggedInAs = userId;
+            let user = Enumerable.From(Me.Model.Users).Where(u => u.UserID == userId).ToArray()[0];
+            $('.LoggedInAs').text(user.FirstName + ' ' + user.LastName);
+            Apps.Components.Helpers.Dialogs.Close('WorkingAs_Dialog');
         },
         StartComponents: function () {
             let startComponents = Enumerable.From(Apps.ComponentList).Where(c => c.Start && c.Config.Start && c.Config.Start === true).ToArray();
@@ -73,6 +110,17 @@
             Apps.Components.Helpers.Debug.Trace(this);
 
             $('#Main_Modal_Background').hide();
+        },
+        Model: {
+            Users: [],
+            LoggedInAs: 0
+        },
+        Controls: {
+            LoggedInAs: {
+                Bound: function () {
+                    this.Selector.html('Nobody');
+                }
+            }
         }
 
     };

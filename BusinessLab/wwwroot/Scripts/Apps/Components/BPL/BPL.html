@@ -8,9 +8,14 @@
 
         <div class="HeaderContainer_DivStyle">
 
-            <img src="Images/ateclogo.png" style="height:40px;" />
-            <!--<span class="Title_SpanStyle">ATEC</span>-->
-            <!--<span class="SubTitle_SpanStyle">IT</span>-->
+            <img src="Images/ateclogo.png" style="border-radius: 8px; height: 40px; margin-top: -61px; margin-left: -1px;" />
+            <span class="Title_SpanStyle">ATEC</span>
+            <span class="SubTitle_SpanStyle">IT</span>
+
+            <span class="Title_LoggedInAs">Working as: 
+                <span class="LoggedInAs">Nobody</span> 
+                <span class="btn btn-warning btn-sm" onclick="Apps.Components.BPL.ShowUsersDialog();">I Am</span>
+            </span>
 
             <div class="dropdown">
                 <div class="btn btn-warning" style="margin-top: -2px;">Tools</div>
@@ -59,5 +64,16 @@
     </div>
 </script>
 
+<script id="WorkingAs" type="text/template">
+    <!--
+        0 = user list html    
+    -->
+    <div>
+        <div>
+            Who are you?
+        </div>
+        <div>{0}</div>
+    </div>
+</script>
 
 

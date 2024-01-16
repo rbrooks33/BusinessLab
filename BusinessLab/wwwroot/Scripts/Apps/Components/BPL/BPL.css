@@ -47,20 +47,26 @@
 
 .Title_SpanStyle {
     color: white;
-    font-size: 20px;
+    font-size: 45px;
     font-weight: 600;
-    margin-left: 11px;
+    margin-left: 8px;
     position: relative;
-    top: 3px;
+    top: -17px;
 }
 
 .SubTitle_SpanStyle {
     position: relative;
-    top: 3px;
+    top: -16px;
     color: #ffca2c;
-    font-size: 1.25rem;
+    font-size: 47px;
     font-weight: 500;
-    left: -3px;
+    left: -5px;
+}
+.Title_LoggedInAs {
+    position: relative;
+    top: -27px;
+    color: white;
+    left: 12px;
 }
 /* Dropdown Button */
 
