@@ -67,67 +67,72 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
         //PushHub.SendMessage(hub, result);
 
         var business = new Business(scheduler);
+		if (1 == 1) //BusinessLab.Passwordless.ValidatePasswordlessToken(ref result))
+		{
+			var requestName = result.Params.Where(p => p.Name == "RequestName");
 
-        var requestName = result.Params.Where(p => p.Name == "RequestName");
+			if (requestName.Count() == 1)
+			{
+				switch (requestName.Single().Value)
+				{
+					case "GetPreview": Business.GetPreview(ref result); break;
+					//Actions
+					case "GetActions": Business.GetActions(ref result); break;
+					case "GetTemplates": Business.GetTemplates(ref result); break;
+					case "SaveAction": Business.SaveAction(ref result); break;
+					case "AddAction": Business.AddAction(ref result); break;
+					case "RunAction": Actions.RunAction(ref result); break;
+					case "TestActionCode": Actions.TestCode(scheduler, ref result); break;
 
-        if (requestName.Count() == 1)
-        {
-            switch (requestName.Single().Value)
-            {
-				case "GetPreview": Business.GetPreview(ref result); break;
-				//Actions
-                case "GetActions": Business.GetActions(ref result); break;
-				case "GetTemplates": Business.GetTemplates(ref result); break;
-				case "SaveAction": Business.SaveAction(ref result); break;
-				case "AddAction": Business.AddAction(ref result); break;
-				case "RunAction": Actions.RunAction(ref result); break;
-				case "TestActionCode": Actions.TestCode(scheduler, ref result); break;
+					case "TriggerJob": business.TriggerJob(ref result); break;
+					case "GetWorkflows": Business.GetWorkflows(ref result); break;
+					case "GetSteps": Business.GetSteps(ref result); break;
+					case "SaveWorkflow": Business.SaveWorkflow(ref result); break;
+					case "SaveStep": Business.SaveStep(ref result); break;
+					case "AddStep": Business.AddStep(ref result); break;
+					case "AddWorkflow": Business.AddWorkflow(ref result); break;
+					case "SendMessage": PushHub.SendMessage(hub, result, result.Message); break;
 
-                case "TriggerJob": business.TriggerJob(ref result); break;
-				case "GetWorkflows": Business.GetWorkflows(ref result); break;
-				case "GetSteps": Business.GetSteps(ref result); break;
-				case "SaveWorkflow": Business.SaveWorkflow(ref result); break;
-				case "SaveStep": Business.SaveStep(ref result); break;
-				case "AddStep": Business.AddStep(ref result); break;
-				case "AddWorkflow": Business.AddWorkflow(ref result); break;
-                case "SendMessage": PushHub.SendMessage(hub, result, result.Message); break;
+					case "GetAreas": Business.GetAreas(ref result); break;
+					case "UpsertArea": Business.UpsertArea(ref result); break;
 
-				case "GetAreas": Business.GetAreas(ref result); break;
-				case "UpsertArea": Business.UpsertArea(ref result); break;	
+					case "GetDatabases": Business.GetDatabases(ref result); break;
+					case "UpsertDatabase": Business.UpsertDatabase(ref result); break;
 
-				case "GetDatabases": Business.GetDatabases(ref result); break;
-				case "UpsertDatabase": Business.UpsertDatabase(ref result); break;
+					//case "GetTemplates": Business.GetTemplates(ref result); break;
+					case "GetTemplate": Business.GetTemplates(ref result); break;
 
-				//case "GetTemplates": Business.GetTemplates(ref result); break;
-				case "GetTemplate": Business.GetTemplates(ref result); break;
+					//Projects
+					case "GetProjects": Business.GetProjects(ref result); break;
+					case "UpsertProject": Business.UpdateProject(ref result); break;
+					case "DeleteProject": Business.DeleteProject(ref result); break;
+					case "AddProject": Business.AddProject(ref result); break;
 
-				//Projects
-				case "GetProjects": Business.GetProjects(ref result); break;
-				case "UpsertProject": Business.UpdateProject(ref result); break;
-				case "DeleteProject": Business.DeleteProject(ref result); break;
-				case "AddProject": Business.AddProject(ref result); break;
+					//Tasks
+					case "GetTasks": Business.GetTasks(ref result); break;
+					case "UpdateTask": Business.UpdateTask(ref result); break;
+					case "DeleteTask": Business.DeleteTask(ref result); break;
+					case "AddTask": Business.AddTask(ref result); break;
 
-				//Tasks
-				case "GetTasks": Business.GetTasks(ref result); break;
-				case "UpdateTask": Business.UpdateTask(ref result); break;
-				case "DeleteTask": Business.DeleteTask(ref result); break;
-				case "AddTask": Business.AddTask(ref result); break;
+					//Software
+					case "GetSoftware": Business.GetSoftware(ref result); break;
+					case "UpdateSoftware": Business.UpdateSoftware(ref result); break;
+					case "DeleteSoftware": Business.DeleteSoftware(ref result); break;
+					case "AddSoftware": Business.AddSoftware(ref result); break;
 
-				//Software
-				case "GetSoftware": Business.GetSoftware(ref result); break;
-				case "UpdateSoftware": Business.UpdateSoftware(ref result); break;
-				case "DeleteSoftware": Business.DeleteSoftware(ref result); break;
-				case "AddSoftware": Business.AddSoftware(ref result); break;
+					case "GetContent": Editors.GetContent(ref result); break;
 
-				case "GetContent": Editors.GetContent(ref result); break;
-                    
 
-                default: result.FailMessages.Add("No handler for requestname value " + requestName.Single().Value); 
-                    break;
-            }
-        }
-        else
-            result.FailMessages.Add("RequestName param not found.");
+					default:
+						result.FailMessages.Add("No handler for requestname value " + requestName.Single().Value);
+						break;
+				}
+			}
+			else
+				result.FailMessages.Add("RequestName param not found.");
+		}
+		else
+			result.FailMessages.Add("Token not valid.");
     }
     catch (System.Exception ex)
     {
