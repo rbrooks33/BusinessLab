@@ -2145,11 +2145,11 @@ Apps.Data = {
     ExecutePostArgs: function (args, successcallback) {
         Apps.Data.GlobalPOST.Execute(args, function () {
 
-            if (Apps.Data.GlobalPOST.Success) {
+            if (Apps.Data.GlobalPOST.Success && Apps.Data.GlobalPOST.Result.FailMessages.length == 0) {
                 successcallback(Apps.Data.GlobalPOST);
             }
             else
-                Apps.Components.Home.HandleError(Apps.Data.GlobalPOST.Result);
+                Apps.Components.BPL.HandleError(Apps.Data.GlobalPOST.Result);
         });
 
     },
