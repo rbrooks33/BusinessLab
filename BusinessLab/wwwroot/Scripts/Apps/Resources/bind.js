@@ -436,7 +436,7 @@ Apps.Define([], function () {
                         }
                     }
                     catch (err) {
-                        Apps.Notify('info', 'Problem finding control ' + propertyName);
+                        Apps.Notify('info', 'Problem finding control ' + propertyName + '. Exception: ' + err.message + '. Stack: ' + err.stack);
                         Apps.Components.Helpers.HandleException(err);
                     }
                 },
