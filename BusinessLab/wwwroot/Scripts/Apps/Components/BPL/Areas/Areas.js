@@ -32,7 +32,7 @@ Apps.Define([], function () {
         },
         GetCollectionHtml: function (requestName, callback) {
 
-            let post = Apps.Components.Home.Main;
+            let post = Apps.Components.BPL.Data.Posts.Main;
 
             let args = {
                 "Params":
@@ -43,11 +43,27 @@ Apps.Define([], function () {
 
             post.Refresh(args, [], function () {
 
-                if (post.Success) {
-                    callback(post.Data);
-                }
-                else
-                    Apps.Components.Home.HandleError(post.Result);
+                //if (post.Codes && Enumerable
+                //    .From(post.Codes)
+                //    .Where(c => c.ID == 2)
+                //    .ToArray().length == 1) {
+
+                //if (!Apps.Util.IsInt(Me.Root.Model.UserID)) {
+
+                //}
+                //else {
+
+                //}
+                    if (post.Success) {
+                        callback(post.Data);
+                    }
+                    else
+                        Apps.Components.Home.HandleError(post.Result);
+            //    }
+            //    else {
+            //        let html = 'hiya';
+            //        Apps.OpenDialog(Me, 'Passwordless_Auth_Dialog', 'Login', html);
+            //    }
             });
         },
         Show: function () {
