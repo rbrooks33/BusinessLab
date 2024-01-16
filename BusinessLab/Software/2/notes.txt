@@ -1,0 +1,4 @@
+checklist:
+connectionstrings.config set atec api to dev/prod
+saleswizard.js set to dev/prod api
+sw webpart set up

@@ -18,7 +18,7 @@
                     {
                         text: 'Add Action',
                         actionclick: function () {
-                            Apps.Components.Helpers.Admin.Software.Add();
+                            Apps.Components.BPL.Admin.Software.Add();
                         }
                     }
                 ],
