@@ -39,17 +39,17 @@
                             "UI": true,
                             "Components": [
                                 {
-                            "Name": "ConnectionsTable",
-                            "Load": true,
+                                    "Name": "ConnectionsTable",
+                                    "Load": true,
                                     "Initialize": true,
                                     "Components": [
                                         {
                                             "Name": "ConnectionProperties",
                                             "Load": true,
-                            "Initialize": true
-                        }
+                                            "Initialize": true
+                                        }
 
-                    ]
+                                    ]
                                 }
 
                             ]
@@ -114,7 +114,13 @@
                     "Name": "Notes",
                     "Load": true,
                     "Initialize": true,
-                    "UI": true
+                    "UI": true,
+                    "Components": [{
+                        "Name": "NotesTable",
+                        "Load": true,
+                        "Initialize": true
+                    }
+]
                 },
                 {
                     "Name": "Projects",
