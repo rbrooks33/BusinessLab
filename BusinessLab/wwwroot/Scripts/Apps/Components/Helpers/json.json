@@ -1,0 +1,15 @@
+{
+	"LogSynchronization": 3,
+	"ObjectType": "bizformitem.bizform.instantquoteform",
+	"UpdateTimeStamp": true,
+	"LastUpdated": "2024-01-19T15:34:00.4468706-08:00",
+	"Locked": false,
+	"DataClass": {
+		"Locked": false,
+		"IDWasChanged": false,
+		"Data": [ 6, "Saved", "Rodney", "Test", "Brooks Landscaping Test Company", "rbrooks@atecorp.com", "195 Elder Ave", "", "Imperial Beach", "73", "United States", "91932", false, "1", "195 Elder Ave", "", "Imperial Beach", "73", "United States", "91932", "6195001611", "", "YOKO-DL850", 1.0, 4, 359.0000, "BiWeekRent_RENTRETBWK", false, "34", "24x16x12", "8495.000000000", 0.00, 359.00, 519.00, 8, false, "-1", false, null, 55, false, "2024-01-19T00:00:00", "2024-01-19T00:00:00", false, null, -1, "0", "1", null, null, "12345", false, false, 1, "", "", "", "", "31.42;0", 31.4200, null, null, null, true, null, "5565", "2023-09-14T14:38:05.1703658", "2024-01-19T15:33:23.2885424" ],
+		"OriginalData": null,
+		"ClassName": "bizform.instantquoteform"
+	},
+	"UpdateVersionGUID": true
+}

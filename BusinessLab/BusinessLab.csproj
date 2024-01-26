@@ -6,6 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Software\**" />
+    <Content Remove="Software\**" />
+    <EmbeddedResource Remove="Software\**" />
+    <None Remove="Software\**" />
+  </ItemGroup>
+
   <!--<ItemGroup>
     <Content Remove="wwwroot\Scripts\Apps\Components\BPL\Actions\Controls\ActionsTable.js" />
     <Content Remove="wwwroot\Scripts\Apps\Components\BPL\Areas\Workflows\Steps\Steps.js" />
@@ -111,11 +118,6 @@
     <None Update="businesslab.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Software\" />
-    <Folder Include="wwwroot\Scripts\Apps\Components\BPL\Admin\Software\Git\" />
   </ItemGroup>
 
 </Project>

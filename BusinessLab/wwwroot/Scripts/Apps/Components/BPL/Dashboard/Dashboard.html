@@ -2,8 +2,8 @@
 <div class="Home_Stage_Title">
     Dashboard
 </div>
-<div>
-    <div data-bind-property="DashboardHTML" data-bind-type="html"></div>
+<div style="margin:30px;">
+    <div data-bind-property="DashboardHTML" data-bind-type="html" style="display: flex;"></div>
 </div>
 
 <script id="Apps_AppThumbnail" type="text/template">
@@ -12,7 +12,7 @@
         0 = app name
         1 = app description
         2 = app id
-        3 = stringified app obj
+        3 = severityid
         4 = opacity
     -->
 
@@ -38,27 +38,27 @@
 
             <div id="MySpecialty_MiniAppStatus_Good_{2}"
                  class="Apps_Thumbnail_MiniStatus"
-                 style="background: #42b947; "
-                 onclick="Apps.Components.Home.Apps.ShowLogs('{3}', 0);"></div>
+                 style="background: #42b947;cursor:pointer; "
+                 onclick="Apps.Components.BPL.Dashboard.ShowSeverityLogs({2}, 2);"></div>
 
             <div id="MySpecialty_MiniAppStatus_Bad_{2}"
                  class="Apps_Thumbnail_MiniStatus"
-                 style="background: #ff460c; "
-                 onclick="Apps.Components.Home.Apps.ShowLogs('{3}', 1);"></div>
+                 style="background: #ff460c; cursor: pointer; "
+                 onclick="Apps.Components.BPL.Dashboard.ShowSeverityLogs({2}, 4);"></div>
 
             <div id="MySpecialty_MiniAppStatus_Ugly_{2}"
                  class="Apps_Thumbnail_MiniStatus" style="background: #ffff29;"
-                 onclick="Apps.Components.Home.Apps.ShowLogs('{3}', 2);"></div>
+                 onclick="Apps.Components.BPL.Dashboard.ShowSeverityLogs({2}, 3);"></div>
 
             <div id="MySpecialty_MiniAppStatus_Info_{2}"
                  class="Apps_Thumbnail_MiniStatus"
-                 style="background: white; border-top: 1px #80808069 solid; border-left: 1px #80808069 solid; border-right: 1px #80808069 solid; "
-                 onclick="Apps.Components.Home.Apps.ShowLogs('{3}', 3);"></div>
+                 style="background: white; cursor: pointer; border-top: 1px #80808069 solid; border-left: 1px #80808069 solid; border-right: 1px #80808069 solid; "
+                 onclick="Apps.Components.BPL.Dashboard.ShowSeverityLogs({2}, 1);"></div>
 
             <div id="MySpecialty_MiniAppStatus_Issue_{2}"
                  class="Apps_Thumbnail_MiniStatus"
-                 style="background: #3d3dbf; "
-                 onclick="Apps.Components.Home.Apps.ShowLogs('{3}', 4);"></div>
+                 style="background: #3d3dbf; cursor: pointer; "
+                 onclick="Apps.Components.BPL.Dashboard.ShowSeverityLogs({2}, 5);"></div>
         </div>
     </div>
 
@@ -130,6 +130,12 @@
         <div data-tabstrip-tabtitle="Info" data-tabstrip-templateid="templateTabInfo"></div>
         <div data-tabstrip-tabtitle="Issues" data-tabstrip-templateid="templateTabIssues"></div>
     </div>
+
+
+</script>
+
+<script id="SeverityLogs_Template" type="text/template">
+
 
 
 </script>

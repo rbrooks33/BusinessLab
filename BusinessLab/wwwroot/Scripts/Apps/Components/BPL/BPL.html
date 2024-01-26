@@ -12,14 +12,17 @@
             <span class="Title_SpanStyle">ATEC</span>
             <span class="SubTitle_SpanStyle">IT</span>
 
-            <span class="Title_LoggedInAs">Working as: 
+            <!--<span class="Title_LoggedInAs">Working as: 
                 <span class="LoggedInAs">Nobody</span> 
                 <span class="btn btn-warning btn-sm" onclick="Apps.Components.BPL.ShowUsersDialog();">I Am</span>
-            </span>
+            </span>-->
 
             <div class="dropdown">
                 <div class="btn btn-warning" style="margin-top: -2px;">Tools</div>
                 <div class="dropdown-content" style="z-index:999;">
+                    <a href="#" onclick="Apps.Components.BPL.UseBuiltInDB();">Use Local DB</a>
+                    <a href="#" onclick="Apps.Components.BPL.UseATECDevDB();">Use ATEC IT Dev</a>
+                    <a href="#" onclick="Apps.Components.BPL.UseATECLiveDB();">Use ATEC IT Staging/Live</a>
                     <a href="#" onclick="Apps.Components.Apps.Tools.Common.Show();">Common Tools</a>
                     <a href="#" onclick="Apps.Components.Apps.Publish.Tools.Show();">Permissions</a>
                     <a href="#" onclick="Apps.Components.Home.Create.Templates.Show();">Templates</a>

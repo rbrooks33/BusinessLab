@@ -96,7 +96,14 @@
                     "Name": "Dashboard",
                     "Load": true,
                     "Initialize": true,
-                    "UI": true
+                    "UI": true,
+                    "Components": [
+                        {
+                            "Name": "DashboardControls",
+                            "Load": true,
+                            "Initialize": true
+                        }
+                    ]
                 },
                 {
                     "Name": "Jobs",

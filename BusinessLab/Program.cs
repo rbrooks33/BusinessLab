@@ -123,6 +123,19 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 					case "GetContent": Editors.GetContent(ref result); break;
 
 
+					case "UseDB":
+
+						Data.UsingDB = Data.UseDB.Local;
+						if (result.Message.ToLower() == "dev")
+							Data.UsingDB = Data.UseDB.Dev;
+						else if (result.Message == "live")
+							Data.UsingDB = Data.UseDB.Live;
+
+						result.Success = true;
+						break;
+					
+					case "GetConfigs": result.Data = Data.Execute("SELECT * FROM Configs", null, true); result.Success = true; break;
+
 					default:
 						result.FailMessages.Add("No handler for requestname value " + requestName.Single().Value);
 						break;

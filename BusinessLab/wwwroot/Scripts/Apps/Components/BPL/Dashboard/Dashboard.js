@@ -7,20 +7,9 @@
         },
         Show: function () {
             Me.UI.HideAll(); //Hides all but me
+            Apps.BindHTML(Me.UI.Selector, Me.DashboardControls, true);
 
-        },
-        Model: {
-            DashboardHTML: ''
-        },
-        Controls: {
-            DashboardHTML: {
-                Bound: function () {
-                    thisSelector = this.Selector;
-                //    Me.GetAppsThumbnailsHTML(function (html) {
-                //        thisSelector.html(html);
-                //    });
-                }
-            }
+            setInterval(Me.RefreshLogTotals, 5000);
         },
         GetAppsThumbnailsHTML: function (callback) {
 
@@ -45,9 +34,7 @@
 
             let args = {
                 Params: [
-                    { Name: "RequestName", Value: "GetAllApps" },
-                    { Name: "Token", Value: Apps.Components.Helpers.Auth.User.Token },
-                    { Name: "CustomerID", Value: "0" }
+                    { Name: "RequestName", Value: "GetAllApps" }
                 ]
             };
 
@@ -149,47 +136,32 @@
                     Apps.Components.Helpers.HandleError(post.Result);
             });
         },
-        RefreshAppsData: function () {
+        RefreshLogTotals: function () {
 
             $.each(Me.AppList, function (i, a) {
                 setTimeout(function () {
-                    Me.GetAppData(a.AppID);
-                }, 500);
+                    Me.GetLogTotals(a.AppID);
+                }, 5000);
 
             })
 
         },
-        GetAppData: function (appId) {
+        GetLogTotals: function (appId) {
 
-            let postAsync = Me.Parent.Data.Posts.HelpersAsync;
+            //Get log totals
+            let params = [
+                { Name: 'AppID', Value: appId.toString() }
+            ];
+            Me.Root.Actions.Run(22, function (appLogTotals) {
 
-            let request = {
-                Params: [
-                    { Name: "RequestName", Value: "GetAppData" },
-                    { Name: "AppID", Value: appId.toString() },
-                    { Name: "Token", Value: Apps.Components.Helpers.Auth.User.Token },
-                    { Name: "CustomerID", Value: "0" }
+                Me.UpdateAppLogTotals(appLogTotals, appId);
 
-                ]
-            }
-
-            postAsync.Refresh(request, [], function () {
-
-                if (postAsync.Success) {
-
-                    let app = postAsync.Data[0];
-
-                    Me.UpdateAppLogTotals(app, appId);
-
-                }
-                //else {
-                //    Apps.Components.Home.HandleError(post.Result);
-                //}
-                //callback(result)
-            });
+            },params);
 
         },
-        UpdateAppLogTotals: function (app, appId) {
+        UpdateAppLogTotals: function (appArray, appId) {
+
+            let app = appArray[0];
 
             if (app.GoodCount == 0
                 && app.BadCount == 0
@@ -255,31 +227,125 @@
             }
 
         },
-        GetAppLogs: function (appId, callback) {
+        ShowSeverityLogs: function (appId, severityId) {
 
-            let post = Me.Parent.Data.Posts.Helpers;
+            //Get all logs
+            let params = [
+                { Name: 'AppID', Value: appId.toString() },
+                { Name: 'LogSeverityID', Value: severityId.toString() }
+            ];
+            Me.Root.Actions.Run(21, function (appLogs) {
 
-            let request = {
-                Params: [
-                    { Name: "RequestName", Value: "GetAppLogData" },
-                    { Name: "AppID", Value: appId.toString() },
-                    { Name: "Token", Value: Apps.Components.Helpers.Auth.User.Token },
-                    { Name: "CustomerID", Value: "0" }
-                ]
-            }
+                let html = '';
 
-            post.Refresh(request, [], function () {
+                if (severityId == 2) {
 
-                if (post.Success) {
+                    //STEPS
+                    let steps = Enumerable.From(appLogs).Distinct(l => l.StepID).ToArray();
 
-                    Me.SelectedAppLogs = post.Data; //choice between callback and property
 
-                    if (callback)
-                        callback(post.Data);
+                    $.each(steps, function (i, s) {
+
+                        html += '<table class="table">';
+                        html += '  <tr>';
+                        html += '    <th>' + s.StepName + '</th>';
+                        html += '  </tr>';
+                        html += '  <tr><td>';
+                        let stepLogs = Enumerable.From(appLogs).Where(l => l.StepID == s.StepID).ToArray();
+
+                        html += '<table class="table">';
+                        $.each(stepLogs, function (i, sl) {
+                            html += '  <tr>';
+                            html += '    <td>' + sl.Created1 + '</td>';
+                            html += '    <td>' + sl.UniqueID + '</td>';
+                            html += '    <td>' + sl.UserFullName + '</td>';
+                            html += '  </tr>';
+                        });
+                        html += '</table>';
+
+                        html += '  </td></tr>';
+                        html += '</table>';
+                    });
                 }
-                else
-                    Apps.Components.Home.HandleError(post.Result);
-            });
+                else if (severityId == 1) {
+
+                    let appLogsDesc = Enumerable.From(appLogs).OrderByDescending(l => l.Created1).ToArray();
+
+                    //INFO
+                    html = '<table class="table">';
+                    html += '  <tr>';
+                    html += '    <th>Created</th>';
+                    html += '    <th>Title</th>';
+                    html += '    <th>Description</th>';
+                    html += '    <th>Unique ID</th>';
+                    html += '  </tr>';
+                    $.each(appLogsDesc, function (i, l) {
+
+                        html += '  <tr>';
+                        html += '    <td>' + Apps.Util.FormatDateTime2(l.Created1) + '</td>';
+                        html += '    <td>' + l.Title + '</td>';
+                        html += '    <td style="width:30%;">' + l.Description + '</td>';
+                        html += '    <td>' + l.UniqueID + '</td>';
+                        html += '  </tr>';
+
+                    });
+                    html += '</table>';
+
+                }
+                else if (severityId == 3) {
+
+                    let appLogsDesc = Enumerable.From(appLogs).OrderByDescending(l => l.Created1).ToArray();
+
+                    //INFO
+                    html = '<table class="table">';
+                    html += '  <tr>';
+                    html += '    <th>Created</th>';
+                    html += '    <th>Title</th>';
+                    html += '    <th>Description</th>';
+                    html += '    <th>Unique ID</th>';
+                    html += '  </tr>';
+                    $.each(appLogsDesc, function (i, l) {
+
+                        html += '  <tr>';
+                        html += '    <td>' + Apps.Util.FormatDateTime2(l.Created1) + '</td>';
+                        html += '    <td>' + l.Title + '</td>';
+                        html += '    <td style="width:30%;">' + l.Description + '</td>';
+                        html += '    <td>' + l.UniqueID + '</td>';
+                        html += '  </tr>';
+
+                    });
+                    html += '</table>';
+
+                }
+                else if (severityId == 4) {
+
+                    let appLogsDesc = Enumerable.From(appLogs).OrderByDescending(l => l.Created1).ToArray();
+
+                    //INFO
+                    html = '<table class="table">';
+                    html += '  <tr>';
+                    html += '    <th>Created</th>';
+                    html += '    <th>Title</th>';
+                    html += '    <th>Description</th>';
+                    html += '    <th>Unique ID</th>';
+                    html += '  </tr>';
+                    $.each(appLogsDesc, function (i, l) {
+
+                        html += '  <tr>';
+                        html += '    <td>' + Apps.Util.FormatDateTime2(l.Created1) + '</td>';
+                        html += '    <td>' + l.Title + '</td>';
+                        html += '    <td style="width:30%;">' + l.Description + '</td>';
+                        html += '    <td>' + l.UniqueID + '</td>';
+                        html += '  </tr>';
+
+                    });
+                    html += '</table>';
+
+                }
+
+                Apps.OpenDialog(Me, 'DashboardLogDialog', 'Logs', html);
+
+            }, params);
 
         },
         ShowApp: function (appString) {
@@ -550,6 +616,7 @@
             else
                 Me.RefreshHandle = null;
         }
+
 
     };
     return Me;

@@ -48,6 +48,9 @@
 
         Save: function (action) {
 
+            action.RepeatQuantity = action.RepeatQuantity ? action.RepeatQuantity : 0;
+            action.RepeatIntervalSeconds = action.RepeatIntervalSeconds ? action.RepeatIntervalSeconds : 0;
+
             let args = Apps.Data.GetPostArgs('SaveAction');
             args.Params.push({ Name: 'ActionID', Value: action.ActionID.toString() });
             args.Data = JSON.stringify(action);

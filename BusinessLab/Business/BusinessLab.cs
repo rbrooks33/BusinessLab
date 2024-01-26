@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.FileProviders.Composite;
 using Newtonsoft.Json;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Simpl;
+using System.Data;
 using System.IO.Compression;
 using System.Net;
 using static Quartz.Logging.OperationName;
@@ -169,7 +171,18 @@ namespace BusinessLab
 
 		public static void GetActions(ref Result result)
 		{
-			result.Data = Data.Execute($"SELECT * FROM Actions");
+   //         var dt = new DataTable();
+
+			//using (var conn = new SqliteConnection(Resource.SqliteConnectionString))
+			//{
+			//	conn.Open();
+			//	var cmd = new SqliteCommand("SELECT * FROM Actions", conn);
+			//	var reader = cmd.ExecuteReader();
+			//	dt.Load(reader);
+			//	conn.Close();
+			//}
+
+            result.Data = Data.Execute($"SELECT * FROM Actions", null);
             result.Success = true;
 		}
         public static void GetPreview(ref Result result)
@@ -232,7 +245,7 @@ namespace BusinessLab
                 WHERE 
                     ActionID = {result.GetParam("ActionID")}";
 
-                    result.Data = Data.Execute(sql);
+                    result.Data = Data.Execute(sql, true);
                     result.Success = true;
                 }
                 else

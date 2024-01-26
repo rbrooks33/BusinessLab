@@ -12,6 +12,13 @@ namespace BusinessLab
     {
         public class Action
         {
+            public Action() {
+                RepeatIntervalSeconds = 0;
+                RepeatQuantity = 0;
+                FailActionID = 0;
+                SuccessActionID = 0;
+            }
+
             public string ActionName { get; set; } = string.Empty;
             public string ActionDescription { get; set; } = "&nbsp;&nbsp;&nbsp;";
             public int ActionID { get; set; }
@@ -27,8 +34,8 @@ namespace BusinessLab
             public int FailActionID { get; set;}
             public string SuccessActionDescription { get; set; } = string.Empty;
             public string FailActionDescription { get; set; } = string.Empty;
-            public int RepeatQuantity { get; set; }
-            public int RepeatIntervalSeconds { get; set; }
+            public int RepeatQuantity { get; set; } = int.MinValue;
+            public int RepeatIntervalSeconds { get; set; } = int.MinValue;
             public string CronSchedule { get; set; } = string.Empty;
         }
         public static string _myusings = @"
@@ -106,18 +113,38 @@ namespace BusinessLab
                         {
                             string sql = action.Sql;
 
-                            var parameters = new List<Microsoft.Data.Sqlite.SqliteParameter>();
-
-                            foreach (var p in result.Params)
+                            if (Data.UsingDB == Data.UseDB.Dev || Data.UsingDB == Data.UseDB.Live)
                             {
-                                if (p.Name != "RequestName" && p.Name != "ActionID")
-                                {
-                                    var param = new Microsoft.Data.Sqlite.SqliteParameter(action.VariableDelimiter + p.Name.ToString(), p.Value.ToString());
-                                    parameters.Add(param);
-                                }
-                            }
+								var sqlParameters = new List<SqlParameter>();
 
-                            result.Data = Data.Execute(sql, parameters.ToArray());
+								foreach (var p in result.Params)
+								{
+									if (p.Name != "RequestName" && p.Name != "ActionID")
+									{
+										var param = new SqlParameter(action.VariableDelimiter + p.Name.ToString(), p.Value.ToString());
+										sqlParameters.Add(param);
+									}
+								}
+
+								result.Data = Data.Execute(sql, sqlParameters.ToArray());
+							}
+							else
+                            {
+
+
+                                var parameters = new List<Microsoft.Data.Sqlite.SqliteParameter>();
+
+                                foreach (var p in result.Params)
+                                {
+                                    if (p.Name != "RequestName" && p.Name != "ActionID")
+                                    {
+                                        var param = new Microsoft.Data.Sqlite.SqliteParameter(action.VariableDelimiter + p.Name.ToString(), p.Value.ToString());
+                                        parameters.Add(param);
+                                    }
+                                }
+
+                                result.Data = Data.Execute(sql, parameters.ToArray());
+                            }
                             result.Success = true;
                         }
                         else result.FailMessages.Add("Either Sql or Variable Delimiter empty.");
@@ -221,12 +248,17 @@ namespace BusinessLab
 
             if (int.TryParse(props.ActionID.ToString(), out int actionid))
             {
+                if (props.RepeatInterval == null)
+                    props.RepeatInterval = 0;
+
                 string updatesql = $@"
 
                     update actions set 
                     actionname = '{props.ActionName}' ,
                     actiondescription = '{props.ActionDescription}',
-                    variabledelimiter = '{props.VariableDelimiter}'
+                    variabledelimiter = '{props.VariableDelimiter}',
+                    repeatquantity = '{props.RepeatInterval}',
+                    repeatintervalseconds = '{props.RepeatIntervalSeconds}'
                 
                     where actionid = {actionid}
                     

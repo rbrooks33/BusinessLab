@@ -1,0 +1,111 @@
+{
+	"Id": "00000000-0000-0000-0000-000000000000",
+	"LogicalName": "lead",
+	"Attributes": [
+		{
+			"Key": "subject",
+			"Value": "Request a Quote"
+		},
+		{
+			"Key": "firstname",
+			"Value": "Rodney"
+		},
+		{
+			"Key": "lastname",
+			"Value": "Test"
+		},
+		{
+			"Key": "emailaddress1",
+			"Value": "rbrooks@atecorp.com"
+		},
+		{
+			"Key": "companyname",
+			"Value": "Brooks Landscaping Test Company"
+		},
+		{
+			"Key": "websiteurl",
+			"Value": ""
+		},
+		{
+			"Key": "telephone1",
+			"Value": "6195001611"
+		},
+		{
+			"Key": "address1_telephone1",
+			"Value": "6195001611"
+		},
+		{
+			"Key": "address1_line1",
+			"Value": "195 Elder Ave"
+		},
+		{
+			"Key": "address1_line2",
+			"Value": ""
+		},
+		{
+			"Key": "address1_city",
+			"Value": "Imperial Beach"
+		},
+		{
+			"Key": "address1_stateorprovince",
+			"Value": "AZ"
+		},
+		{
+			"Key": "address1_postalcode",
+			"Value": "91932"
+		},
+		{
+			"Key": "address1_country",
+			"Value": "United States"
+		},
+		{
+			"Key": "new_gclid",
+			"Value": ""
+		},
+		{
+			"Key": "description",
+			"Value": ""
+		},
+		{
+			"Key": "estimatedclosedate",
+			"Value": "2024-01-23T09:22:55.5748821-08:00"
+		},
+		{
+			"Key": "new_rentallength",
+			"Value": "WeekRent_RENTRETWKY"
+		},
+		{
+			"Key": "new_testequipment",
+			"Value": ""
+		},
+		{
+			"Key": "new_testrequirement",
+			"Value": ""
+		},
+		{
+			"Key": "new_referraltext",
+			"Value": ","
+		},
+		{
+			"Key": "new_calibration",
+			"Value": { "Value": 4 }
+		},
+		{
+			"Key": "donotsendmm",
+			"Value": false
+		},
+		{
+			"Key": "new_referringurl",
+			"Value": "http://www.example.com"
+		},
+		{
+			"Key": "new_webquoteid",
+			"Value": 41850
+		}
+	],
+	"EntityState": null,
+	"FormattedValues": [],
+	"RelatedEntities": [],
+	"RowVersion": null,
+	"KeyAttributes": []
+}
