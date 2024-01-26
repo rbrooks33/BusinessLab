@@ -15,3 +15,8 @@ Properties/
 /BusinessLab/Resource.resx
 /BusinessLab/Software
 /BusinessLab/Resource.Designer.cs
+/BusinessLab/Data/businesslab.db
+/BusinessLab/Data/businesslab.sqbpro
+/BusinessLab/Data/businesslab_scheduler.sqbpro
+/BusinessLab/Data/Resource.resx
+/BusinessLab/businesslab.db
