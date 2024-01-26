@@ -4,7 +4,7 @@
     <NameOfLastUsedPublishProfile>FolderProfile</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Resource.resx">
+    <EmbeddedResource Update="Data\Resource.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

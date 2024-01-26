@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using BusinessLab.Data;
+using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyModel;
 using Newtonsoft.Json;
@@ -6,7 +7,7 @@ using Newtonsoft.Json.Linq;
 using System.Data;
 using System.Data.Common;
 
-namespace BusinessLab
+namespace BusinessLab.Code
 {
     public class Data
     {
@@ -189,7 +190,9 @@ namespace BusinessLab
 			if (Data.UsingDB == Data.UseDB.Live)
 				cs = Resource.SqlConnectionStringStagingLive;
 			
-			if(Data.UsingDB == UseDB.Dev || Data.UsingDB == UseDB.Live)
+			if(
+				(Data.UsingDB == UseDB.Dev || Data.UsingDB == UseDB.Live)
+				&& !UseSqlite)
 			{ 
 				using (var conn = new SqlConnection(cs))
 				{

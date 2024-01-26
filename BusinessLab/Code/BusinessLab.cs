@@ -26,7 +26,7 @@ namespace BusinessLab
         //Databases
         public static void GetDatabases(ref Result result)
         {
-            result.Data = Data.Execute($"SELECT * FROM Databases");
+            result.Data = Code.Data.Execute($"SELECT * FROM Databases");
             result.Success = true;
         }
 
@@ -39,7 +39,7 @@ namespace BusinessLab
             {
                 result.AddSqliteParam("@DatabaseID", (string)result.DynamicData.DatabaseID);
 
-                var databases = Data.Execute($@" 
+                var databases = Code.Data.Execute($@" 
                     SELECT * FROM Databases 
                     WHERE DatabaseID = @DatabaseID
                 ", result.GetSqliteParamArray());
@@ -52,7 +52,7 @@ namespace BusinessLab
                     result.AddSqliteParam("@ConnectionString", (string)result.DynamicData.ConnectionString);
                     result.AddSqliteParam("@DatabaseID", (string)result.DynamicData.DatabaseID);
 
-                    Data.Execute($@"
+                    Code.Data.Execute($@"
                         UPDATE Databases 
                         SET DatabaseName = @DatabaseName, 
                         ConnectionString = @ConnectionString 
@@ -68,7 +68,7 @@ namespace BusinessLab
                     result.AddSqliteParam("@DatabaseName", (string)result.DynamicData.DatabaseName);
                     result.AddSqliteParam("@ConnectionString", (string)result.DynamicData.ConnectionString);
 
-                    Data.Execute($@"
+                    Code.Data.Execute($@"
                         INSERT INTO Databases 
                             (DatabaseName, ConnectionString) 
                         VALUES 
@@ -81,20 +81,20 @@ namespace BusinessLab
         }
 		public static void DeleteDatabase(ref Result result)
 		{
-			result.Data = Data.Execute($"SELECT * FROM Databases");
+			result.Data = Code.Data.Execute($"SELECT * FROM Databases");
 			result.Success = true;
 		}
 
 		public static void GetTemplates(ref Result result)
 		{
-			result.Data = Data.Execute($"SELECT * FROM Templates");
+			result.Data = Code.Data.Execute($"SELECT * FROM Templates");
 			result.Success = true;
 		}
         public static void GetTemplate(ref Result result)
         {
             if (result.ParamExists("TemplateID"))
             {
-                result.Data = Data.Execute($"SELECT * FROM Templates WHERE TemplateID = {result.GetParam("TemplateID")}");
+                result.Data = Code.Data.Execute($"SELECT * FROM Templates WHERE TemplateID = {result.GetParam("TemplateID")}");
                 result.Success = true;
             }
 
@@ -102,7 +102,7 @@ namespace BusinessLab
 
 		public static void GetAreas(ref Result result)
         {
-			result.Data = Data.Execute($"SELECT * FROM Areas");
+			result.Data = Code.Data.Execute($"SELECT * FROM Areas");
 			result.Success = true;
 		}
         public static void UpsertArea(ref Result result)
@@ -114,7 +114,7 @@ namespace BusinessLab
 			{
 				result.AddSqliteParam("@AreaID", (string)result.DynamicData.AreaID);
 
-				var databases = Data.Execute($@" 
+				var databases = Code.Data.Execute($@" 
                     SELECT * FROM Areas 
                     WHERE AreaID = @AreaID
                 ", result.GetSqliteParamArray());
@@ -126,7 +126,7 @@ namespace BusinessLab
 					result.AddSqliteParam("@AreaName", (string)result.DynamicData.AreaName);
 					result.AddSqliteParam("@AreaID", (string)result.DynamicData.AreaID);
 
-					Data.Execute($@"
+					Code.Data.Execute($@"
                         UPDATE Areas 
                         SET AreaName = @AreaName
                         WHERE AreaID = @AreaID
@@ -140,7 +140,7 @@ namespace BusinessLab
 					result.SqliteParams.Clear();
 					result.AddSqliteParam("@AreaName", "[New Area]");
 
-					Data.Execute($@"
+					Code.Data.Execute($@"
                         INSERT INTO Areas 
                             (AreaName) 
                         VALUES 
@@ -160,12 +160,12 @@ namespace BusinessLab
 
 		public static void GetWorkflows(ref Result result)
 		{
-			result.Data = Data.Execute($"SELECT * FROM Workflows", null);
+			result.Data = Code.Data.Execute($"SELECT * FROM Workflows", null);
 			result.Success = true;
 		}
 		public static void GetSteps(ref Result result)
 		{
-			result.Data = Data.Execute($"SELECT * FROM Steps ORDER BY StepOrder");
+			result.Data = Code.Data.Execute($"SELECT * FROM Steps ORDER BY StepOrder");
 			result.Success = true;
 		}
 
@@ -182,7 +182,7 @@ namespace BusinessLab
 			//	conn.Close();
 			//}
 
-            result.Data = Data.Execute($"SELECT * FROM Actions", null);
+            result.Data = Code.Data.Execute($"SELECT * FROM Actions", null);
             result.Success = true;
 		}
         public static void GetPreview(ref Result result)
@@ -245,7 +245,7 @@ namespace BusinessLab
                 WHERE 
                     ActionID = {result.GetParam("ActionID")}";
 
-                    result.Data = Data.Execute(sql, true);
+                    result.Data = Code.Data.Execute(sql, true);
                     result.Success = true;
                 }
                 else
@@ -267,7 +267,7 @@ namespace BusinessLab
                 WHERE 
                     WorkflowID = {workflow.WorkflowID.Value}";
 
-				result.Data = Data.Execute(sql);
+				result.Data = Code.Data.Execute(sql);
 				result.Success = true;
 		}
         /// <summary>
@@ -290,7 +290,7 @@ namespace BusinessLab
 				result.AddSqliteParam("@StepOrder", (string)result.DynamicData.StepOrder);
 				result.AddSqliteParam("@Archived", (string)result.DynamicData.Archived);
 
-				Data.Execute($@"
+				Code.Data.Execute($@"
                         UPDATE Steps 
                         SET StepName = @StepName, 
                         StepDescription = @StepDescription,
@@ -307,7 +307,7 @@ namespace BusinessLab
 		public static void AddAction(ref Result result)
         {
             FormattableString sql = $"INSERT INTO Actions (ActionName) VALUES ('new action')";
-            result.Data = Data.Execute(sql);
+            result.Data = Code.Data.Execute(sql);
 			result.Success = true;
 		}
 
@@ -318,7 +318,7 @@ namespace BusinessLab
             if (areaIdParam != null)
             {
                 FormattableString sql = $"INSERT INTO Workflows (WorkflowName, WorkflowDescription, AreaID) VALUES ('new workflow', '@nbsp;@nbsp;@nbsp;', {areaIdParam.Value})";
-                result.Data = Data.Execute(sql);
+                result.Data = Code.Data.Execute(sql);
                 result.Success = true;
             }
             else
@@ -331,7 +331,7 @@ namespace BusinessLab
             if (workflowId != null)
             {
                 FormattableString sql = $"INSERT INTO Steps (StepName, WorkflowID) VALUES ('new step', {workflowId.Value})";
-                result.Data = Data.Execute(sql);
+                result.Data = Code.Data.Execute(sql);
                 result.Success = true;
             }
             else
@@ -354,7 +354,7 @@ namespace BusinessLab
 
                 result.Params.Add(new Result.Param {  Name = "CorrelationID", Value = correlationId });
 
-                var action = Data.GetAction(actionId.Value, ref result);
+                var action = Code.Data.GetAction(actionId.Value, ref result);
                 
                 apJob = JobBuilder.Create<StepJob>().WithIdentity(actionId.Value, correlationId).Build();
 
@@ -427,12 +427,12 @@ namespace BusinessLab
             
 		}
         public static void GetProjects(ref Result result) {
-            result.Data = Data.Execute("SELECT * FROM Projects", null);
+            result.Data = Code.Data.Execute("SELECT * FROM Projects", null);
             result.Success = true;
         }
 		public static void AddProject(ref Result result)
 		{
-            Data.Execute("INSERT INTO Projects (ProjectName, ProjectDescription) VALUES ('[New Project]', '[Project Description]')", null);
+            Code.Data.Execute("INSERT INTO Projects (ProjectName, ProjectDescription) VALUES ('[New Project]', '[Project Description]')", null);
             result.Success = true;
 		}
         public static void UpdateProject(ref Result result)
@@ -447,7 +447,7 @@ namespace BusinessLab
                 result.AddSqliteParam("@ProjectDescription", (string)result.DynamicData.ProjectDescription);
                 result.AddSqliteParam("@Archived", (string)result.DynamicData.Archived);
 
-                Data.Execute($@"
+                Code.Data.Execute($@"
                         UPDATE Projects 
                         SET ProjectName = @ProjectName, 
                         ProjectDescription = @ProjectDescription,
@@ -467,19 +467,19 @@ namespace BusinessLab
             {
                 result.SqliteParams.Clear();
                 result.AddSqliteParam("@ProjectID", (string)result.DynamicData.ProjectID);
-                Data.Execute("UPDATE Projects SET Archived = 1 WHERE ProjectID = @ProjectID", null);
+                Code.Data.Execute("UPDATE Projects SET Archived = 1 WHERE ProjectID = @ProjectID", null);
                 result.Success = true;
             }
 		}
 		//Tasks
 		public static void GetTasks(ref Result result)
 		{
-			result.Data = Data.Execute("SELECT * FROM Tasks", null);
+			result.Data = Code.Data.Execute("SELECT * FROM Tasks", null);
 			result.Success = true;
 		}
 		public static void AddTask(ref Result result)
 		{
-			Data.Execute("INSERT INTO Tasks (TaskName, TaskDescription) VALUES ('[New Task]', '[Task Description]')", null);
+			Code.Data.Execute("INSERT INTO Tasks (TaskName, TaskDescription) VALUES ('[New Task]', '[Task Description]')", null);
 			result.Success = true;
 		}
 		public static void UpdateTask(ref Result result)
@@ -494,7 +494,7 @@ namespace BusinessLab
 				result.AddSqliteParam("@TaskDescription", (string)result.DynamicData.TaskDescription);
 				result.AddSqliteParam("@Archived", (string)result.DynamicData.Archived);
 
-				Data.Execute($@"
+				Code.Data.Execute($@"
                         UPDATE Tasks 
                         SET TaskName = @TaskName, 
                         TaskDescription = @TaskDescription,
@@ -514,19 +514,19 @@ namespace BusinessLab
 			{
 				result.SqliteParams.Clear();
 				result.AddSqliteParam("@TaskID", (string)result.DynamicData.TaskID);
-				Data.Execute("UPDATE Tasks SET Archived = 1 WHERE TaskID = @TaskID", null);
+				Code.Data.Execute("UPDATE Tasks SET Archived = 1 WHERE TaskID = @TaskID", null);
 				result.Success = true;
 			}
 		}
 		//Software
 		public static void GetSoftware(ref Result result)
 		{
-			result.Data = Data.Execute("SELECT * FROM Software", null);
+			result.Data = Code.Data.Execute("SELECT * FROM Software", null);
 			result.Success = true;
 		}
 		public static void AddSoftware(ref Result result)
 		{
-			Data.Execute("INSERT INTO Software (SoftwareName, SoftwareDescription) VALUES ('[New Software]', '[Software Description]')", null);
+			Code.Data.Execute("INSERT INTO Software (SoftwareName, SoftwareDescription) VALUES ('[New Software]', '[Software Description]')", null);
 			result.Success = true;
 		}
 		public static void UpdateSoftware(ref Result result)
@@ -541,7 +541,7 @@ namespace BusinessLab
 				result.AddSqliteParam("@SoftwareDescription", (string)result.DynamicData.SoftwareDescription);
 				result.AddSqliteParam("@Archived", (string)result.DynamicData.Archived);
 
-				Data.Execute($@"
+				Code.Data.Execute($@"
                         UPDATE Software 
                         SET SoftwareName = @SoftwareName, 
                         SoftwareDescription = @SoftwareDescription,
@@ -561,7 +561,7 @@ namespace BusinessLab
 			{
 				result.SqliteParams.Clear();
 				result.AddSqliteParam("@SoftwareID", (string)result.DynamicData.SoftwareID);
-				Data.Execute("UPDATE Software SET Archived = 1 WHERE SoftwareID = @SoftwareID", null);
+				Code.Data.Execute("UPDATE Software SET Archived = 1 WHERE SoftwareID = @SoftwareID", null);
 				result.Success = true;
 			}
 		}
@@ -576,7 +576,7 @@ namespace BusinessLab
                 result.SqliteParams.Clear();
                 result.AddSqliteParam("@SoftwareID", (string)result.DynamicData.SoftwareID);
 
-                result.Data = Data.Execute("SELECT * FROM SoftwareVersions WHERE SoftwareID = @SoftwareID", null);
+                result.Data = Code.Data.Execute("SELECT * FROM SoftwareVersions WHERE SoftwareID = @SoftwareID", null);
                 result.Success = true;
             }
 		}
@@ -589,7 +589,7 @@ namespace BusinessLab
             {
                 result.SqliteParams.Clear();
                 result.AddSqliteParam("@SoftwareID", (string)result.DynamicData.SoftwareID);
-                Data.Execute("INSERT INTO SoftwareVersions (SoftwareID, SoftwareVersionName, SoftwareVersionDescription) VALUES (@SoftwareID, '[New Software]', '[Software Description]')", null);
+                Code.Data.Execute("INSERT INTO SoftwareVersions (SoftwareID, SoftwareVersionName, SoftwareVersionDescription) VALUES (@SoftwareID, '[New Software]', '[Software Description]')", null);
                 result.Success = true;
             }
 		}
@@ -605,7 +605,7 @@ namespace BusinessLab
 				result.AddSqliteParam("@SoftwareVersionDescription", (string)result.DynamicData.SoftwareVersionDescription);
 				result.AddSqliteParam("@Archived", (string)result.DynamicData.Archived);
 
-				Data.Execute($@"
+				Code.Data.Execute($@"
                         UPDATE SoftwareVersions 
                         SET SoftwareVersionName = @SoftwareVersionName, 
                         SoftwareVersionDescription = @SoftwareVersionDescription,
@@ -625,7 +625,7 @@ namespace BusinessLab
 			{
 				result.SqliteParams.Clear();
 				result.AddSqliteParam("@SoftwareVersionID", (string)result.DynamicData.SoftwareID);
-				Data.Execute("UPDATE SoftwareVersions SET Archived = 1 WHERE SoftwareVersionID = @SoftwareVersionID", null);
+				Code.Data.Execute("UPDATE SoftwareVersions SET Archived = 1 WHERE SoftwareVersionID = @SoftwareVersionID", null);
 				result.Success = true;
 			}
 		}

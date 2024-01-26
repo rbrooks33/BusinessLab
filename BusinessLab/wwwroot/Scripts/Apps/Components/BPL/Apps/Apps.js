@@ -8,6 +8,7 @@
         Show: function () {
             Me.UI.HideAll(); //Hides all but me
             Apps.BindHTML(Me.UI.Selector, Me, true);
+            Me.Root.ShowHeroHeader();
         },
         Model: {
             AppsHTML: ''

@@ -9,6 +9,7 @@
             Me.UI.HideAll(); //Hides all but me
             Me.ProjectTable.Create(Me.Controls.ProjectsTable.Selector);
             Apps.Components.Helpers.Debug.UI.Show();
+            Me.Root.ShowHeroHeader();
         },
         Start: function () {
         },

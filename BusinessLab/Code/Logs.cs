@@ -26,7 +26,7 @@
 					INSERT INTO Logs (StepID, Title, Description, LogSeverity, UniqueID) 
 					VALUES (@StepID, @Title, @Description, @LogSeverity, @UniqueID)";
 
-				Data.Execute(sql, result.GetSqliteParamArray());
+				Code.Data.Execute(sql, result.GetSqliteParamArray());
 			}
 			catch (Exception ex) { 
 				result.FailMessages.Add(ex.ToString());

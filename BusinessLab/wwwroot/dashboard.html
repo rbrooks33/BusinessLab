@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="Scripts/Apps/Apps.js"></script>
+    <script>
+        Apps.ComponentsReady = function () {
+            //Apps.Components.BPL.ShowDashboard();
+
+        //    let html = '';
+        //    html += '<table class="table">';
+
+            Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetConfigs"), function (data) {
+
+                Model.Configs = data.Data;
+        //        Apps.Components.BPL.Actions.Run(Model.ConfigValue('DevGetAllAppsActionID'), function (apps) {
+
+        //        });
+
+            });
+        }
+
+        var Model = {
+
+            Configs: [],
+            ConfigValue: function (configName) {
+                let ret = "";
+                let configs = Enumerable.From(Model.Configs).Where(c => c.ConfigName == configName).ToArray();
+                if (configs.length > 0)
+                    ret = configs[0].ConfigValue;
+                return ret;
+            }
+        }
+        function EnvironmentChanged(optionVal) {
+            if (optionVal == 'dev') {
+
+                Apps.Components.BPL.Actions.Run(Model.ConfigValue('DevGetAllAppsActionID'), function (apps) {
+                    ShowApps('dev', data);
+                });
+
+            }
+            else if (optionVal == 'live') {
+
+                Apps.Components.BPL.Actions.Run(Model.ConfigValue('LiveGetAllAppsActionID'), function (apps) {
+                    ShowApps('live', data);
+                });
+
+            }
+        }
+        function ShowApps(environment, data) {
+
+        }
+    </script>
+</head>
+<body>
+
+    <div>
+        <div>
+            <select onchange="EnvironmentChanged($(this).val());">
+                <option value="-1">Select An Environment</option>
+                <option value="dev">Dev</option>
+                <option value="live">Live</option>
+            </select>
+        </div>
+    </div>
+</body>
+</html>

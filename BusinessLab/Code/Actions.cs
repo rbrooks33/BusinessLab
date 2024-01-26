@@ -61,7 +61,7 @@ namespace BusinessLab
 
             string actionName = "[no name]";
 
-            var action = Data.GetAction(actionId, ref result);
+            var action = Code.Data.GetAction(actionId, ref result);
 
             if (result.Success)
             {
@@ -113,23 +113,23 @@ namespace BusinessLab
                         {
                             string sql = action.Sql;
 
-                            if (Data.UsingDB == Data.UseDB.Dev || Data.UsingDB == Data.UseDB.Live)
-                            {
-								var sqlParameters = new List<SqlParameter>();
+       //                     if (Code.Data.UsingDB == Data.UseDB.Dev || Data.UsingDB == Data.UseDB.Live)
+       //                     {
+							//	var sqlParameters = new List<SqlParameter>();
 
-								foreach (var p in result.Params)
-								{
-									if (p.Name != "RequestName" && p.Name != "ActionID")
-									{
-										var param = new SqlParameter(action.VariableDelimiter + p.Name.ToString(), p.Value.ToString());
-										sqlParameters.Add(param);
-									}
-								}
+							//	foreach (var p in result.Params)
+							//	{
+							//		if (p.Name != "RequestName" && p.Name != "ActionID")
+							//		{
+							//			var param = new SqlParameter(action.VariableDelimiter + p.Name.ToString(), p.Value.ToString());
+							//			sqlParameters.Add(param);
+							//		}
+							//	}
 
-								result.Data = Data.Execute(sql, sqlParameters.ToArray());
-							}
-							else
-                            {
+							//	result.Data = Data.Execute(sql, sqlParameters.ToArray());
+							//}
+							//else
+       //                     {
 
 
                                 var parameters = new List<Microsoft.Data.Sqlite.SqliteParameter>();
@@ -143,8 +143,8 @@ namespace BusinessLab
                                     }
                                 }
 
-                                result.Data = Data.Execute(sql, parameters.ToArray());
-                            }
+                                result.Data = Code.Data.Execute(sql, parameters.ToArray());
+                            //}
                             result.Success = true;
                         }
                         else result.FailMessages.Add("Either Sql or Variable Delimiter empty.");
@@ -223,7 +223,7 @@ namespace BusinessLab
                 //}
 
                 sql = (String.IsNullOrEmpty(sql) ? "select 'empty sql'" : sql);
-                result.Data = Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(sql, parameters.ToArray()));
+                result.Data = Code.Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(sql, parameters.ToArray()));
                 result.Success = true;
             }
             else result.FailMessages.Add("Arg sCode null or empty.");
@@ -239,7 +239,7 @@ namespace BusinessLab
                     ('New Action', 'Description')
                     
                     ";
-            result.Data = Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
+            result.Data = Code.Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
 
             result.Success = true;
         }
@@ -263,7 +263,7 @@ namespace BusinessLab
                     where actionid = {actionid}
                     
                     ";
-                result.Data = Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
+                result.Data = Code.Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
                 result.Success = true;
             }
 
@@ -285,7 +285,7 @@ namespace BusinessLab
                     where actionid = {actionid}
                     
                     ";
-                result.Data = Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
+                result.Data = Code.Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
                 result.Success = true;
             }
         }

@@ -6,7 +6,7 @@
             callback();
         },
         Refresh: function (destinationSelector) {
-            Me.Root.Actions.Run(18, function (apps) {
+            Me.Root.Actions.Run(Me.Root.Model.Configs.DevGetAllAppsActionID, function (apps) {
 
                 //Get other connections
                 Me.Root.Actions.Run(11, function (connections) {

@@ -18,24 +18,34 @@
 
                 Me.Model.Configs = data.Data;
 
+
                 //Me.UI.HideAll();
 
                 Me.Dashboard.Show();
+
+                Me.ShowHeroHeader();
 
                 Me.StartComponents();
 
                 //Apps.AutoBind();
 
+
                 Apps.Components.Helpers.PushHub.Subscriber().Publish('AppLoaded', true); //Notify app finished loading
 
-                Apps.Components.Helpers.Debug.Init();
+                //Apps.Components.Helpers.Debug.Init();
                 //$('#contentDebug').show();
-                Apps.Components.Helpers.Debug.UI.Show(400);
+                //Apps.Components.Helpers.Debug.UI.Show(400);
 
                 //Apps.Require(['/Scripts/Apps/Resources/funcunit.js'], function (funcunit) { });
                 //    if (Me.Model.LoggedInAs == 0)
                 //        Me.ShowUsersDialog();
             });
+        },
+        ShowHeroHeader: function () {
+            $.each($('.HeaderHeroHtml'), function (i, h) {
+                $(h).html(Me.ConfigValue('HeaderHeroHtml'));
+            });
+
         },
         UseBuiltInDB: function () {
 
@@ -177,6 +187,14 @@
 
             $('#Main_Modal_Background').hide();
         },
+        ConfigValue: function (configName) {
+            let ret = "";
+            let configs = Enumerable.From(Me.Model.Configs).Where(c => c.ConfigName == configName).ToArray();
+            if (configs.length > 0)
+                ret = configs[0].ConfigValue;
+            return ret;
+        },
+
         Model: {
             Users: [],
             LoggedInAs: 0,

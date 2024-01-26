@@ -48,7 +48,7 @@ namespace BusinessLab
 
 
 			//Set up jobs
-			var actions = Data.Execute<List<Actions.Action>>("SELECT * FROM Actions", ref result);
+			var actions = Code.Data.Execute<List<Actions.Action>>("SELECT * FROM Actions", ref result);
 
 			foreach (var action in actions)
 			{

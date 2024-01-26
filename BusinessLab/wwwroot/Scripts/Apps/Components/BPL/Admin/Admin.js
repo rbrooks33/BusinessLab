@@ -10,6 +10,7 @@
             Me.UI.Drop();
             Me.UI.HideAll(); //Hides all but me
             Apps.BindHTML(Me.UI.Selector, Me, true);
+            Me.Root.ShowHeroHeader();
         },
         Start: function () {
 

@@ -10,6 +10,7 @@
             Me.UI.Drop();
             Me.UI.HideAll(); //Hides all but me
             //Me.ShowComponents();
+            Me.Root.ShowHeroHeader();
 
             Me.Model.JSEditor = ace.edit('JSEditorViewer', {
                 autoScrollEditorIntoView: false,

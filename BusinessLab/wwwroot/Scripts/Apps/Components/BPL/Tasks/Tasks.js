@@ -9,6 +9,7 @@
             Me.UI.HideAll(); //Hides all but me
             Me.TaskTable.Create(Me.Controls.TaskTableHTML.Selector);
             Apps.Components.Helpers.Debug.UI.Show();
+            Me.Root.ShowHeroHeader();
         },
         Start: function () {
         },

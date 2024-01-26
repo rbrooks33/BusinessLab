@@ -28,6 +28,7 @@
             Me.UI.HideAll(); //Hides all but me and debug
             Apps.BindHTML(Me.UI.Selector, Me, true);
             //Apps.Components.Helpers.Debug.UI.Show();
+            Me.Root.ShowHeroHeader();
 
         },
         Edit: function (action) {

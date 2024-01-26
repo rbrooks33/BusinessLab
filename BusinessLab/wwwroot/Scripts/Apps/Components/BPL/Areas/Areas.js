@@ -4,7 +4,8 @@ Apps.Define([], function () {
         Root: Apps.Components.BPL,
         Post: Apps.Components.BPL.Data.Posts.Main,
        Initialize: function (callback) {
-            Me.UI.Drop();
+           Me.UI.Drop();
+           Me.Root.ShowHeroHeader();
             callback();
         },
         Start: function () {
