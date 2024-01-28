@@ -9,10 +9,13 @@
         GetTable: function (callback) {
             let args = Apps.Data.GetPostArgs('GetSoftware');
             Apps.Data.ExecutePostArgs(args, function (post) {
-                let softwareTableHTML = Me.SoftwareTable.Create(post.Data);
+                let softwareTableHTML = Me.SoftwareTable.Refresh(post.Data);
                 if (callback)
                     callback(softwareTableHTML);
             });
+        },
+        Save: function () {
+
         }
     };
     return Me;

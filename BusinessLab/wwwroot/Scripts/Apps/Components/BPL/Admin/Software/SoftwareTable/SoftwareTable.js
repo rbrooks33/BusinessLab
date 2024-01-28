@@ -3,7 +3,7 @@
         Initialize: function (callback) {
             callback(); 
         },
-        Create: function (software) {
+        Refresh: function (software) {
 
             var settings =
             {
@@ -12,7 +12,7 @@
                 title: "Managed Software",
                 tablestyle: "margin:50px;width:85%;",
                 savecallback: function (obj, fieldName) {
-                    Apps.Components.BPL.Admin.Software.Save(obj);
+                    Apps.Components.BPL.Admin.Software.SoftwareTable.Save(obj, fieldName);
                 },
                 tableactions: [
                     {
@@ -50,7 +50,22 @@
             };
 
             return Apps.Grids.GetTable(settings);
-        }
+        },
+        Save: function (obj, changedFieldName) {
+
+            let argParams = [
+                { Name: "SoftwareID", Value: obj.SoftwareID.toString() },
+                { SoftwareName: obj.SoftwareName }
+            ];
+
+            Me.Root.Actions.Run(24, function () {
+                Me.Controls.PropertiesTableHTML.Refresh();
+            }, argParams);
+
+            Apps.Notify('info', 'Saved ' + changedFieldName);
+
+        },
+
     };
     return Me;
 })
