@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Reflection.PortableExecutable;
 using static BusinessLab.Result;
+using BusinessLab.Code;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -124,6 +125,9 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 					case "GetContent": Editors.GetContent(ref result); break;
 
 					case "GetConfigs": result.Data = BusinessLab.Code.Data.Execute("SELECT * FROM Configs", null, true); result.Success = true; break;
+
+					case "GetCloudQueue": CloudQueue.GetCloudQueue(ref result); break;
+					case "UpsertCloudQueue": CloudQueue.UpsertCloudQueue(ref result); break;
 
 					default:
 						result.FailMessages.Add("No handler for requestname value " + requestName.Single().Value);

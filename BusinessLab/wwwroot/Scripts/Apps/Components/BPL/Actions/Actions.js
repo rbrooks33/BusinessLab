@@ -102,22 +102,28 @@
 
                 case 'PS':
 
-                    args.Data = Data = {
+                    args.Data = {
                         ActionID: action.ActionID.toString(),
                         Code: escape(Me.PSEditor.getValue())
-                    }
+                    };
 
                     break;
 
                 case 'SQL':
 
-                    args.Data = Data = {
+                    args.Data = {
                         ActionID: action.ActionID.toString(),
                         Code: Me.SqlEditor.getValue()
-                    }
+                    };
 
                     break;
 
+                case 'CSharp':
+
+                    args.Data = {
+                        ActionID: action.ActionID.toString(),
+                        Code: Me.CSharpEditor.getValue()
+                    };
 
             }
             Apps.Data.ExecutePostArgs(args, function (post) {
@@ -130,6 +136,9 @@
                     else if (Me.Model.EditedAction.EditorType == 'SQL') {
                         let html = Apps.Components.Helpers.Controls.QuickTable.GetTable(post.Data);
                         Me.Controls.EditedAction.ActionOutput.Selector.html(html);
+                    }
+                    else if (Me.Model.EditedAction.EditorType == 'CSharp') {
+                        Me.Controls.EditedAction.ActionOutput.Selector.html(post.Data);
                     }
                 }
                 else
