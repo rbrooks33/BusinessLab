@@ -15,6 +15,13 @@ var builder = WebApplication.CreateBuilder(args);
 //app.MapGet("/", () => "Hello World!");
 //Workflow.Start();
 
+builder.Services.AddHttpClient("HttpClientWithSSLUntrusted").ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+	ClientCertificateOptions = ClientCertificateOption.Manual,
+	ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+			
+}); ;
+
 
 //QUARTX
 builder.Services.AddQuartz(q =>

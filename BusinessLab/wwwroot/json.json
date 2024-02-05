@@ -1,111 +1,53 @@
 {
-	"Id": "00000000-0000-0000-0000-000000000000",
-	"LogicalName": "lead",
-	"Attributes": [
+	"FirstName": "Rom",
+	"LastName": "Hirsch",
+	"Email": "Romhi@post.bgu.ac.il",
+	"Company": "Ben Gurion University of the Negev",
+	"CompanyDivision": "",
+	"CompanyWebsite": "",
+	"Telephone": "503533410",
+	"TelephoneExtension": "",
+	"Street": "Beer Sheva Blvd 1",
+	"Street2": "",
+	"City": "Beer Sheva",
+	"State": "",
+	"Zip": "84105 ",
+	"Country": "Israel",
+	"JobLevel": null,
+	"JobFunction": null,
+	"Gclid": "",
+	"QuoteID": 82282,
+	"QuoteSource": "Request a Quote",
+	"Items": [
 		{
-			"Key": "subject",
-			"Value": "Request a Quote"
-		},
-		{
-			"Key": "firstname",
-			"Value": "Rodney"
-		},
-		{
-			"Key": "lastname",
-			"Value": "Test"
-		},
-		{
-			"Key": "emailaddress1",
-			"Value": "rbrooks@atecorp.com"
-		},
-		{
-			"Key": "companyname",
-			"Value": "Brooks Landscaping Test Company"
-		},
-		{
-			"Key": "websiteurl",
-			"Value": ""
-		},
-		{
-			"Key": "telephone1",
-			"Value": "6195001611"
-		},
-		{
-			"Key": "address1_telephone1",
-			"Value": "6195001611"
-		},
-		{
-			"Key": "address1_line1",
-			"Value": "195 Elder Ave"
-		},
-		{
-			"Key": "address1_line2",
-			"Value": ""
-		},
-		{
-			"Key": "address1_city",
-			"Value": "Imperial Beach"
-		},
-		{
-			"Key": "address1_stateorprovince",
-			"Value": "AZ"
-		},
-		{
-			"Key": "address1_postalcode",
-			"Value": "91932"
-		},
-		{
-			"Key": "address1_country",
-			"Value": "United States"
-		},
-		{
-			"Key": "new_gclid",
-			"Value": ""
-		},
-		{
-			"Key": "description",
-			"Value": ""
-		},
-		{
-			"Key": "estimatedclosedate",
-			"Value": "2024-01-23T09:22:55.5748821-08:00"
-		},
-		{
-			"Key": "new_rentallength",
-			"Value": "WeekRent_RENTRETWKY"
-		},
-		{
-			"Key": "new_testequipment",
-			"Value": ""
-		},
-		{
-			"Key": "new_testrequirement",
-			"Value": ""
-		},
-		{
-			"Key": "new_referraltext",
-			"Value": ","
-		},
-		{
-			"Key": "new_calibration",
-			"Value": { "Value": 4 }
-		},
-		{
-			"Key": "donotsendmm",
-			"Value": false
-		},
-		{
-			"Key": "new_referringurl",
-			"Value": "http://www.example.com"
-		},
-		{
-			"Key": "new_webquoteid",
-			"Value": 41850
+			"ColumnNames": [],
+			"Quantity": 1,
+			"CRMID": "HUGH-8010H01F000",
+			"SkuName": "Hughes 8010H (10 Watt) Series Microwave TWT Amplifiers",
+			"ProductInfo": "",
+			"AccessoryNames": [],
+			"AccessoriesCRMID": [ "" ],
+			"AddOnCRMID": [ "" ],
+			"isConfigCRM": true,
+			"URL": "//www.atecorp.com/products/hughes/8010h-10-watt-series"
 		}
 	],
-	"EntityState": null,
-	"FormattedValues": [],
-	"RelatedEntities": [],
-	"RowVersion": null,
-	"KeyAttributes": []
+	"IncompleteItem": null,
+	"AdditionalNeeds": "",
+	"EstimatedDate": null,
+	"RentalLength": "",
+	"WhatTesting": "",
+	"WhatRegulation": "",
+	"LevelCalibration": null,
+	"Referral": null,
+	"Subscribe": true,
+	"ReferringUrl": "http://www.example.com",
+	"Description": "",
+	"OrderInfo": "Items: {[1 X HUGH-8010H01F000 : Hughes 8010H (10 Watt) Series Microwave TWT Amplifiers : ]}\r\n",
+	"ReSubmitDescription": null,
+	"JobLevelText": "",
+	"JobFunctionText": "",
+	"ReferralText": ",",
+	"RentalLengthText": "",
+	"LevelCalibrationText": ""
 }
