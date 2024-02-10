@@ -35,28 +35,6 @@ namespace BusinessLab
 		public object Data { get; set; }
 		public ExpandoObject ExpandoData { get; set; }
 		public dynamic DynamicData { get; set; }
-		public void AddParam(string name, string value)
-		{
-			var existingParams = Params.Where(p => p.Name == name);
-
-			if (existingParams.Count() == 0)
-			{
-				//Add
-				Params.Add(new Param { Name = name, Value = value });
-			}
-			else if (existingParams.Count() == 1)
-			{
-				//Update value only
-				existingParams.Single().Value = value;
-			}
-			else if(existingParams.Count() > 1) 
-			{ 
-				//Delete all but one and update that one
-				Params.Clear();
-				Params.Add(new Param { Name = name, Value = value });
-			}
-
-		}
 		public void AddSqliteParam(string name, string value)
 		{
 			SqliteParams.Add(new SqliteParameter(name, value));
@@ -64,6 +42,10 @@ namespace BusinessLab
 		public SqliteParameter[]? GetSqliteParamArray()
 		{
 			return SqliteParams.ToArray();
+		}
+		public void AddParam(string name, string value)
+		{
+			Params.Add(new Param { Name = name, Value = value });
 		}
 		public bool ParamExists(string paramName)
 		{
