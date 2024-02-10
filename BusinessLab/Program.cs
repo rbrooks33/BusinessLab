@@ -150,7 +150,7 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
     catch (System.Exception ex)
     {
         result.FailMessages.Add("api exception: " + ex.Message + ". See exception logs for more information.");
-        Logs.Add(3, "Exception stack trace", ex.ToString(), ref result, Logs.LogSeverity.Exception);
+        Logs.Add(4, "Exception stack trace", ex.ToString(), ref result, Logs.LogSeverity.Exception);
 
     }
 
