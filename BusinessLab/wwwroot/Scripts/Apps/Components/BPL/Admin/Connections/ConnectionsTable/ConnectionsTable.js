@@ -44,12 +44,14 @@
                         Apps.Grids.GetField('ConnectionID'),
                         Apps.Grids.GetField('ConnectionName'),
                         Apps.Grids.GetField('ConnectionTypeID'),
+                        Apps.Grids.GetField('ConnectionTypeName'),
                         Apps.Grids.GetField('Properties')
                     ],
                     columns: [
                         Apps.Grids.GetColumn("ConnectionID", "ID"),
                         Apps.Grids.GetColumn("ConnectionName", "Name"),
-                        Apps.Grids.GetColumn('ConnectionTypeID', 'Connection Type'),
+                        Apps.Grids.GetColumn('ConnectionTypeID', 'Connection Type ID'),
+                        Apps.Grids.GetColumn('ConnectionTypeName', 'Connection Type'),
                         Apps.Grids.GetColumn("Properties", "Properties")
                     ]
                 };
