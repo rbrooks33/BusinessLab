@@ -1,8 +1,15 @@
 ﻿<div data-bind-template="BPLHeader"></div>
-<div class="Home_Stage_Title">
-    Dashboard
+<div style="display:flex;">
+    <div class="Home_Stage_Title">
+        Dashboard
+    </div>
+    <div class="btn-group" style="display: inline-table; margin-top: 31px; right: 17px; position: absolute;">
+        <div class="btn btn-outline-secondary" onclick="Apps.Components.BPL.Dashboard.Refresh();">Refresh</div>
+        <div class="btn btn-outline-secondary" onclick="Apps.Components.BPL.Dashboard.TimerEnable();">Enable</div>
+        <div class="btn btn-outline-secondary" onclick="Apps.Components.BPL.Dashboard.TimerDisable();">Disable</div>
+    </div>
 </div>
-<div style="margin:30px;">
+<div style="margin: 30px; margin-top: 15px;">
     <div data-bind-property="DashboardHTML" data-bind-type="html" style="display: flex;"></div>
 </div>
 

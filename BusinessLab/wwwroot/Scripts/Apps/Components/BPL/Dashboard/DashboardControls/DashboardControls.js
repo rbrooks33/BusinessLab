@@ -7,7 +7,9 @@
         },
         Model: {
             DashboardHTML: '',
-            SelectedAppLogs: []
+            SelectedAppLogs: [],
+            TimerEnabled: false,
+            TimerIntervalID :0
         },
         Controls: {
             DashboardHTML: {
@@ -17,7 +19,14 @@
                         Me.Parent.AppList = apps;
                         let thumbnailHtml = '';
                         $.each(apps, function (i, a) {
-                            thumbnailHtml += Me.Parent.UI.Templates.Apps_AppThumbnail.HTML([a.AppName, a.AppDescription, a.AppID, a.LogSeverity, 1]);
+                            thumbnailHtml += Me.Parent.UI.Templates.Apps_AppThumbnail.HTML(
+                                [
+                                    a.AppName,
+                                    a.AppDescription,
+                                    a.AppID,
+                                    a.LogSeverity,
+                                    1
+                                ]);
                         });
                         thisSelector.html(thumbnailHtml);
                     });
