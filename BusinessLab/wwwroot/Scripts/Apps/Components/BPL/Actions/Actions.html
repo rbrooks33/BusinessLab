@@ -3,7 +3,7 @@
     Actions
 </div>
 
-<div data-bind-property="BPLActionsHomePage"></div>
+<div data-bind-property="BPLActionsHomePage" class="ActionsHome"></div>
 
 <script id="BPL_Actions_EditPage_Template" type="text/template">
 
@@ -15,6 +15,8 @@
         -->
     <h4>Action #{0}: {1}</h4>
     <p>{2}</p>
+    <h4>Connection</h4>
+    <select data-bind-property="EditedAction.ConnectionID" class="form-control"></select>
 
     <h4>Unique ID</h4>
     <input type="text" data-bind-property="EditedAction.UniqueID" class="form-control" />

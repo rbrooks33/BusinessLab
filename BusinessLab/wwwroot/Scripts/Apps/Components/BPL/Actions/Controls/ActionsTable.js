@@ -38,30 +38,30 @@
                     Apps.Grids.GetField('ActionID'),
                     Apps.Grids.GetField('ActionName'),
                     Apps.Grids.GetField('ActionDescription'),
-                    Apps.Grids.GetField('SuccessActionID'),
-                    Apps.Grids.GetField('SuccessActionDescription'),
-                    Apps.Grids.GetField('FailActionID'),
-                    Apps.Grids.GetField('FailActionDescription'),
-                    Apps.Grids.GetField('UniqueID'),
-                    Apps.Grids.GetField('RepeatQuantity'),
-                    Apps.Grids.GetField('RepeatIntervalSeconds'),
-                    Apps.Grids.GetField('CronSchedule')
+                    Apps.Grids.GetField('ConnectionID')
+                //    Apps.Grids.GetField('SuccessActionDescription'),
+                //    Apps.Grids.GetField('FailActionID'),
+                //    Apps.Grids.GetField('FailActionDescription'),
+                //    Apps.Grids.GetField('UniqueID'),
+                //    Apps.Grids.GetField('RepeatQuantity'),
+                //    Apps.Grids.GetField('RepeatIntervalSeconds'),
+                //    Apps.Grids.GetField('CronSchedule')
                 ],
                 columns: [
                     Apps.Grids.GetColumn("ActionID", "ID"),
                     Apps.Grids.GetColumn("ActionName", "Action"),
                     Apps.Grids.GetColumn("ActionDescription", "Description"),
-                    Apps.Grids.GetColumn("SuccessActionID", "Yes Action"),
-                    Apps.Grids.GetColumn("SuccessActionDescription", "Yes Description"),
-                    Apps.Grids.GetColumn("FailActionID", "No Action"),
-                    Apps.Grids.GetColumn("FailActionDescription", "No Description"),
-                    Apps.Grids.GetColumn("UniqueID", "Tag"),
-                    Apps.Grids.GetColumn("RepeatQuantity", "Repeat Times"),
-                    Apps.Grids.GetColumn("RepeatIntervalSeconds", "Repeat Interval (Seconds)"),
-                    Apps.Grids.GetColumn("CronSchedule", "Custom Schedule (CRON)")
-                //    Me.GetColumn("IsJob", "Is Job", function (action) {
-                //        return action.IsJob ? 'Yes' : 'No';
-                //    })
+                    Apps.Grids.GetColumn("ConnectionID", "Connection")
+                //    Apps.Grids.GetColumn("SuccessActionDescription", "Yes Description"),
+                //    Apps.Grids.GetColumn("FailActionID", "No Action"),
+                //    Apps.Grids.GetColumn("FailActionDescription", "No Description"),
+                //    Apps.Grids.GetColumn("UniqueID", "Tag"),
+                //    Apps.Grids.GetColumn("RepeatQuantity", "Repeat Times"),
+                //    Apps.Grids.GetColumn("RepeatIntervalSeconds", "Repeat Interval (Seconds)"),
+                //    Apps.Grids.GetColumn("CronSchedule", "Custom Schedule (CRON)")
+                ////    Me.GetColumn("IsJob", "Is Job", function (action) {
+                ////        return action.IsJob ? 'Yes' : 'No';
+                ////    })
                 ]
             };
 
