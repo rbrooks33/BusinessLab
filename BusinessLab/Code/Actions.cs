@@ -1,14 +1,13 @@
 ﻿
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
-using BusinessLab;
-using System.Text;
 using Microsoft.Data.SqlClient;
+using Microsoft.ApplicationInsights.AspNetCore;
+using Microsoft.Data.Sqlite;
+using System.Data;
 
 namespace BusinessLab
 {
-    public class Actions
+	public class Actions
     {
         public class Action
         {
@@ -37,6 +36,7 @@ namespace BusinessLab
             public int RepeatQuantity { get; set; } = int.MinValue;
             public int RepeatIntervalSeconds { get; set; } = int.MinValue;
             public string CronSchedule { get; set; } = string.Empty;
+            public int ConnectionID { get; set; } = 0;
         }
         public static string _myusings = @"
             using BusinessLab;
@@ -44,8 +44,72 @@ namespace BusinessLab
             using System.Collections.Generic;
             using Newtonsoft.Json;
         ";
+		public static Actions.Action GetAction(string actionIdString, ref Result result)
+		{
+			var resultAction = new Actions.Action();
 
-        public static void RunAction(ref Result result)
+			if (int.TryParse(actionIdString, out int actionId))
+			{
+				resultAction = GetAction(actionId, ref result);
+			}
+			else
+			{
+				result.FailMessages.Add("Unable to parse action string " + actionIdString);
+			}
+			return resultAction;
+		}
+
+		public static Actions.Action GetAction(int actionId, ref Result result)
+		{
+			var resultAction = new Actions.Action();
+
+            var dt = Code.Data.ExecuteCSSqlite($"SELECT * FROM Actions WHERE ActionID = {actionId}", null);
+
+			//using (var db = new SqliteConnection(Resource.SqliteConnectionString))
+			//{
+			//	db.Open();
+			//	var command = db.CreateCommand();
+			//	command.CommandText = $"SELECT * FROM Actions WHERE ActionID = {actionId}";
+
+			//	using (var reader = command.ExecuteReader())
+			//	{
+			//		var dt = new DataTable();
+			//		dt.Load(reader);
+
+					int.TryParse(dt.Rows[0]["SuccessActionID"].ToString(), out int successActionId);
+					int.TryParse(dt.Rows[0]["FailActionID"].ToString(), out int failActionId);
+					int.TryParse(dt.Rows[0]["RepeatIntervalSeconds"].ToString(), out int repeatIntervalSeconds);
+					int.TryParse(dt.Rows[0]["RepeatQuantity"].ToString(), out int repeatQuantity);
+
+					resultAction.Code = dt.Rows[0]["Code"].ToString();
+					resultAction.CodeCMD = dt.Rows[0]["CodeCMD"].ToString();
+					resultAction.CodePS = dt.Rows[0]["CodePS"].ToString();
+					resultAction.UniqueID = dt.Rows[0]["UniqueID"].ToString();
+					resultAction.ActionName = dt.Rows[0]["ActionName"].ToString();
+					resultAction.ActionID = actionId;
+					resultAction.ActionDescription = dt.Rows[0]["ActionDescription"].ToString();
+					resultAction.CronSchedule = dt.Rows[0]["CronSchedule"].ToString();
+					resultAction.EditorType = dt.Rows[0]["EditorType"].ToString();
+					resultAction.FailActionDescription = dt.Rows[0]["FailActionDescription"].ToString();
+					resultAction.SuccessActionDescription = dt.Rows[0]["SuccessActionDescription"].ToString();
+					resultAction.SuccessActionID = successActionId; // dt.Rows[0]["SuccessActionID"].ToString();
+					resultAction.FailActionID = failActionId; // dt.Rows[0]["FailActionID"].ToString();
+					resultAction.RepeatIntervalSeconds = repeatIntervalSeconds; // dt.Rows[0]["RepeatIntervalSeconds"].ToString();
+					resultAction.RepeatQuantity = repeatQuantity; // repeat dt.Rows[0]["RepeatQuantity"].ToString();
+					resultAction.Sql = dt.Rows[0]["Sql"].ToString();
+					resultAction.VariableDelimiter = dt.Rows[0]["VariableDelimiter"].ToString();
+					resultAction.ConnectionID = Convert.ToInt32(dt.Rows[0]["ConnectionID"]);
+
+					//result.Data = JsonConvert.SerializeObject(dt.Rows[0]);
+					//resultAction = JsonConvert.DeserializeObject<BusinessLab.Actions.Action>(result.Data.ToString()); // (T)Convert.ChangeType(result.Data, typeof(T));
+					result.Success = true;
+			//	}
+			//}
+
+			return resultAction;
+		}
+
+		public static void RunAction(ref Result result)
         {
             //End point call
             if(result.ParamExists("ActionID", Result.ParamType.Int))
@@ -61,7 +125,7 @@ namespace BusinessLab
 
             string actionName = "[no name]";
 
-            var action = Code.Data.GetAction(actionId, ref result);
+            var action = GetAction(actionId, ref result);
 
             if (result.Success)
             {
@@ -113,25 +177,27 @@ namespace BusinessLab
                         {
                             string sql = action.Sql;
 
-       //                     if (Code.Data.UsingDB == Data.UseDB.Dev || Data.UsingDB == Data.UseDB.Live)
-       //                     {
-							//	var sqlParameters = new List<SqlParameter>();
+                            if(action.ConnectionID > 0)
+                            {
+                                string sqlConnections = "SELECT ConnectionString FROM BPLConnections WHERE ConnectionID = " + action.ConnectionID.ToString();
+                                var dtConnection = Code.Data.ExecuteCSSqlite(sqlConnections, null);
+                                string cs = dtConnection.Rows[0][0].ToString();
 
-							//	foreach (var p in result.Params)
-							//	{
-							//		if (p.Name != "RequestName" && p.Name != "ActionID")
-							//		{
-							//			var param = new SqlParameter(action.VariableDelimiter + p.Name.ToString(), p.Value.ToString());
-							//			sqlParameters.Add(param);
-							//		}
-							//	}
+								var parameters = new List<SqlParameter>();
 
-							//	result.Data = Data.Execute(sql, sqlParameters.ToArray());
-							//}
-							//else
-       //                     {
+								foreach (var p in result.Params)
+								{
+									if (p.Name != "RequestName" && p.Name != "ActionID")
+									{
+										var param = new SqlParameter(action.VariableDelimiter + p.Name.ToString(), p.Value.ToString());
+										parameters.Add(param);
+									}
+								}
 
-
+								result.Data = Code.Data.ExecuteCSSqlServer(sql, cs, parameters.ToArray());
+                            }
+                            else
+                            {
                                 var parameters = new List<Microsoft.Data.Sqlite.SqliteParameter>();
 
                                 foreach (var p in result.Params)
@@ -142,8 +208,10 @@ namespace BusinessLab
                                         parameters.Add(param);
                                     }
                                 }
-
                                 result.Data = Code.Data.Execute(sql, parameters.ToArray());
+
+                            }
+
                             //}
                             result.Success = true;
                         }

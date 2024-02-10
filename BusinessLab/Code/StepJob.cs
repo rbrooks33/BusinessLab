@@ -31,7 +31,7 @@ namespace BusinessLab
                 Business.SendJobTraceMessage($"Executing Action #{name}.");
 
                 //Get job action and run
-                var action = Code.Data.GetAction(name, ref result);
+                var action = Actions.GetAction(name, ref result);
 
                 if (action.ActionID > 0)
                 {

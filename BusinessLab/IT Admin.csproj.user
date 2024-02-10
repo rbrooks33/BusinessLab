@@ -3,9 +3,4 @@
   <PropertyGroup>
     <NameOfLastUsedPublishProfile>C:\Work\Learning\BusinessLab2\BusinessLab\Properties\PublishProfiles\FolderProfile.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Data\Resource.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
 </Project>

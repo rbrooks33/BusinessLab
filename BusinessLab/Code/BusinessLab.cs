@@ -354,7 +354,7 @@ namespace BusinessLab
 
                 result.Params.Add(new Result.Param {  Name = "CorrelationID", Value = correlationId });
 
-                var action = Code.Data.GetAction(actionId.Value, ref result);
+                var action = Actions.GetAction(actionId.Value, ref result);
                 
                 apJob = JobBuilder.Create<StepJob>().WithIdentity(actionId.Value, correlationId).Build();
 
