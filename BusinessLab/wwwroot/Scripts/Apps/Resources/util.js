@@ -397,7 +397,7 @@
                 var name = eval("rtr." + textFieldName);
                 var selected = '';
                 if (id === selectedValue) {
-                    options += ' selected ';
+                    selected = ' selected ';
                 }
                 options += '<option value="' + id + '"' + selected + '>' + name + '</option>'; //).appendTo($('#' + cboID));
 
