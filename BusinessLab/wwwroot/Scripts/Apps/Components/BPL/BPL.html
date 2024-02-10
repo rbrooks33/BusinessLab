@@ -14,37 +14,38 @@
                 <span class="btn btn-warning btn-sm" onclick="Apps.Components.BPL.ShowUsersDialog();">I Am</span>
             </span>-->
 
-            <div class="dropdown">
-                <div class="btn btn-warning" style="margin-top: -2px;">Tools</div>
-                <div class="dropdown-content" style="z-index:999;">
-                    <a href="#" onclick="Apps.Components.BPL.UseBuiltInDB();">Use Local DB</a>
-                    <a href="#" onclick="Apps.Components.BPL.UseATECDevDB();">Use ATEC IT Dev</a>
-                    <a href="#" onclick="Apps.Components.BPL.UseATECLiveDB();">Use ATEC IT Staging/Live</a>
-                    <a href="#" onclick="Apps.Components.Apps.Tools.Common.Show();">Common Tools</a>
-                    <a href="#" onclick="Apps.Components.Apps.Publish.Tools.Show();">Permissions</a>
-                    <a href="#" onclick="Apps.Components.Home.Create.Templates.Show();">Templates</a>
-                    <a href="#" onclick="Apps.Components.Helpers.Docs.Show();">Docs</a>
-                    <a href="#" onclick="Apps.Components.Helpers.Login.Show();">Login</a>
-                    <a href="#" onclick="Apps.Components.Journal.Show();">Journal</a>
-                    <a href="#" onclick="Apps.Components.Helpers.Login.About();">About</a>
+            <div style=" position: relative; top: -70px;">
+                <div class="dropdown">
+                    <div class="btn btn-warning" style="margin-top: -2px;">Tools</div>
+                    <div class="dropdown-content" style="z-index:999;">
+                        <a href="#" onclick="Apps.Components.BPL.UseBuiltInDB();">Use Local DB</a>
+                        <a href="#" onclick="Apps.Components.BPL.UseATECDevDB();">Use ATEC IT Dev</a>
+                        <a href="#" onclick="Apps.Components.BPL.UseATECLiveDB();">Use ATEC IT Staging/Live</a>
+                        <a href="#" onclick="Apps.Components.Apps.Tools.Common.Show();">Common Tools</a>
+                        <a href="#" onclick="Apps.Components.Apps.Publish.Tools.Show();">Permissions</a>
+                        <a href="#" onclick="Apps.Components.Home.Create.Templates.Show();">Templates</a>
+                        <a href="#" onclick="Apps.Components.Helpers.Docs.Show();">Docs</a>
+                        <a href="#" onclick="Apps.Components.Helpers.Login.Show();">Login</a>
+                        <a href="#" onclick="Apps.Components.Journal.Show();">Journal</a>
+                        <a href="#" onclick="Apps.Components.Helpers.Login.About();">About</a>
+                    </div>
                 </div>
-            </div>
 
-            <div class="btn btn-warning" onclick="Apps.Components.Apps.Track.Events.ShowHide();" style="float:right;margin-right:5px;">Events</div>
+                <div class="btn btn-warning" onclick="Apps.Components.Apps.Track.Events.ShowHide();" style="float:right;margin-right:5px;">Events</div>
 
-            <!--<div class="btn btn-success" onclick="Apps.connection.invoke('SendMessage', 'hi', 'ya');">Send</div>-->
+                <!--<div class="btn btn-success" onclick="Apps.connection.invoke('SendMessage', 'hi', 'ya');">Send</div>-->
 
-            <div class="dropdown">
-                <div class="btn btn-warning" style="margin-top: -2px;">New</div>
-                <div class="dropdown-content" style="z-index:999">
-                    <a href="#" onclick="Apps.Components.Home.Create.List('software');">Software</a>
-                    <a href="#" onclick="Apps.Components.Apps.New('system');">New System</a>
-                    <a href="#" onclick="Apps.Components.Apps.New('app');">New App</a>
-                    <!--<a href="#" onclick="Apps.Components.Plan.Apps.Stories.New('story');">New Story</a>-->
+                <div class="dropdown">
+                    <div class="btn btn-warning" style="margin-top: -2px;">New</div>
+                    <div class="dropdown-content" style="z-index:999">
+                        <a href="#" onclick="Apps.Components.Home.Create.List('software');">Software</a>
+                        <a href="#" onclick="Apps.Components.Apps.New('system');">New System</a>
+                        <a href="#" onclick="Apps.Components.Apps.New('app');">New App</a>
+                        <!--<a href="#" onclick="Apps.Components.Plan.Apps.Stories.New('story');">New Story</a>-->
+                    </div>
                 </div>
+
             </div>
-
-
         </div>
 
         <div class="btn-group HeadsUp_StageButtons">

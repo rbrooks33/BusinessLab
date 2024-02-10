@@ -11,7 +11,20 @@
                     "Name": "Actions",
                     "Load": true,
                     "Initialize": true,
-                    "UI": true
+                    "UI": true,
+                    "Components": [
+                        {
+                            "Name": "ActionsControls",
+                            "Load": true,
+                            "Initialize":true
+                        },
+                        {
+                            "Name": "ActionsModel",
+                            "Load": true,
+                            "Initialize": true
+                        }
+
+                    ]
                 },
                 {
                     "Name": "Admin",
@@ -160,7 +173,21 @@
                     "Name": "Visuals",
                     "Load": true,
                     "Initialize": true,
-                    "UI": true
+                    "UI": true,
+                    "Components": [
+                        {
+                            "Name": "VisualsControls",
+                            "Load": true,
+                            "Initialize": true,
+                            "UI":false
+                        },
+                        {
+                            "Name": "VisualsModel",
+                            "Load": true,
+                            "Initialize": true
+                        }
+
+                    ]
                 }
 
             ]
