@@ -3,21 +3,28 @@
     Visuals
 </div>
 
-<div style="position:absolute;">
+<div style="position:absolute;width:100%">
     <div>
-        <div style="margin-left:20px;">Preview: Reload: <b>5s</b></div>
+        <div style="margin-left:10px;">Preview: Reload: <b>5s</b></div>
     </div>
     <div>
         <select data-bind-property="VisualsConnections" class="form-control"></select>
     </div>
-    <div style="display:flex">
+    <div style="display:flex;margin-top:20px;">
         <div class="EditorButtons" onclick="Apps.Components.BPL.Visuals.ShowCOMPONENTS();">Component Tree</div>
         <div class="EditorButtons" onclick="Apps.Components.BPL.Visuals.ShowHTML();">HTML</div>
         <div class="EditorButtons" onclick="Apps.Components.BPL.Visuals.ShowJS();">JS</div>
         <div class="EditorButtons" onclick="Apps.Components.BPL.Visuals.ShowCSS();">CSS</div>
         <div class="EditorButtons" onclick="Apps.Components.BPL.Visuals.ShowDATA();">Data</div>
         <div class="EditorButtons" onclick="Apps.Components.BPL.Visuals.ShowPREVIEW();">Preview</div>
-    </div>
+        <div>
+            Font: &nbsp;
+            <div onclick="Apps.Components.BPL.Visuals.ChangeFont(22);" class="btn btn-dark">22</div>
+            &nbsp;&nbsp;
+            <div onclick="Apps.Components.BPL.Visuals.ChangeFont(15);" class="btn btn-dark">15</div>
+            &nbsp;&nbsp;
+            <div onclick="Apps.Components.BPL.Visuals.ChangeFont(12);" class="btn btn-dark">12</div>
+        </div>
     <div>
         <div class="EditorViewers COMPONENTS"><div class="ComponentTree"></div></div>
         <div class="EditorViewers HTML"><div id="HTMLEditorViewer" class="ViewerStyle">hiya</div></div>

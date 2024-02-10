@@ -1,6 +1,6 @@
 ﻿.EditorButtons {
     border: 1px solid cornflowerblue;
-    width: 151px;
+    width: 127px;
     height: 30px;
     margin: 3px;
     text-align: center;
@@ -9,14 +9,15 @@
 
 .EditorViewers {
     border: 1px solid cornflowerblue;
-    width: 935px;
+    width: 100%;
     height: 600px;
     position: absolute;
     left: 3px;
+    top:135px
 }
 
 
 .ViewerStyle {
-    width: 932px;
+    width: 100%;
     height: 598px;
 }

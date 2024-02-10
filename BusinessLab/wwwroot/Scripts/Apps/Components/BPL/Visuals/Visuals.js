@@ -2,11 +2,12 @@
     let Me = {
         Root: Apps.Components.BPL,
         Post: Apps.Components.BPL.Data.Posts.Main,
-       
         Initialize: function (callback) {
             callback();
         },
         Show: function () {
+            Me.Controls = Me.VisualsControls.Controls;
+            Me.Model = Me.VisualsModel.Model;
             Me.UI.Drop();
             Me.UI.HideAll(); //Hides all but me
             //Me.ShowComponents();
@@ -37,6 +38,9 @@
             Me.Model.CSSEditor.session.setMode(new mode());
 
             Apps.BindHTML(Me.UI.Selector, Me, true);
+        },
+        ChangeFont: function (newFont) {
+            $('.ViewerStyle').css('font-size', newFont + 'px');
         },
         ShowComponents: function (componentsFilePath) {
 
@@ -179,6 +183,8 @@
         ShowPREVIEW: function () {
             $('.EditorViewers').hide();
             $('.EditorViewers.PREVIEW').show();
+
+            let w = window.open(Me.Model.SelectedURL,'_blank','width=800,height=800,popup=true');
         },
         ShowSubComponents: function (namespace, c) {
 
@@ -261,63 +267,6 @@
                 else
                     Apps.Notify('warning', 'Show components failed.');
             });
-        },
-
-        Model: {
-            VisualsConnections: '',
-            ConnectionProperties: [],
-            SelectedFolder: '',
-            JSEditor: {},
-            HTMLEditor: {},
-            CSSEditor: {}
-        },
-        Controls: {
-            VisualsConnections: {
-                Bound: function () {
-                    let thisSelector = this.Selector;
-                    Me.Root.Actions.Run(10, function (data) {
-                        Apps.Util.GetSelectOptions(data, 0, 'Select a Connection', 'ConnectionID', 'ConnectionName', function (options) {
-                            thisSelector.html(options);
-                        });
-                    });
-                },
-                Changed: function (propertyName, connetionId) {
-                    let argParams = [
-                        { Name: 'ConnectionTypeID', Value: '3' } 
-                    ]
-                    Me.Root.Actions.Run(11, function (data) {
-                        Me.Model.ConnectionProperties = data;
-
-                        //let previewWindow = window.open(data[1].Value, '_blank','location=yes,height=570,width=520,scrollbars=yes,status=yes');
-
-                        //Required format:
-                        //data[0] should be url of component's preview page
-                        //data[1] should be FOLDER of preview page
-
-                        Me.Model.SelectedURL = data[1].Value;
-                        Me.Model.SelectedFolder = data[0].Value;
-
-                        let componentPathArray = data[0].Value.split("\\");
-                        let componentName = componentPathArray[componentPathArray.length - 1];
-                        let args = Apps.Data.GetPostArgs('GetContent');
-                        args.Params.push({ Name: 'FolderPath', Value: data[0].Value });
-                        args.Params.push({ Name: 'ComponentName', Value: componentName });
-
-                        Apps.Data.ExecutePostArgs(args, function (post) {
-
-                            let jsContent = Enumerable.From(post.Result.Params).Where(p => p.Name == 'JSContent').ToArray()[0];
-                            let htmlContent = Enumerable.From(post.Result.Params).Where(p => p.Name == 'HTMLContent').ToArray()[0];
-                            let cssContent = Enumerable.From(post.Result.Params).Where(p => p.Name == 'CSSContent').ToArray()[0];
-
-                            Me.Model.JSEditor.setValue(jsContent.Value);
-                            Me.Model.HTMLEditor.setValue(htmlContent.Value);
-                            Me.Model.CSSEditor.setValue(cssContent.Value);
-                        });
-
-
-                    }, argParams);
-                }
-            }
         }
     };
     return Me;
