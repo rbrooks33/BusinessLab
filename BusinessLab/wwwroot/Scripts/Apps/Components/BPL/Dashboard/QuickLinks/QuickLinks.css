@@ -1,0 +1,15 @@
+﻿.QuickLinksBox {
+    width: 200px;
+    border: 3px solid #1961AE;
+    border-radius: 5px;
+}
+.QuickLinksHeader {
+    width: 100%;
+    height: 30px;
+    background-color: #1961AE;
+    color: white;
+    padding-left: 10px;
+}
+.QuickLinksContents{
+    padding:10px;
+}

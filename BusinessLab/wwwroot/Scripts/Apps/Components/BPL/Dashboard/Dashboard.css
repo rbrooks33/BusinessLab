@@ -1,4 +1,11 @@
-﻿.Apps_Thumbnail_MiniStatus {
+﻿.AppsHeader{
+    width: 100%;
+    height: 30px;
+    background-color: #1961AE;
+    color: white;
+    padding-left:10px;
+}
+.Apps_Thumbnail_MiniStatus {
     width: 35px;
     height: 14px;
     font-size: 10px;

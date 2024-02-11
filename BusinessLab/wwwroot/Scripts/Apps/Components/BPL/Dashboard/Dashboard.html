@@ -9,9 +9,18 @@
         <div class="btn btn-outline-secondary" onclick="Apps.Components.BPL.Dashboard.TimerDisable();">Disable</div>
     </div>
 </div>
-<div style="margin: 30px; margin-top: 15px;">
-    <div data-bind-property="DashboardHTML" data-bind-type="html" style="display: flex;"></div>
-</div>
+
+    <div style="margin: 30px; margin-top: 15px; width: 70vw; border: 3px solid #1961AE; border-radius: 5px;">
+        <div class="AppsHeader">Apps</div>
+        <div data-bind-property="DashboardHTML" data-bind-type="html" style="display: flex;padding:15px;"></div>
+        
+    </div>
+    <div style="width: 200px; position: absolute; top: 205px; right: 20px; ">
+        <div data-bind-property="QuickLinksHTML" data-bind-contenttype="html"></div>
+
+    </div>
+    <div>
+    </div>
 
 <script id="Apps_AppThumbnail" type="text/template">
 

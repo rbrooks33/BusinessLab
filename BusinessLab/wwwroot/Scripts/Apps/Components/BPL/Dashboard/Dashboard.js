@@ -7,7 +7,7 @@
         },
         Show: function () {
             Me.UI.HideAll(); //Hides all but me
-            Apps.BindHTML(Me.UI.Selector, Me.DashboardControls, true);
+            //Apps.BindHTML(Me.UI.Selector, Me.DashboardControls, true);
             Me.Root.ShowHeroHeader();
             //setInterval(Me.RefreshLogTotals, 5000);
         },

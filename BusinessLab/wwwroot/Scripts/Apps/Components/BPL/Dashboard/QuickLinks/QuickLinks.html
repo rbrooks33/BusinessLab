@@ -1,0 +1,16 @@
+﻿<script id="QuickLinksHTML_Template" type="text/template">
+    <div class="QuickLinksBox">
+        <div class="QuickLinksHeader">
+            Quick Links
+        </div>
+        <div data-bind-property="QuickLinksContents" class="QuickLinksContents"></div>
+    </div>
+</script>
+
+<script id="QuickLinksRow_Template" type="text/template">
+    <!--
+        0 = id
+        1 = name
+    -->
+    <a href="#" onclick="Apps.Components.BPL.Dashboard.QuickLinks.Click({0});">{1}</a>
+</script>

@@ -115,6 +115,13 @@
                             "Name": "DashboardControls",
                             "Load": true,
                             "Initialize": true
+                            
+                        },
+                        {
+                            "Name": "QuickLinks",
+                            "Load": true,
+                            "Initialize": true,
+                            "UI": true
                         }
                     ]
                 },

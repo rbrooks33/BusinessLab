@@ -27,7 +27,7 @@
 
                 Me.StartComponents();
 
-                //Apps.AutoBind();
+                Apps.AutoBind();
 
 
                 Apps.Components.Helpers.PushHub.Subscriber().Publish('AppLoaded', true); //Notify app finished loading
