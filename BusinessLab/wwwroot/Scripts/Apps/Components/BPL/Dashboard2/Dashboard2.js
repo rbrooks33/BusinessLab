@@ -23,19 +23,32 @@
                 Bound: function () {
 
                     let that = this;
-                    Me.Root.Areas.Get(function (data) {
+                    let html = '';
 
+                    Me.Root.Areas.Get(function (areas) {
+                        Me.Model.Areas = areas.Data;
 
-                        Me.Model.Areas = data.Data;
+                        Me.Root.Areas.Workflows.Get(function (workflows) {
+                            Me.Model.Workflows = workflows.Data;
 
-                        let html = '';
+                            Me.Root.Areas.Workflows.Steps.Get(function (steps) {
+                                Me.Model.Steps = steps.Data;
 
-                        $.each(Me.Model.Areas, function (i, a) {
-                            html += Me.UI.Templates.Dashboard_Area_Template.HTML([a.AreaID, a.AreaName]);    
+                                $.each(Me.Model.Areas, function (i, a) {
+
+                                    let workflowHtml = '';
+                                    let areaWorkflows = Enumerable.From(Me.Model.Workflows).Where(w => w.AreaID == a.AreaID).ToArray();
+
+                                    $.each(areaWorkflows, function (i, w) {
+                                        workflowHtml += Me.UI.Templates.Dashboard_WorkflowStatus_Template.HTML([w.WorkflowName]);
+                                    });
+                                    html += Me.UI.Templates.Dashboard_Area_Template.HTML([a.AreaID, a.AreaName, workflowHtml]);
+                                });
+                            });
                         });
 
                         that.Selector.html(html);
-                        
+
                     });
                 }
             } 

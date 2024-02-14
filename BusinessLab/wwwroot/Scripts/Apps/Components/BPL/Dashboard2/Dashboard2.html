@@ -8,6 +8,9 @@
     <!--
         0 = area id
         1 = area name
+        2 = workflow html
+        3 = apps html
+        4 = actions html
     -->
     <div class="DashboardAreaContainer">
         <div class="DashboardAreaTitle">{1}</div>
@@ -17,5 +20,35 @@
             <div class="DashboardAreaStatus DashboardStatus_Ugly"></div>
             <div class="DashboardAreaStatus DashboardStatus_Info"></div>
         </div>
+
+        <div class="DashboardWorkflowContainer">
+            <div style="font-size:1.5vw;font-weight:bold;">Workflows</div>
+            {2}
+        </div>
+
+        <div class="DashboardAppsContainer">
+            <div style="font-size: 1.5vw; font-weight: bold;">Apps</div>
+            {3}
+        </div>
+
+        <div class="DashboardActionsContainer">
+            <div style="font-size: 1.5vw; font-weight: bold;">Actions</div>
+            {4}
+        </div>
+
     </div>
+</script>
+
+<script id="Dashboard_WorkflowStatus_Template" type="text/template">
+    <!--
+    0 = workfow name    
+    -->
+    <div style="font-size:1.5vw;">{0}</div>
+    <div class="WorkflowStatusContainer">
+        <div class="DashboardWorkflowStatus DashboardStatus_Good"></div>
+        <div class="DashboardWorkflowStatus DashboardStatus_Bad"></div>
+        <div class="DashboardWorkflowStatus DashboardStatus_Ugly"></div>
+        <div class="DashboardWorkflowStatus DashboardStatus_Info"></div>
+    </div>
+
 </script>

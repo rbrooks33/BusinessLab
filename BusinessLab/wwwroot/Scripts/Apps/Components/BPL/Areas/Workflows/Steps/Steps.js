@@ -90,6 +90,13 @@
             //TODO: Depends on having called "Set"
             Me.SetHTML(Me.ParentName, Me.Data, Me.Selector);
         },
+        Get: function (callback) {
+            Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetSteps"), function (data) {
+                callback(data);
+            });
+
+        },
+
         Save: function (step) {
 
             let post = Apps.Components.Home.Main;

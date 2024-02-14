@@ -88,6 +88,16 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 					case "GetAreas": Areas.GetAreas(ref result); break;
 					case "UpsertArea": Areas.UpsertArea(ref result); break;
 
+					//Workflows
+					case "GetWorkflows": Workflows.GetWorkflows(ref result); break;
+					case "SaveWorkflow": Workflows.SaveWorkflow(ref result); break;
+					case "AddWorkflow": Workflows.AddWorkflow(ref result); break;
+
+					//Steps
+					case "GetSteps": Steps.GetSteps(ref result); break;
+					case "SaveStep": Steps.SaveStep(ref result); break;
+					case "AddStep": Steps.AddStep(ref result); break;
+
 					case "GetPreview": Business.GetPreview(ref result); break;
 					//Actions
 					case "GetActions": Business.GetActions(ref result); break;
@@ -98,12 +108,6 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 					case "TestActionCode": Actions.TestCode(scheduler, ref result); break;
 
 					case "TriggerJob": business.TriggerJob(ref result); break;
-					case "GetWorkflows": Business.GetWorkflows(ref result); break;
-					case "GetSteps": Business.GetSteps(ref result); break;
-					case "SaveWorkflow": Business.SaveWorkflow(ref result); break;
-					case "SaveStep": Business.SaveStep(ref result); break;
-					case "AddStep": Business.AddStep(ref result); break;
-					case "AddWorkflow": Business.AddWorkflow(ref result); break;
 					case "SendMessage": PushHub.SendMessage(hub, result, result.Message); break;
 
 

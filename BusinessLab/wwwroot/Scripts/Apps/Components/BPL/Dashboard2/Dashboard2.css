@@ -37,3 +37,13 @@
 .DashboardStatus_Info {
     background-color: white;
 }
+.DashboardWorkflowContainer {
+    margin-top: 20px;
+    margin-left: 2px;
+}
+.DashboardWorkflowStatus {
+    border: solid 1px #1961AE;
+    width: 2.7vw;
+    height: 8px;
+    display: table-cell;
+}

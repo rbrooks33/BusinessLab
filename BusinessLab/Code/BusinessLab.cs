@@ -159,16 +159,6 @@ namespace BusinessLab
 		//    result.Success = true;
 		//}
 
-		public static void GetWorkflows(ref Result result)
-		{
-			result.Data = Data.Execute($"SELECT * FROM Workflows", null);
-			result.Success = true;
-		}
-		public static void GetSteps(ref Result result)
-		{
-			result.Data = Data.Execute($"SELECT * FROM Steps ORDER BY StepOrder");
-			result.Success = true;
-		}
 
 		public static void GetActions(ref Result result)
 		{
@@ -253,57 +243,12 @@ namespace BusinessLab
                     result.FailMessages.Add("Data obj is null");
             }
         }
-		public static void SaveWorkflow(ref Result result)
-		{
-			result.ValidateData();
-			result.SqliteParams.Clear();
-
-			var workflow = JsonConvert.DeserializeObject<dynamic>(result.Data.ToString());
-
-				FormattableString sql = @$"
-                
-                UPDATE Workflows SET 
-                    WorkflowName = {workflow.WorkflowName.Value},
-                    WorkflowDescription = {workflow.WorkflowDescription.Value}
-                WHERE 
-                    WorkflowID = {workflow.WorkflowID.Value}";
-
-				result.Data = Data.Execute(sql);
-				result.Success = true;
-		}
         /// <summary>
         /// df sdf sdf sdfsdf
         /// <para name="result"></para>
         /// <see href="https://www.google.com">google</see>
         /// </summary>
         /// 
-		public static void SaveStep(ref Result result)
-		{
-			result.ValidateData();
-			result.SqliteParams.Clear();
-
-			if (result.ParamExists("StepID", Result.ParamType.Int))
-			{
-				result.AddSqliteParam("@StepID", (string)result.DynamicData.StepID);
-				result.AddSqliteParam("@StepName", (string)result.DynamicData.StepName);
-				result.AddSqliteParam("@StepDescription", (string)result.DynamicData.StepDescription);
-				result.AddSqliteParam("@FunctionalSpecs", (string)result.DynamicData.FunctionalSpecs);
-				result.AddSqliteParam("@StepOrder", (string)result.DynamicData.StepOrder);
-				result.AddSqliteParam("@Archived", (string)result.DynamicData.Archived);
-
-				Data.Execute($@"
-                        UPDATE Steps 
-                        SET StepName = @StepName, 
-                        StepDescription = @StepDescription,
-                        FunctionalSpecs = @FunctionalSpecs,
-                        StepOrder = @StepOrder,
-                        Archived = @Archived
-                        WHERE StepID = @StepID
-                    ", result.GetSqliteParamArray());
-
-				result.Success = true;
-			}
-		}
 
 		public static void AddAction(ref Result result)
         {
@@ -312,32 +257,6 @@ namespace BusinessLab
 			result.Success = true;
 		}
 
-		public static void AddWorkflow(ref Result result)
-		{
-			var areaIdParam = result.Params.Where(p => p.Name == "AreaID").SingleOrDefault();
-
-            if (areaIdParam != null)
-            {
-                FormattableString sql = $"INSERT INTO Workflows (WorkflowName, WorkflowDescription, AreaID) VALUES ('new workflow', '@nbsp;@nbsp;@nbsp;', {areaIdParam.Value})";
-                result.Data = Data.Execute(sql);
-                result.Success = true;
-            }
-            else
-                result.FailMessages.Add("AreaID was not included in parasm.");
-		}
-		public static void AddStep(ref Result result)
-		{
-            var workflowId = result.Params.Where(p => p.Name == "WorkflowID").SingleOrDefault();
-
-            if (workflowId != null)
-            {
-                FormattableString sql = $"INSERT INTO Steps (StepName, WorkflowID) VALUES ('new step', {workflowId.Value})";
-                result.Data = Data.Execute(sql);
-                result.Success = true;
-            }
-            else
-                result.FailMessages.Add("No workflow id provided.");
-		}
 		//Trigger simple, start now
 		public void TriggerJob(ref Result result)
         {
