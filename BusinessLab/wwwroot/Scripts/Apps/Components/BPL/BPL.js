@@ -13,7 +13,7 @@
         },
         Show: function () {
 
-            Me.Dashboard.Show();
+            Me.Dashboard2.Show();
 
             Me.ShowHeroHeader();
 

@@ -16,7 +16,7 @@
                         {
                             "Name": "ActionsControls",
                             "Load": true,
-                            "Initialize":true
+                            "Initialize": true
                         },
                         {
                             "Name": "ActionsModel",
@@ -75,7 +75,7 @@
                         {
                             "Name": "CloudQueue",
                             "Load": true,
-                            "Initialize":true
+                            "Initialize": true
                         }
                     ]
                 },
@@ -88,7 +88,7 @@
                         {
                             "Name": "AppsTable",
                             "Load": true,
-                            "Initialize":true
+                            "Initialize": true
                         }
                     ]
                 },
@@ -97,7 +97,7 @@
                     "Load": true,
                     "Initialize": true,
                     "UI": true,
-                    "Start":true,
+                    "Start": true,
                     "Components": [
                         {
                             "Name": "Workflows",
@@ -108,7 +108,7 @@
                                     "Name": "Steps",
                                     "Load": true,
                                     "Initialize": true,
-                                    "UI":true
+                                    "UI": true
                                 }
                             ]
                         }
@@ -124,7 +124,7 @@
                             "Name": "DashboardControls",
                             "Load": true,
                             "Initialize": true
-                            
+
                         },
                         {
                             "Name": "QuickLinks",
@@ -133,6 +133,12 @@
                             "UI": true
                         }
                     ]
+                },
+                {
+                    "Name": "Dashboard2",
+                    "Load": true,
+                    "Initialize": true,
+                    "UI":true
                 },
                 {
                     "Name": "Jobs",

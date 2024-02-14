@@ -101,57 +101,57 @@ namespace BusinessLab
 
         }
 
-		public static void GetAreas(ref Result result)
-        {
-			result.Data = Data.Execute($"SELECT * FROM Areas");
-			result.Success = true;
-		}
-        public static void UpsertArea(ref Result result)
-        {
-			result.ValidateData();
-			result.SqliteParams.Clear();
+		//public static void GetAreas(ref Result result)
+  //      {
+		//	result.Data = Data.Execute($"SELECT * FROM Areas");
+		//	result.Success = true;
+		//}
+  //      public static void UpsertArea(ref Result result)
+  //      {
+		//	result.ValidateData();
+		//	result.SqliteParams.Clear();
 
-			if (result.ParamExists("AreaID", Result.ParamType.Int))
-			{
-				result.AddSqliteParam("@AreaID", (string)result.DynamicData.AreaID);
+		//	if (result.ParamExists("AreaID", Result.ParamType.Int))
+		//	{
+		//		result.AddSqliteParam("@AreaID", (string)result.DynamicData.AreaID);
 
-				var databases = Data.Execute($@" 
-                    SELECT * FROM Areas 
-                    WHERE AreaID = @AreaID
-                ", result.GetSqliteParamArray());
+		//		var databases = Data.Execute($@" 
+  //                  SELECT * FROM Areas 
+  //                  WHERE AreaID = @AreaID
+  //              ", result.GetSqliteParamArray());
 
-				if (databases.Rows.Count == 1)
-				{
-					//Update
-					result.SqliteParams.Clear();
-					result.AddSqliteParam("@AreaName", (string)result.DynamicData.AreaName);
-					result.AddSqliteParam("@AreaID", (string)result.DynamicData.AreaID);
+		//		if (databases.Rows.Count == 1)
+		//		{
+		//			//Update
+		//			result.SqliteParams.Clear();
+		//			result.AddSqliteParam("@AreaName", (string)result.DynamicData.AreaName);
+		//			result.AddSqliteParam("@AreaID", (string)result.DynamicData.AreaID);
 
-					Data.Execute($@"
-                        UPDATE Areas 
-                        SET AreaName = @AreaName
-                        WHERE AreaID = @AreaID
-                    ", result.GetSqliteParamArray());
+		//			Data.Execute($@"
+  //                      UPDATE Areas 
+  //                      SET AreaName = @AreaName
+  //                      WHERE AreaID = @AreaID
+  //                  ", result.GetSqliteParamArray());
 
-					result.Success = true;
-				}
-				else
-				{
-					//Insert
-					result.SqliteParams.Clear();
-					result.AddSqliteParam("@AreaName", "[New Area]");
+		//			result.Success = true;
+		//		}
+		//		else
+		//		{
+		//			//Insert
+		//			result.SqliteParams.Clear();
+		//			result.AddSqliteParam("@AreaName", "[New Area]");
 
-					Data.Execute($@"
-                        INSERT INTO Areas 
-                            (AreaName) 
-                        VALUES 
-                            (@AreaName)
-                    ", result.GetSqliteParamArray());
+		//			Data.Execute($@"
+  //                      INSERT INTO Areas 
+  //                          (AreaName) 
+  //                      VALUES 
+  //                          (@AreaName)
+  //                  ", result.GetSqliteParamArray());
 
-					result.Success = true;
-				}
-			}
-		}
+		//			result.Success = true;
+		//		}
+		//	}
+		//}
 		//public static void GetTemplates(ref Result result)
 		//{
 		//    string sql = "SELECT * FROM Templates";

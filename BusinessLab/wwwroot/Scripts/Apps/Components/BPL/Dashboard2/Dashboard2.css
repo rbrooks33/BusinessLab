@@ -1,0 +1,39 @@
+﻿.AreaContainerHTML {
+    display:flex;
+}
+.DashboardAreaContainer {
+    height: 100vh;
+    width: 11.1vw;
+    border: 1px solid #1961AE;
+}
+.DashboardAreaTitle {
+    font-size: 1.5vw;
+    text-align: center;
+    padding: 2px;
+    background: #1961AE;
+    color: white;
+}
+.DashboardAreaStatus {
+    border: solid 1px blue;
+    width: 2.7vw;
+    height: 19px;
+    display: table-cell;
+}
+.DashboardStatusContainer {
+    position: absolute;
+    border: solid 1px #1961AE;
+    width: 11vw;
+    height: 20px;
+}
+.DashboardStatus_Good{
+    background-color:green;
+}
+.DashboardStatus_Bad {
+    background-color:red;
+}
+.DashboardStatus_Ugly {
+    background-color:orange;
+}
+.DashboardStatus_Info {
+    background-color: white;
+}

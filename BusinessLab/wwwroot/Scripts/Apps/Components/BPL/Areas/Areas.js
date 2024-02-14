@@ -13,6 +13,11 @@ Apps.Define([], function () {
             Me.UI.HideAll(); //Hides all but me
             Apps.BindHTML(Me.UI.Selector, Me, true);
         },
+        Get: function (callback) {
+            Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetAreas"), function (data) {
+                callback(data);
+            });
+        },
         Add: function () {
             let args = {
                 Params: [
