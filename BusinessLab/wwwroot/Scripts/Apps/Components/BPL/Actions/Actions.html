@@ -26,13 +26,13 @@
 
     <!-- Editor Type Radios-->
     <span>SQL</span>
-    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[0]" value="sql" checked />
+    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[0].Name" value="sql" checked />
     <span>CSharp</span>
-    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[1]" value="csharp" />
+    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[1].Name" value="csharp" />
     <span>CMD</span>
-    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[2]" value="csharp" />
+    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[2].Name" value="csharp" />
     <span>PS</span>
-    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[3]" value="csharp" />
+    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[3].Name" value="csharp" />
 
     <h4 data-bind-property="EditedAction.EditorTypeTitle">SQL</h4> <!--switches in code-->
     <!--Editor Types-->
@@ -53,19 +53,18 @@
     <div data-bind-property="EditedAction.ActionOutput" class="form-control" style="width:100%;"></div>
 
     <h3>JavaScript/Postman</h3>
-    <textarea data-bind-collection-property="ActionTriggerTypes.Code[0]"
+    <textarea data-bind-collection-property="ActionTriggerTypes[0].Code"
               class="form-control"
               style="width:100%;margin-bottom:10px;"></textarea>
     <div class="btn btn-success"
-         data-bind-collection-property="ActionTriggerTypes.Run[0]"
+         data-bind-collection-property="ActionTriggerTypes[0].Run"
          style="margin-bottom:10px;">Run</div>
 
     <h3>T-SQL</h3>
-    <textarea data-bind-collection-property="ActionTriggerTypes.Code[1]"
+    <textarea data-bind-collection-property="ActionTriggerTypes[1].Code"
               class="form-control"
               style="width:100%;margin-bottom:10px;"></textarea>
-    <div data-bind-collection-property="ActionTriggerTypes.Run[1]
-         class=" btn btn-success"">Run</div>
+    <div data-bind-collection-property="ActionTriggerTypes[1].Run" class=" btn btn-success">Run</div>
 
     <!--<h3>C#</h3>
     <textarea data-bind-property="CSHARPActions" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>

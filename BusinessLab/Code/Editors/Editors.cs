@@ -1,4 +1,6 @@
-﻿namespace BusinessLab
+﻿using BusinessLabClassLib;
+
+namespace BusinessLab
 {
 	public class Editors
 	{

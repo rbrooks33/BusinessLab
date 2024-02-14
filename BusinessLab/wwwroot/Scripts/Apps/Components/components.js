@@ -66,8 +66,17 @@
                                 }
 
                             ]
+                        },
+                        {
+                            "Name": "Configs",
+                            "Load": true,
+                            "Initialize": true
+                        },
+                        {
+                            "Name": "CloudQueue",
+                            "Load": true,
+                            "Initialize":true
                         }
-
                     ]
                 },
                 {

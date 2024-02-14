@@ -31,7 +31,8 @@
             QuickLinksHTML: {
                 Bound: function () {
                     this.Selector.html(Me.UI.Templates.QuickLinksHTML_Template.HTML());
-                    Apps.BindHTML(this.Selector, Me);
+                    //Apps.BindHTML(this.Selector, Me);
+                    Apps.BindElement('QuickLinksContents', Me);
                 }
             },
             QuickLinksContents: {

@@ -373,7 +373,7 @@ Apps.Define([], function () {
                 Me.CountDownBind.check();
             });
         },
-        DataBindControls: function (data, bindType, controlsObject) {
+        DataBindControls: function (data, bindType, controlsObject, isCollection) {
             //Binding and validation.
 
             if (!Me.ControlTypes)
@@ -384,7 +384,7 @@ Apps.Define([], function () {
             };
             Me.ControlTypes[bindType]['Controls'] = [];
 
-            Apps.Bind.DataBind(data, bindType, false,
+            Apps.Bind.DataBind(data, bindType, isCollection,
                 function (selector, propertyName, boundValue) {
 
 

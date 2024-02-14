@@ -1278,7 +1278,7 @@
 
             let isColl = false;
             if (collectionName) {
-                bindpropname =  collectionName;
+                bindpropname = collectionName;
                 isColl = true;
             }
             else {
@@ -1290,7 +1290,7 @@
 
                     //Apply current model values
                     var propertyValue = eval('c.Model.' + bindpropname);
-                    var elementType = e.localName.toLowerCase();
+                    var elementType = e.localName ? e.localName.toLowerCase() : '[no local name]';
                     var contentType = $(e).attr('data-bind-contenttype');
 
                     if (elementType == 'div' || elementType == 'span') {
@@ -1318,21 +1318,22 @@
 
                     if (existing.length == 0 || forceBind) {
 
-                        //Add reference
-                        Apps.AutoBindReferences.push({
-                            Name: bindpropname,
-                            ComponentObject: c,
-                            Component: c.Config.Name,
-                            ElementType: e.localName,
-                            ElementClass: e.className
-                        });
+                        ////Add reference
+                        //Apps.AutoBindReferences.push({
+                        //    Name: bindpropname,
+                        //    ComponentObject: c,
+                        //    Component: c.Config.Name,
+                        //    ElementType: e.localName,
+                        //    ElementClass: e.className
+                        //});
 
-                        //For simplicity make type name same as property
-                        $(e).attr('data-bind-type', bindpropname);
+                        ////For simplicity make type name same as property
+                        //$(e).attr('data-bind-type', bindpropname);
 
-                        //Bind and validate existing values
-                        Apps.Bind.DataBindControls(c.Model, bindpropname, c.Controls);
+                        ////Bind and validate existing values
+                        //Apps.Bind.DataBindControls(c.Model, bindpropname, c.Controls);
 
+                        Apps.BindElement(bindpropname, c);
                     }
                     else
                         console.debug('Found ' + existing.length + ' data-bind-property ' + bindpropname + ' in ' + c.Config.Name);
@@ -1347,8 +1348,34 @@
                 console.debug(bindpropname + ' does not appear to be found in ' + c.Config.Name + ' model');
             }
 
-
+            //long sizeInBytes = Directory.EnumerateFiles("{path}","*", SearchOption.AllDirectories).Sum(fileInfo => new FileInfo(fileInfo).Length);
         });
+    },
+    BindElement: function (propertyName, component) {
+        //Add reference
+
+        let elementSelector = $('[data-bind-property="' + propertyName + '"]');
+        let collectionSelector = $('[data-bind-collection-property="' + propertyName + '"]');
+        let isCollection = false;
+        if (collectionSelector.length > 0) {
+            isCollection = true;
+            elementSelector = collectionSelector;
+        }
+
+        let hasElement = elementSelector.length > 0;
+        Apps.AutoBindReferences.push({
+            Name: propertyName,
+            ComponentObject: component,
+            Component: component.Config.Name,
+            ElementType: hasElement ? elementSelector[0].localName : '[no element]',
+            ElementClass: hasElement ? elementSelector[0].className : '[no element]'
+        });
+
+        //For simplicity make type name same as property
+        elementSelector.attr('data-bind-type', propertyName);
+
+        //Bind and validate existing values
+        Apps.Bind.DataBindControls(component.Model, propertyName, component.Controls, isCollection);
 
     },
     GetMoveBindSourcex: function (sourceId, destinationId, c, moveOnly) {
@@ -2146,7 +2173,8 @@ Apps.Data = {
         Apps.Data.GlobalPOST.Execute(args, function () {
 
             if (Apps.Data.GlobalPOST.Success && Apps.Data.GlobalPOST.Result.FailMessages.length == 0) {
-                successcallback(Apps.Data.GlobalPOST);
+                if(successcallback)
+                    successcallback(Apps.Data.GlobalPOST);
             }
             else
                 Apps.Components.BPL.HandleError(Apps.Data.GlobalPOST.Result);

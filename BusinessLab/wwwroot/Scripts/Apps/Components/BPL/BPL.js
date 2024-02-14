@@ -13,102 +13,23 @@
         },
         Show: function () {
 
+            Me.Dashboard.Show();
 
-            Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetConfigs"), function (data) {
+            Me.ShowHeroHeader();
 
-                Me.Model.Configs = data.Data;
+            Me.StartComponents();
 
+            Apps.AutoBind();
 
-                //Me.UI.HideAll();
-
-                Me.Dashboard.Show();
-
-                Me.ShowHeroHeader();
-
-                Me.StartComponents();
-
-                Apps.AutoBind();
-
-
-                Apps.Components.Helpers.PushHub.Subscriber().Publish('AppLoaded', true); //Notify app finished loading
-
-                //Apps.Components.Helpers.Debug.Init();
-                //$('#contentDebug').show();
-                //Apps.Components.Helpers.Debug.UI.Show(400);
-
-                //Apps.Require(['/Scripts/Apps/Resources/funcunit.js'], function (funcunit) { });
-                //    if (Me.Model.LoggedInAs == 0)
-                //        Me.ShowUsersDialog();
-            });
+            Apps.Components.Helpers.PushHub.Subscriber().Publish('AppLoaded', true); //Notify app finished loading
         },
         ShowHeroHeader: function () {
             $.each($('.HeaderHeroHtml'), function (i, h) {
-                $(h).html(Me.ConfigValue('HeaderHeroHtml'));
+                $(h).html(Me.Admin.Configs.GetConfigValue('HeaderHeroHtml'));
             });
 
-        },
-        UseBuiltInDB: function () {
-
-            Me.Model.UseDB = 'UseBuiltInDB';
-
-            let post = Me.Data.Posts.Main;
-            let args = {
-                Params: [
-                    {Name: 'RequestName', Value: 'UseDB'}
-                ],
-                Message: 'local'
-            };
-            post.Refresh(args, [], function () {
-                if (post.Success) {
-                    location.reload();
-                }
-                else {
-                    Me.HandleError(post.Result);
-                }
-            });
-        },
-        UseATECDevDB: function () {
-
-            Me.Model.UseDB = 'UseATECDevDB';
-
-            let post = Me.Data.Posts.Main;
-            let args = {
-                Params: [
-                    { Name: 'RequestName', Value: 'UseDB' }
-                ],
-                Message: 'dev'
-            };
-            post.Refresh(args, [], function () {
-                if (post.Success) {
-                    location.reload();
-                }
-                else {
-                    Me.HandleError(post.Result);
-                }
-            });
-        },
-        UseATECLiveDB: function () {
-
-            Me.Model.UseDB = 'UseATECLiveDB';
-
-            let post = Me.Data.Posts.Main;
-            let args = {
-                Params: [
-                    { Name: 'RequestName', Value: 'UseDB' }
-                ],
-                Message: 'live'
-            };
-            post.Refresh(args, [], function () {
-                if (post.Success) {
-                    location.reload();
-                }
-                else {
-                    Me.HandleError(post.Result);
-                }
-            });
         },
         ShowUsersDialog: function () {
-
             Me.Actions.Run(15, function (users) {
 
                 Me.Model.Users = users;
@@ -187,19 +108,10 @@
 
             $('#Main_Modal_Background').hide();
         },
-        ConfigValue: function (configName) {
-            let ret = "";
-            let configs = Enumerable.From(Me.Model.Configs).Where(c => c.ConfigName == configName).ToArray();
-            if (configs.length > 0)
-                ret = configs[0].ConfigValue;
-            return ret;
-        },
 
         Model: {
             Users: [],
-            LoggedInAs: 0,
-            Configs: [],
-            SampleConfig: { "ConfigID": 1, "ConfigName": "SqlConnection", "ConfigValue": "1", "Created": "", "Updated": "" }
+            LoggedInAs: 0
         },
         Controls: {
             LoggedInAs: {

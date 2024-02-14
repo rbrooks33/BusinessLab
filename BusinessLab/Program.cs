@@ -7,8 +7,8 @@ using Quartz;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection.PortableExecutable;
-using static BusinessLab.Result;
 using BusinessLab.Code;
+using BusinessLabClassLib;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -84,6 +84,8 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 			{
 				switch (requestName.Single().Value)
 				{
+					//Software
+
 					case "GetPreview": Business.GetPreview(ref result); break;
 					//Actions
 					case "GetActions": Business.GetActions(ref result); break;
@@ -124,14 +126,15 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 					case "AddTask": Business.AddTask(ref result); break;
 
 					//Software
-					case "GetSoftware": Business.GetSoftware(ref result); break;
-					case "UpdateSoftware": Business.UpdateSoftware(ref result); break;
-					case "DeleteSoftware": Business.DeleteSoftware(ref result); break;
-					case "AddSoftware": Business.AddSoftware(ref result); break;
-
+					case "OpenFolder": Software.OpenFolder(ref result);break;
+					case "AddSoftware": Software.Add(ref result);break;
+					case "GetSoftware": Software.GetSoftware(ref result); break;
+					case "UpdateSoftware": Software.UpdateSoftware(ref result); break;
+					case "DeleteSoftware": Software.DeleteSoftware(ref result); break;
+					case "AddBPLServer": Software.AddBPLServer(ref result); break;
 					case "GetContent": Editors.GetContent(ref result); break;
 
-					case "GetConfigs": result.Data = BusinessLab.Code.Data.Execute("SELECT * FROM Configs", null, true); result.Success = true; break;
+					case "GetConfigs": result.Data = Data.Execute("SELECT * FROM Configs", null, true); result.Success = true; break;
 
 					case "GetCloudQueue": CloudQueue.GetCloudQueue(ref result); break;
 					case "UpsertCloudQueue": CloudQueue.UpsertCloudQueue(ref result); break;

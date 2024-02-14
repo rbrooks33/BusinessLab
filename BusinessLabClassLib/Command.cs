@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BusinessLab
+namespace BusinessLabClassLib
 {
     public static class Command
     {
@@ -80,8 +80,10 @@ namespace BusinessLab
                 var errorReader = pr.StandardError;
                 string errors = errorReader.ReadToEnd();
 
-                result.FailMessages.Add(errors);
-                result.SuccessMessages.Add(output);
+                if(errors.Length > 0)
+                    result.FailMessages.Add(errors);
+                if(output.Length > 0) 
+                    result.SuccessMessages.Add(output);
 
                 //pr.StandardOutput.Read();
                 //pr.StandardError.Read();

@@ -1,13 +1,12 @@
-﻿using BusinessLabClassLib;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
 using System.Data;
 using System.Data.Common;
 
-namespace BusinessLab.Code
+namespace BusinessLabClassLib
 {
-	public class Datax
+	public class Data
     {
 		
 
@@ -76,7 +75,7 @@ namespace BusinessLab.Code
 			}
 			return dt;
 		}
-		internal static DataTable ExecuteCSSqlServer(string sql, string cs, SqlParameter[]? parameters)
+		public static DataTable ExecuteCSSqlServer(string sql, string cs, SqlParameter[]? parameters)
 		{
 			var dt = new DataTable();
 
@@ -96,7 +95,7 @@ namespace BusinessLab.Code
 			return dt;
 		}
 
-		internal static DataTable ExecuteCSSqlite(string sql, SqliteParameter[]? parameters)
+		public static DataTable ExecuteCSSqlite(string sql, SqliteParameter[]? parameters)
 		{
 			var dt = new DataTable();
 			string cs = "Data Source=Data\\businesslab.db";

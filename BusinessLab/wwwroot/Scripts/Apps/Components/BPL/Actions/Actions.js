@@ -42,7 +42,7 @@
             let html = Me.UI.Templates.BPL_Actions_EditPage_Template.HTML([action.ActionID, action.ActionName, action.UniqueID]);
             Apps.OpenDialog(Me, 'BPL_Actions_Edit_Dialog', 'Edit Dialog', html);
 
-            $('[data-bind-collection-property="EditorTypes[0]"]').click(); //.prop('checked', true);
+            //$('[data-bind-collection-property="EditorTypes[0]"]').click(); //.prop('checked', true);
 
         },
         Add: function () {
@@ -100,7 +100,7 @@
 
             let action = Me.Model.EditedAction;
             let args = Apps.Data.GetPostArgs('TestActionCode');
-            //args.Params.push({ Name: 'ActionID', Value: action.ActionID.toString() });
+            args.Params.push({ Name: 'ActionID', Value: action.ActionID.toString() });
 
             switch (Me.Model.EditedAction.EditorType) {
 

@@ -1,4 +1,6 @@
-﻿namespace BusinessLab
+﻿using BusinessLabClassLib;
+
+namespace BusinessLab
 {
 	public class Logs
 	{
@@ -26,7 +28,7 @@
 					INSERT INTO Logs (StepID, Title, Description, LogSeverity, UniqueID) 
 					VALUES (@StepID, @Title, @Description, @LogSeverity, @UniqueID)";
 
-				Code.Data.Execute(sql, result.GetSqliteParamArray());
+				Data.Execute(sql, result.GetSqliteParamArray());
 			}
 			catch (Exception ex) { 
 				result.FailMessages.Add(ex.ToString());

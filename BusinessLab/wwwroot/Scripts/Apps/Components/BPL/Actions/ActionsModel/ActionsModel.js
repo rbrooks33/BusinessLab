@@ -21,10 +21,10 @@
             ],
             BPLActionsHomePage: '',
             EditorTypes: [
-                'SQL',
-                'CSharp',
-                'CMD',
-                'PS'
+                { Name: 'SQL' },
+                { Name: 'CSharp' },
+                { Name: 'CMD' },
+                { Name: 'PS' }
             ],
             EditedAction: {
                 UniqueID: '',

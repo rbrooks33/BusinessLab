@@ -1,5 +1,6 @@
 ﻿namespace BusinessLab
 {
+	using BusinessLabClassLib;
 	using Microsoft.AspNetCore.SignalR;
 	using System.Net;
 	using System.Threading.Tasks;

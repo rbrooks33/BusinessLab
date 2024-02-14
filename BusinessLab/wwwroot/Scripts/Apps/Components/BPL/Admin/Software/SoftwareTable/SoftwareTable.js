@@ -16,11 +16,33 @@
                 },
                 tableactions: [
                     {
-                        text: 'Add Action',
+                        text: 'Add Software',
                         actionclick: function () {
-                            Apps.Components.BPL.Admin.Software.Add();
+                            Apps.Components.BPL.Admin.Software.SoftwareTable.Add();
+                        }
+                    },
+                    {
+                        text: 'Add BPL Server',
+                        actionclick: function () {
+                            Apps.Components.BPL.Admin.Software.AddBPLServer();
                         }
                     }
+
+                ],
+                rowactions: [
+                    {
+                        text: 'Open Folder',
+                        actionclick: function (element, obj, tr) {
+                            Apps.Components.BPL.Admin.Software.OpenFolder(obj);
+                        }
+                    },
+                    {
+                        text: 'Open In Git',
+                        actionclick: function (element, obj, tr) {
+                            Apps.Components.BPL.Actions.OpenInGit(obj);
+                        }
+                    }
+
                 ],
                 rowbuttons: [
                     {
@@ -30,9 +52,9 @@
                         }
                     },
                     {
-                        text: 'Delete',
+                        text: 'Archive',
                         buttonclick: function (element, obj, tr) {
-                            Apps.Components.BPL.Actions.Delete(obj);
+                            Apps.Components.BPL.Admin.Software.SoftwareTable.Archive(obj);
                         }
                     }
 
@@ -51,6 +73,12 @@
 
             return Apps.Grids.GetTable(settings);
         },
+        Add: function () {
+            Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs('AddSoftware'), function (post) {
+                Me.Parent.GetTable();
+            });
+
+        },
         Save: function (obj, changedFieldName) {
 
             let argParams = [
@@ -59,13 +87,16 @@
             ];
 
             Me.Root.Actions.Run(24, function () {
-                Me.Controls.PropertiesTableHTML.Refresh();
+                //Me.Controls.PropertiesTableHTML.Refresh();
+                Me.Parent.GetTable();
             }, argParams);
 
             Apps.Notify('info', 'Saved ' + changedFieldName);
 
         },
+        Archive: function (software) {
 
+        }
     };
     return Me;
 })

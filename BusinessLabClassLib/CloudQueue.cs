@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace BusinessLab.Code
+namespace BusinessLabClassLib
 {
 	public class CloudQueue
 	{
@@ -27,11 +27,25 @@ namespace BusinessLab.Code
 
 		}
 
+		public static void GetCloudQueueValue(ref Result result)
+		{
+			if (result.ParamExists("CloudQueueName", Result.ParamType.String))
+			{
+
+				GetCloudQueue(ref result);
+				dynamic data = result.Data;
+				foreach (dynamic item in data)
+				{
+
+				}
+			}
+		}
+
 		public static void UpsertCloudQueue(ref Result result)
 		{
-			if (result.ParamExists("Reciever") && result.ParamExists("Contents"))
+			if (result.ParamExists("Receiver") && result.ParamExists("Contents"))
 			{
-				string reciever = result.GetParam("Reciever");
+				string reciever = result.GetParam("Receiver");
 				string contents = result.GetParam("Contents");
 
 				using (WebClient client = new WebClient())

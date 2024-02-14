@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
 using Quartz.Impl.Matchers;
 using Microsoft.AspNetCore.SignalR;
+using BusinessLabClassLib;
 
 namespace BusinessLab
 {

@@ -2,7 +2,7 @@
 using Microsoft.Data.Sqlite;
 using System.Dynamic;
 
-namespace BusinessLab
+namespace BusinessLabClassLib
 {
 	public class Result
 	{

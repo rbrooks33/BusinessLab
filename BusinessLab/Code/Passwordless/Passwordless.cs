@@ -1,4 +1,5 @@
-﻿using SendGrid;
+﻿using BusinessLabClassLib;
+using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Net.Mail;
 using System.Runtime.CompilerServices;
@@ -16,7 +17,7 @@ namespace BusinessLab
 
 				var sql = FormattableStringFactory.Create($@"SELECT * FROM Users WHERE PasswordlessToken = '{result.GetParam("Token")}' AND DATEDIFF(MI, TokenUpdated, getdate()) < 60");
 
-				var tokenRows = Code.Data.Execute(sql);
+				var tokenRows = Data.Execute(sql);
 				if(tokenRows.Rows.Count == 1)
 				{
 					result.Codes.Add(new Result.Code { ID = 1, Description = "Token validated." });
@@ -31,7 +32,7 @@ namespace BusinessLab
 				{
 					//extend token expiration
 					var extendSql = FormattableStringFactory.Create($@"UPDATE Users SET TokenUpdated = getdate() WHERE PasswordlessToken = '{result.GetParam("Token")}'");
-					Code.Data.Execute(extendSql);
+					Data.Execute(extendSql);
 				}
 			}
 			return result.Success;
@@ -42,7 +43,7 @@ namespace BusinessLab
 			if (result.ParamExists("Token"))
 			{
 				var sql = FormattableStringFactory.Create($@"SELECT * FROM Users WHERE PasswordlessToken = '{result.GetParam("Token")}'");
-				var dt = Code.Data.Execute(sql);
+				var dt = Data.Execute(sql);
 				if (dt != null)
 				{
 					if (dt.Rows.Count == 1)
@@ -62,7 +63,7 @@ namespace BusinessLab
                                     Email = '{dt.Rows[0]["Email"].ToString()}'
                             ");
 
-							Code.Data.Execute(sqlUpdate);
+							Data.Execute(sqlUpdate);
 						}
 					}
 					//else
@@ -95,7 +96,7 @@ namespace BusinessLab
 				{
 					//Email success
 					var sql = FormattableStringFactory.Create($@"SELECT * FROM Users WHERE Email = '{result.GetParam("Email")}'");
-					var dt = Code.Data.Execute(sql);
+					var dt = Data.Execute(sql);
 					if (dt.Rows.Count > 0)
 					{
 						if (dt.Rows.Count == 1)
@@ -114,7 +115,7 @@ namespace BusinessLab
                                         UserID = {userId}
                                 ");
 
-							Code.Data.Execute(sqlUpdate);
+							Data.Execute(sqlUpdate);
 
 							//result.SuccessMessages.Add("Token updated for user " + userId.ToString());
 							//result.Data = token;
@@ -146,7 +147,7 @@ namespace BusinessLab
                                     ('{result.GetParam("Email")}', '{newPasscode}', 0, 'passcodeuser', 'passcodeuser', getdate())
                             ");
 
-						Code.Data.Execute(sqlUpdate);
+						Data.Execute(sqlUpdate);
 
 						//result.Data = token;
 						result.Codes.Add(
@@ -188,7 +189,7 @@ namespace BusinessLab
                 AND 
                     Passcode = '{result.GetParam("Passcode")}'
             ");
-				var dt = Code.Data.Execute(sql);
+				var dt = Data.Execute(sql);
 				if (dt != null)
 				{
 					if (dt.Rows.Count == 1)
@@ -205,7 +206,7 @@ namespace BusinessLab
                         WHERE
                             UserID = {dt.Rows[0]["UserID"]}
                     ");
-						Code.Data.Execute(sqlToken);
+						Data.Execute(sqlToken);
 						result.Success = true;
 					}
 				}

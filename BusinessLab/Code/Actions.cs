@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.ApplicationInsights.AspNetCore;
 using Microsoft.Data.Sqlite;
 using System.Data;
+using BusinessLabClassLib;
 
 namespace BusinessLab
 {
@@ -63,7 +64,7 @@ namespace BusinessLab
 		{
 			var resultAction = new Actions.Action();
 
-            var dt = Code.Data.ExecuteCSSqlite($"SELECT * FROM Actions WHERE ActionID = {actionId}", null);
+            var dt = Data.ExecuteCSSqlite($"SELECT * FROM Actions WHERE ActionID = {actionId}", null);
 
 			//using (var db = new SqliteConnection(Resource.SqliteConnectionString))
 			//{
@@ -119,7 +120,7 @@ namespace BusinessLab
         }
         public static void RunAction(int actionId, ref Result result)
         {
-			System.Collections.Generic.List<BusinessLab.Result.Param> params2 = result.Params.Where(p => p.Name == "FirstName").ToList();
+			System.Collections.Generic.List<Result.Param> params2 = result.Params.Where(p => p.Name == "FirstName").ToList();
 
 			result.Success = false; //reset
 
@@ -151,7 +152,7 @@ namespace BusinessLab
                                 $@"
                                     {_myusings}
 
-                                    public string Product(ref BusinessLab.Result result)
+                                    public string Product(ref BusinessLabClassLib.Result result)
                                     {{
                                         {code}           
                                     }}      
@@ -165,7 +166,7 @@ namespace BusinessLab
                             catch (Exception ex)
                             {
                                 result.FailMessages.Add($"Action run for #{actionId} exception: {ex}");
-                                //common.AddLog(iLogAppId, LogSeverities.Exception, officeId, $"Action run exception for #{actiontypeid}: {ex.ToString()}", "", hub);
+                                Logs.Add(0, $"Action run exception for #{action.ActionID.ToString()}", ex.ToString(), ref result, Logs.LogSeverity.Exception,"actionrun");
                             }
                         }
                         else result.FailMessages.Add("Arg sCode null or empty.");
@@ -180,7 +181,7 @@ namespace BusinessLab
                             if(action.ConnectionID > 0)
                             {
                                 string sqlConnections = "SELECT ConnectionString FROM BPLConnections WHERE ConnectionID = " + action.ConnectionID.ToString();
-                                var dtConnection = Code.Data.ExecuteCSSqlite(sqlConnections, null);
+                                var dtConnection = Data.ExecuteCSSqlite(sqlConnections, null);
                                 string cs = dtConnection.Rows[0][0].ToString();
 
 								var parameters = new List<SqlParameter>();
@@ -194,7 +195,7 @@ namespace BusinessLab
 									}
 								}
 
-								result.Data = Code.Data.ExecuteCSSqlServer(sql, cs, parameters.ToArray());
+								result.Data = Data.ExecuteCSSqlServer(sql, cs, parameters.ToArray());
                             }
                             else
                             {
@@ -208,7 +209,7 @@ namespace BusinessLab
                                         parameters.Add(param);
                                     }
                                 }
-                                result.Data = Code.Data.Execute(sql, parameters.ToArray());
+                                result.Data = Data.Execute(sql, parameters.ToArray());
 
                             }
 
@@ -243,32 +244,8 @@ namespace BusinessLab
 
 		public static void TestCode(WorkflowScheduler scheduler, ref Result result)
         {
-            if (result.Data != null)
-            {
-                var action = JsonConvert.DeserializeObject<Actions.Action>(result.Data.ToString());
-
-                Actions.RunAction(action.ActionID, ref result);
-                //if (!String.IsNullOrEmpty(action.Code))
-                //{
-                //    dynamic script = CSScriptLib.CSScript.Evaluator.LoadMethod(
-                //    $@"
-                //    {_myusings}
-
-                //    public string Product(BusinessLab.Actions.Action action, BusinessLab.WorkflowScheduler scheduler, BusinessLab.Result result)
-                //    {{
-                //        {action.Code}           
-                //    }}      
-                //");
-
-                //    result.Data = script.Product(action, scheduler, result);
-                //    result.Success = true;
-                //}
-                //else
-                //    result.FailMessages.Add("Arg sCode empty.");
-
-            }
-            else
-                result.FailMessages.Add("Data obj is null");
+            if(result.ParamExists("ActionID", Result.ParamType.Int))
+                Actions.RunAction(Convert.ToInt32(result.GetParam("ActionID")), ref result);
 
         }
 
@@ -291,7 +268,7 @@ namespace BusinessLab
                 //}
 
                 sql = (String.IsNullOrEmpty(sql) ? "select 'empty sql'" : sql);
-                result.Data = Code.Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(sql, parameters.ToArray()));
+                result.Data = Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(sql, parameters.ToArray()));
                 result.Success = true;
             }
             else result.FailMessages.Add("Arg sCode null or empty.");
@@ -307,7 +284,7 @@ namespace BusinessLab
                     ('New Action', 'Description')
                     
                     ";
-            result.Data = Code.Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
+            result.Data = Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
 
             result.Success = true;
         }
@@ -331,7 +308,7 @@ namespace BusinessLab
                     where actionid = {actionid}
                     
                     ";
-                result.Data = Code.Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
+                result.Data = Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
                 result.Success = true;
             }
 
@@ -353,7 +330,7 @@ namespace BusinessLab
                     where actionid = {actionid}
                     
                     ";
-                result.Data = Code.Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
+                result.Data = Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
                 result.Success = true;
             }
         }
