@@ -38,12 +38,24 @@
     background-color: white;
 }
 .DashboardWorkflowContainer {
-    margin-top: 20px;
+    margin-top: 30px;
     margin-left: 2px;
+    margin-right:2px;
+    text-align:center;
+    
 }
 .DashboardWorkflowStatus {
     border: solid 1px #1961AE;
     width: 2.7vw;
     height: 8px;
     display: table-cell;
+}
+.DashboardAppsContainer {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.DashboardActionsContainer {
+    margin-top: 10px;
+    text-align: center;
 }

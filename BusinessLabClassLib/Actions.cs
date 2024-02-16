@@ -1,14 +1,9 @@
-﻿
-using Newtonsoft.Json;
-using Microsoft.Data.SqlClient;
-using Microsoft.ApplicationInsights.AspNetCore;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.SqlClient;
 using System.Data;
-using BusinessLabClassLib;
 
-namespace BusinessLab
+namespace BusinessLabClassLib
 {
-	public class Actions
+    public class Actions
     {
         public class Action
         {
@@ -242,7 +237,7 @@ namespace BusinessLab
                 result.FailMessages.Add("Getting action from db failed.");
         }
 
-		public static void TestCode(WorkflowScheduler scheduler, ref Result result)
+		public static void TestCode(ref Result result)
         {
             if(result.ParamExists("ActionID", Result.ParamType.Int))
                 Actions.RunAction(Convert.ToInt32(result.GetParam("ActionID")), ref result);
@@ -333,6 +328,16 @@ namespace BusinessLab
                 result.Data = Data.Execute(System.Runtime.CompilerServices.FormattableStringFactory.Create(updatesql, new List<Microsoft.Data.Sqlite.SqliteParameter>().ToArray()));
                 result.Success = true;
             }
+        }
+        public static void GetWorkflowActions(ref Result result)
+        {
+            result.Data = Data.ExecuteCSSqlite(@"
+                SELECT DISTINCT Actions.ActionID, Actions.ActionName, Workflows.AreaID FROM Actions
+                INNER JOIN Actions_Steps ON Actions_Steps.ActionID = Actions.ActionID
+                INNER JOIN Steps ON Steps.StepID = Actions_Steps.StepID
+                INNER JOIN Workflows ON Workflows.WorkflowID = Steps.WorkflowID
+            ", null);
+            result.Success = true;
         }
 			//public static void RunAction(string actionUniqueId, MiniApps.Models.Action action, MiniAppsContext db, ref Result result)
 			//{

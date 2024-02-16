@@ -1,6 +1,5 @@
-﻿using BusinessLabClassLib;
-
-namespace BusinessLab
+﻿
+namespace BusinessLabClassLib
 {
 	public class Logs
 	{

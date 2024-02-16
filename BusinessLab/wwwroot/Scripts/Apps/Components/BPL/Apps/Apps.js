@@ -10,6 +10,12 @@
             Apps.BindHTML(Me.UI.Selector, Me, true);
             Me.Root.ShowHeroHeader();
         },
+        GetWorkflowApps: function (callback) {
+            Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetWorkflowApps"), function (data) {
+                callback(data);
+            });
+
+        },
         Model: {
             AppsHTML: ''
         },

@@ -34,15 +34,41 @@
                             Me.Root.Areas.Workflows.Steps.Get(function (steps) {
                                 Me.Model.Steps = steps.Data;
 
-                                $.each(Me.Model.Areas, function (i, a) {
+                                Me.Root.Apps.GetWorkflowApps(function (apps) {
+                                    Me.Model.Apps = apps.Data;
 
-                                    let workflowHtml = '';
-                                    let areaWorkflows = Enumerable.From(Me.Model.Workflows).Where(w => w.AreaID == a.AreaID).ToArray();
+                                    Me.Root.Actions.GetWorkflowActions(function (actions) {
+                                        Me.Model.Actions = actions.Data;
 
-                                    $.each(areaWorkflows, function (i, w) {
-                                        workflowHtml += Me.UI.Templates.Dashboard_WorkflowStatus_Template.HTML([w.WorkflowName]);
+                                        $.each(Me.Model.Areas, function (i, a) {
+
+                                            //Area Workflows
+                                            let workflowHtml = '';
+                                            let areaWorkflows = Enumerable.From(Me.Model.Workflows).Where(w => w.AreaID == a.AreaID).ToArray();
+                                            
+                                            $.each(areaWorkflows, function (i, w) {
+                                                workflowHtml += Me.UI.Templates.Dashboard_WorkflowStatus_Template.HTML([w.WorkflowName]);
+                                            });
+
+                                            //Area Apps (app and app/step logs)
+                                            let appsHtml = '';
+                                            let areaApps = Enumerable.From(Me.Model.Apps).Where(app => app.AreaID == a.AreaID).ToArray();
+                                            areaApps.length > 0 ? $('.AppStatusContainerTitle').show() : $('.AppStatusContainerTitle').hide();
+                                            $.each(areaApps, function (i, app) {
+                                                appsHtml += Me.UI.Templates.Dashboard_AppStatus_Template.HTML([app.AppName]);
+                                            });
+
+                                            //Area Actions (action/step logs)
+                                            let actionsHtml = '';
+                                            let areaActions = Enumerable.From(Me.Model.Actions).Where(action => action.AreaID == a.AreaID).ToArray();
+
+                                            $.each(areaActions, function (i, action) {
+                                                actionsHtml += Me.UI.Templates.Dashboard_ActionStatus_Template.HTML([action.ActionName]);
+                                            });
+
+                                            html += Me.UI.Templates.Dashboard_Area_Template.HTML([a.AreaID, a.AreaName, workflowHtml, appsHtml, actionsHtml]);
+                                        });
                                     });
-                                    html += Me.UI.Templates.Dashboard_Area_Template.HTML([a.AreaID, a.AreaName, workflowHtml]);
                                 });
                             });
                         });
@@ -51,7 +77,7 @@
 
                     });
                 }
-            } 
+            }
         }
     };
     return Me;

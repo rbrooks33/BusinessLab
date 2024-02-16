@@ -35,6 +35,12 @@
             Me.Root.ShowHeroHeader();
 
         },
+        GetWorkflowActions: function (callback) {
+            Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetWorkflowActions"), function (data) {
+                callback(data);
+            });
+
+        },
         Edit: function (action) {
 
             Me.Model.EditedAction = action;

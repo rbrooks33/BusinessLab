@@ -84,6 +84,9 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 			{
 				switch (requestName.Single().Value)
 				{
+					//Apps
+					case "GetWorkflowApps": Apps.GetWorkflowApps(ref result); break;
+
 					//Areas
 					case "GetAreas": Areas.GetAreas(ref result); break;
 					case "UpsertArea": Areas.UpsertArea(ref result); break;
@@ -99,13 +102,15 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 					case "AddStep": Steps.AddStep(ref result); break;
 
 					case "GetPreview": Business.GetPreview(ref result); break;
+
 					//Actions
 					case "GetActions": Business.GetActions(ref result); break;
 					case "GetTemplates": Business.GetTemplates(ref result); break;
 					case "SaveAction": Business.SaveAction(ref result); break;
 					case "AddAction": Business.AddAction(ref result); break;
 					case "RunAction": Actions.RunAction(ref result); break;
-					case "TestActionCode": Actions.TestCode(scheduler, ref result); break;
+					case "TestActionCode": Actions.TestCode(ref result); break;
+					case "GetWorkflowActions": Actions.GetWorkflowActions(ref result); break;
 
 					case "TriggerJob": business.TriggerJob(ref result); break;
 					case "SendMessage": PushHub.SendMessage(hub, result, result.Message); break;

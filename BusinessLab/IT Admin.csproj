@@ -70,7 +70,6 @@
   </ItemGroup>-->
 
   <ItemGroup>
-    <PackageReference Include="CS-Script" Version="4.8.1" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.9" />
