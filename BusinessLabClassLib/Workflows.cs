@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Data.Sqlite;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,41 @@ namespace BusinessLabClassLib
 {
     public class Workflows
     {
-            public static void GetWorkflows(ref Result result)
+        public static void GetWorkflows(ref Result result)
+        {
+            result.Data = Data.Execute(@$"
+                SELECT 
+                    *,
+                    (SELECT COUNT(*) FROM Steps s WHERE s.WorkflowID = w.WorkflowID) AS StepCount
+                FROM 
+                    Workflows w", null);
+            result.Success = true;
+        }
+        public static void GetAllWorkflows(ref Result result)
+        {
+            result.Data = Data.ExecuteCSSqlite(@"
+                SELECT * FROM Workflows", null);
+            result.Success = true;
+
+        }
+        public static void GetAllWorkflowLogs(ref Result result)
+        {
+            if (result.ParamExists("WorkflowID"))
             {
-                result.Data = Data.Execute($"SELECT * FROM Workflows", null);
+                var sqliteParams = new List<SqliteParameter>();
+                sqliteParams.Add(new SqliteParameter() { ParameterName = "@WorkflowID", Value = result.GetParam("AppID") });
+                result.Data = Data.ExecuteCSSqlite(@"
+                    SELECT 
+                    (SELECT count(*) from Logs INNER JOIN Steps ON Steps.StepID = Logs.StepID WHERE Step.WorkflowID = @WorkflowID AND Logs.LogSeverity = 1) AS InfoCount,
+                    (SELECT count(*) from Logs INNER JOIN Steps ON Steps.StepID = Logs.StepID WHERE Step.WorkflowID = @WorkflowID AND Logs.LogSeverity = 2) AS GoodCount,
+                    (SELECT count(*) from Logs INNER JOIN Steps ON Steps.StepID = Logs.StepID WHERE Step.WorkflowID = @WorkflowID AND Logs.LogSeverity = 3) AS UglyCount,
+                    (SELECT count(*) from Logs INNER JOIN Steps ON Steps.StepID = Logs.StepID WHERE Step.WorkflowID = @WorkflowID AND Logs.LogSeverity = 4) AS BadCount,
+                    0 AS IssueCount
+
+                ", sqliteParams.ToArray());
                 result.Success = true;
             }
+        }
         public static void SaveWorkflow(ref Result result)
         {
             result.ValidateData();

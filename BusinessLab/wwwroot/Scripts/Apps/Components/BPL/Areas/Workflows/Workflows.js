@@ -115,10 +115,22 @@
 
             //CUSTOM CODE TO SET DATA TO CHILD CELL:
 
-            let data = Enumerable.From(Me.Root.Areas.Model.Steps).Where(w => w.WorkflowID == parent[parentIdFieldName]).ToArray();
+            let data = Enumerable.From(Me.Steps.Model.Steps).Where(w => w.WorkflowID == parent[parentIdFieldName]).ToArray();
 
             Me.Steps.WorkflowID = parent[parentIdFieldName];
             Me.Steps.SetHTML(parentNameFieldName, data, $('#' + childCellId));
+        },
+        Edit: function (workflowId) {
+
+            let workflow = Enumerable.From(Me.Root.Dashboard2.Model.Workflows).Where(w => w.WorkflowID == workflowId).ToArray()[0];
+            Me.EditWorkflow.Show(workflow);
+
+        },
+        Model: {
+            Workflows:[]
+        },
+        Controls: {
+
         }
 
     };

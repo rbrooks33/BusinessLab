@@ -11,8 +11,15 @@
             Me.Root.ShowHeroHeader();
             //setInterval(Me.RefreshLogTotals, 5000);
 
+                Me.Root.Areas.PopulateAreaModels();
+
             Apps.BindElement('AreaContainerHTML', Me);
 
+            Me.RefreshLogs();
+        },
+        RefreshLogs: function () {
+            Me.AppLogs.Refresh();
+            Me.ActionLogs.Refresh();
         },
         Model: {
             Areas: [],
@@ -45,17 +52,16 @@
                                             //Area Workflows
                                             let workflowHtml = '';
                                             let areaWorkflows = Enumerable.From(Me.Model.Workflows).Where(w => w.AreaID == a.AreaID).ToArray();
-                                            
+
                                             $.each(areaWorkflows, function (i, w) {
-                                                workflowHtml += Me.UI.Templates.Dashboard_WorkflowStatus_Template.HTML([w.WorkflowName]);
+                                                workflowHtml += Me.UI.Templates.Dashboard_WorkflowStatus_Template.HTML([a.AreaID, w.WorkflowID, w.WorkflowName, w.StepCount]);
                                             });
 
                                             //Area Apps (app and app/step logs)
                                             let appsHtml = '';
                                             let areaApps = Enumerable.From(Me.Model.Apps).Where(app => app.AreaID == a.AreaID).ToArray();
-                                            areaApps.length > 0 ? $('.AppStatusContainerTitle').show() : $('.AppStatusContainerTitle').hide();
                                             $.each(areaApps, function (i, app) {
-                                                appsHtml += Me.UI.Templates.Dashboard_AppStatus_Template.HTML([app.AppName]);
+                                                appsHtml += Me.UI.Templates.Dashboard_AppStatus_Template.HTML([a.AreaID, app.AppID, app.AppName]);
                                             });
 
                                             //Area Actions (action/step logs)
@@ -63,18 +69,41 @@
                                             let areaActions = Enumerable.From(Me.Model.Actions).Where(action => action.AreaID == a.AreaID).ToArray();
 
                                             $.each(areaActions, function (i, action) {
-                                                actionsHtml += Me.UI.Templates.Dashboard_ActionStatus_Template.HTML([action.ActionName]);
+                                                actionsHtml += Me.UI.Templates.Dashboard_ActionStatus_Template.HTML([a.AreaID, action.ActionID, action.ActionName]);
                                             });
 
                                             html += Me.UI.Templates.Dashboard_Area_Template.HTML([a.AreaID, a.AreaName, workflowHtml, appsHtml, actionsHtml]);
+                                        });
+
+                                        that.Selector.html(html);
+
+                                        $.each(Me.Model.Areas, function (i, a) {
+
+                                            let areaWorkflows = Enumerable.From(Me.Model.Workflows).Where(w => w.AreaID == a.AreaID).ToArray();
+                                            if (areaWorkflows.length > 0)
+                                                $('.DashboardStatusContainerTitle_' + a.AreaID).show(400);
+                                            else
+                                                $('.DashboardStatusContainerTitle_' + a.AreaID).hide(400);
+
+                                            let areaApps = Enumerable.From(Me.Model.Apps).Where(app => app.AreaID == a.AreaID).ToArray();
+
+                                            if (areaApps.length > 0)
+                                                $('.AppStatusContainerTitle_' + a.AreaID).show(400);
+                                            else
+                                                $('.AppStatusContainerTitle_' + a.AreaID).hide(400);
+
+                                            let areaActions = Enumerable.From(Me.Model.Actions).Where(action => action.AreaID == a.AreaID).ToArray();
+                                            if (areaActions.length > 0)
+                                                $('.ActionsStatusContainerTitle_' + a.AreaID).show(400);
+                                            else
+                                                $('.ActionsStatusContainerTitle_' + a.AreaID).hide(400);
+                                                
+
                                         });
                                     });
                                 });
                             });
                         });
-
-                        that.Selector.html(html);
-
                     });
                 }
             }

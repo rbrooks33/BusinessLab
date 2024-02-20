@@ -5,9 +5,13 @@
             Apps.Components.Helpers.PushHub.Subscriber().Subscribe('AppLoaded', Me.AppStarted);
         },
         AppStarted: function () {
+        },
+        Refresh: function (callback) {
             Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetConfigs"), function (data) {
-                Me.Model.Configs = data;
+                Me.Model.Configs = data.Data;
+                callback();
             });
+
         },
         GetConfigValue: function (configName) {
             let ret = "";

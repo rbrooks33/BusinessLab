@@ -168,6 +168,12 @@
             Me.Save(Me.SelectedStep);
             Apps.Components.Helpers.Dialogs.Close('BPL_Areas_Workflows_Steps_FunctionalSpecs_Dialog');
 
+        },
+        Model: {
+            Steps:[]
+        },
+        Controls: {
+
         }
     };
     return Me;

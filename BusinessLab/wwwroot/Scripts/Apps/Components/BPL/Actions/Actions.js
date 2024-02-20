@@ -35,6 +35,18 @@
             Me.Root.ShowHeroHeader();
 
         },
+        GetAllActions: function (callback) {
+            Apps.Data.Execute("GetAllActions", [], function (result) {
+                callback(result.Data);
+            });
+        },
+        GetAllActionLogs: function (actionId, callback) {
+            Apps.Data.Execute("GetAllActionLogs",
+                [{ Name: 'ActionID', Value: actionId.toString() }],
+                function (result) {
+                    callback(result.Data);
+                });
+        },
         GetWorkflowActions: function (callback) {
             Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetWorkflowActions"), function (data) {
                 callback(data);
@@ -177,6 +189,15 @@
         },
         ViewJob: function () {
             Apps.Notify('info', 'TBD');
+        },
+        EditSteps: function (actionId) {
+            //NOTE: Dashboard populates workflows, apps and actions according to what it shows
+            //at a later time, each component may load the collection completely
+            let action = Enumerable.From(Me.Root.Dashboard2.Model.Actions).Where(a => a.ActionID == actionId).ToArray()[0];
+
+            Me.EditAction.Show(action)
+
+
         }
     };
     return Me;

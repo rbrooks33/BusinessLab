@@ -8,6 +8,15 @@
             Me.UI.HideAll(); //Hides all but me
             Me.Root.ShowHeroHeader();
         },
+        Add: function (stepId, title, description, uniqueId, logSeverityId) {
+            Apps.Data.Execute('AddLog', [
+                { Name: 'StepID', Value: stepId.toString() },
+                { Name: 'Title', Value: title },
+                { Name: 'Description', Value: description },
+                { Name: 'UniqueID', Value: uniqueId },
+                { Name: 'SeverityID', Value: logSeverityId.toString() }
+            ]);
+        },
         Model: {
 
         },

@@ -22,17 +22,17 @@
         </div>
 
         <div class="DashboardWorkflowContainer">
-            <div style="font-size:1.5vw;font-weight:bold;">Workflows</div>
+            <div class="DashboardStatusContainerTitle_{0}" style="font-size:1.5vw;font-weight:bold;">Workflows</div>
             {2}
         </div>
 
         <div class="DashboardAppsContainer">
-            <div style="font-size: 1.5vw; font-weight: bold;">Apps</div>
+            <div class="AppStatusContainerTitle_{0}" style="font-size: 1.5vw; font-weight: bold;">Apps</div>
             {3}
         </div>
 
         <div class="DashboardActionsContainer">
-            <div style="font-size: 1.5vw; font-weight: bold;">Actions</div>
+            <div class="ActionsStatusContainerTitle_{0}" style="font-size: 1.5vw; font-weight: bold;">Actions</div>
             {4}
         </div>
 
@@ -41,37 +41,58 @@
 
 <script id="Dashboard_WorkflowStatus_Template" type="text/template">
     <!--
-    0 = workfow name    
+        
+    0 = area id
+    1 = workflow id
+    2 = workfow name    
+    3 = step count
     -->
-    <div style="font-size:1.5vw;">{0}</div>
+    <div class="Dashboard_Status_Title">
+        <span class="AppLink" onclick="Apps.Components.BPL.Areas.Workflows.Edit({1});">
+            #{1}&nbsp;{2}&nbsp;({3})
+        </span>
+    </div>
     <div class="WorkflowStatusContainer">
-        <div class="DashboardWorkflowStatus DashboardStatus_Good"></div>
-        <div class="DashboardWorkflowStatus DashboardStatus_Bad"></div>
-        <div class="DashboardWorkflowStatus DashboardStatus_Ugly"></div>
-        <div class="DashboardWorkflowStatus DashboardStatus_Info"></div>
+        <div class="DashboardWorkflowStatus DashboardStatus_Good WorkflowStatus_Good_{0}"></div>
+        <div class="DashboardWorkflowStatus DashboardStatus_Bad WorkflowStatus_Bad_{0}"></div>
+        <div class="DashboardWorkflowStatus DashboardStatus_Ugly WorkflowStatus_Ugly_{0}"></div>
+        <div class="DashboardWorkflowStatus DashboardStatus_Info WorkflowStatus_Info_{0}"></div>
     </div>
 
 </script>
 
 <script id="Dashboard_AppStatus_Template" type="text/template">
     <!--
-    0 = app name
+        
+    0 = area id
+    1 = app id
+    2 = app name
     -->
-    <div class="AppStatusContainerTitle" style="font-size:1.5vw;">{0}</div>
-    <div class="AppStatusContainer">
-        <div class="DashboardWorkflowStatus DashboardStatus_Good"></div>
-        <div class="DashboardWorkflowStatus DashboardStatus_Bad"></div>
-        <div class="DashboardWorkflowStatus DashboardStatus_Ugly"></div>
-        <div class="DashboardWorkflowStatus DashboardStatus_Info"></div>
+    <div class="Dashboard_Status_Title">
+        <span class="AppLink" onclick="Apps.Components.BPL.Apps.Edit({1});">
+            #{1}&nbsp;{2}
+        </span>
+    </div>
+    <div class="AppStatusContainer_{1}">
+        <div class="DashboardWorkflowStatus DashboardStatus_Good AppStatus_Good_{1}"></div>
+        <div class="DashboardWorkflowStatus DashboardStatus_Bad AppStatus_Bad_{1}"></div>
+        <div class="DashboardWorkflowStatus DashboardStatus_Ugly AppStatus_Ugly_{1}"></div>
+        <div class="DashboardWorkflowStatus DashboardStatus_Info AppStatus_Info_{1}"></div>
     </div>
 
 </script>
 
 <script id="Dashboard_ActionStatus_Template" type="text/template">
     <!--
-    0 = action name
+    0 = area id
+    1 = action id
+    2 = action name
     -->
-    <div class="ActionsStatusContainerTitle" style="font-size:1.5vw;">{0}</div>
+    <div class="Dashboard_Status_Title">
+        <span class="AppLink" onclick="Apps.Components.BPL.Actions.EditSteps({1});">
+            #{1}&nbsp;{2}
+        </span>
+    </div>
     <div class="ActionStatusContainer">
         <div class="DashboardWorkflowStatus DashboardStatus_Good"></div>
         <div class="DashboardWorkflowStatus DashboardStatus_Bad"></div>

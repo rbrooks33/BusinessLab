@@ -84,20 +84,32 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 			{
 				switch (requestName.Single().Value)
 				{
+					//Common
+					case "AddLog": Logs.Add(ref result);
+
+                        PushHub.SendMessage(hub, result, "New Log");
+
+                        break;
+
 					//Apps
 					case "GetWorkflowApps": Apps.GetWorkflowApps(ref result); break;
+					case "GetAllApps": Apps.GetAllApps(ref result); break;
+                    case "GetAllAppLogs": Apps.GetAllAppLogs(ref result); break;
+					case "GetAppSteps": Apps.GetAppSteps(ref result); break;
 
-					//Areas
-					case "GetAreas": Areas.GetAreas(ref result); break;
+                    //Areas
+                    case "GetAreas": Areas.GetAreas(ref result); break;
 					case "UpsertArea": Areas.UpsertArea(ref result); break;
 
 					//Workflows
 					case "GetWorkflows": Workflows.GetWorkflows(ref result); break;
 					case "SaveWorkflow": Workflows.SaveWorkflow(ref result); break;
 					case "AddWorkflow": Workflows.AddWorkflow(ref result); break;
+                    case "GetAllWorkflows": Apps.GetAllApps(ref result); break;
+                    case "GetAllWorkflowLogs": Apps.GetAllAppLogs(ref result); break;
 
-					//Steps
-					case "GetSteps": Steps.GetSteps(ref result); break;
+                    //Steps
+                    case "GetSteps": Steps.GetSteps(ref result); break;
 					case "SaveStep": Steps.SaveStep(ref result); break;
 					case "AddStep": Steps.AddStep(ref result); break;
 
@@ -111,8 +123,10 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 					case "RunAction": Actions.RunAction(ref result); break;
 					case "TestActionCode": Actions.TestCode(ref result); break;
 					case "GetWorkflowActions": Actions.GetWorkflowActions(ref result); break;
+                    case "GetAllActions": Actions.GetAllActions(ref result); break;
+                    case "GetAllActionLogs": Actions.GetAllActionLogs(ref result); break;
 
-					case "TriggerJob": business.TriggerJob(ref result); break;
+                    case "TriggerJob": business.TriggerJob(ref result); break;
 					case "SendMessage": PushHub.SendMessage(hub, result, result.Message); break;
 
 

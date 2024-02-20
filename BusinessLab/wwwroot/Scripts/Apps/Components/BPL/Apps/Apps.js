@@ -16,6 +16,26 @@
             });
 
         },
+        GetAllApps: function (callback) {
+            Apps.Data.Execute("GetAllApps", [], function (result) {
+                callback(result.Data);
+            });
+        },
+        GetAllAppLogs: function (appId, callback) {
+            Apps.Data.Execute("GetAllAppLogs",
+                [{ Name: 'AppID', Value: appId.toString() }],
+                function (result) {
+                callback(result.Data);
+            });
+        },
+        Edit: function (appId) {
+
+            //NOTE: Dashboard populates workflows, apps and actions according to what it shows
+            //at a later time, each component may load the collection completely
+            let app = Enumerable.From(Me.Root.Dashboard2.Model.Apps).Where(a => a.AppID == appId).ToArray()[0];
+
+            Me.EditApp.Show(app)
+        },
         Model: {
             AppsHTML: ''
         },

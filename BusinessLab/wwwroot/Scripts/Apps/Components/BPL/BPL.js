@@ -13,19 +13,50 @@
         },
         Show: function () {
 
+            Me.Logs.Add(2, 'test step 2 log', 'testing adding from js', 'rodney', 1);
+
             Me.Dashboard2.Show();
 
-            Me.ShowHeroHeader();
+            Me.Admin.Configs.Refresh(function () {
 
-            Me.StartComponents();
+                Me.ShowHeroHeader();
 
-            Apps.AutoBind();
+                Me.StartComponents();
 
-            Apps.Components.Helpers.PushHub.Subscriber().Publish('AppLoaded', true); //Notify app finished loading
+                //Apps.AutoBind();
+
+                Apps.Components.Helpers.PushHub.Subscriber().Publish('AppLoaded', true); //Notify app finished loading
+
+            });
         },
+        ////AppLink: function (linkDestination) {
+        ////    switch (linkDestination) {
+        ////        case 'workflow_steps':
+
+        ////            let links = Enumerable.From(Me.AppLinks).Where(l => l.Name == linkDestination).ToArray();
+        ////            if (links.length == 1) {
+        ////            //    $.each(links[0].Links, function (i, l) {
+        ////            //        //setTimeout(eval(l), 10000);
+
+        ////                //    });
+        ////                eval(links[0].Links[1]);
+        ////            }
+        ////            break;
+        ////    }
+        ////},
+        ////AppLinks: [
+        ////    {
+        ////        Name: 'workflow_steps',
+        ////        Links: [
+        ////            'Apps.Components.BPL.Areas.Show()',
+        ////            'Apps.Grids.ShowChildren(\'Workflows\', \'AreaID\', \'AreaName\', arguments[1], arguments[2], Apps.Components.BPL.Areas.SetWorkflows)'
+        ////        ]
+        ////    }
+        ////],
         ShowHeroHeader: function () {
             $.each($('.HeaderHeroHtml'), function (i, h) {
-                $(h).html(Me.Admin.Configs.GetConfigValue('HeaderHeroHtml'));
+                let headerHtml = Me.Admin.Configs.GetConfigValue('HeaderHeroHtml');
+                $(h).html(headerHtml);
             });
 
         },

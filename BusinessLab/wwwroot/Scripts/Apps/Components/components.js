@@ -22,6 +22,12 @@
                             "Name": "ActionsModel",
                             "Load": true,
                             "Initialize": true
+                        },
+                        {
+                            "Name": "EditAction",
+                            "Load": true,
+                            "Initialize": true,
+                            "UI":true
                         }
 
                     ]
@@ -89,7 +95,14 @@
                             "Name": "AppsTable",
                             "Load": true,
                             "Initialize": true
+                        },
+                        {
+                            "Name": "EditApp",
+                            "Load": true,
+                            "Initialize": true,
+                            "UI":true
                         }
+
                     ]
                 },
                 {
@@ -100,6 +113,11 @@
                     "Start": true,
                     "Components": [
                         {
+                            "Name": "AreasControls",
+                            "Load": true,
+                            "Initialize":true
+                        },
+                        {
                             "Name": "Workflows",
                             "Load": true,
                             "Initialize": true,
@@ -108,8 +126,24 @@
                                     "Name": "Steps",
                                     "Load": true,
                                     "Initialize": true,
+                                    "UI": true,
+                                    "Components": [
+                                        {
+                                            "Name": "StepRelationships",
+                                            "Load": true,
+                                            "Initialize": true,
+                                            "UI": true
+                                        }
+
+                                    ]
+                                },
+                                {
+                                    "Name": "EditWorkflow",
+                                    "Load": true,
+                                    "Initialize": true,
                                     "UI": true
                                 }
+
                             ]
                         }
                     ]
@@ -138,7 +172,25 @@
                     "Name": "Dashboard2",
                     "Load": true,
                     "Initialize": true,
-                    "UI":true
+                    "UI": true,
+                    "Components": [
+                        {
+                            "Name": "AppLogs",
+                            "Load": true,
+                            "Initialize":true
+                        },
+                        {
+                            "Name": "ActionLogs",
+                            "Load": true,
+                            "Initialize": true
+                        },
+                        {
+                            "Name": "WorkflowLogs",
+                            "Load": true,
+                            "Initialize": true
+                        }
+
+                    ]
                 },
                 {
                     "Name": "Jobs",
@@ -326,19 +378,19 @@
                     "Name": "Plan",
                     "Load": true,
                     "UI": true,
-                    "Initialize": true,
+                    "Initialize": false,
                     "Components": [
                         {
                             "Name": "Areas",
-                            "Load": true
+                            "Load": false
                         },
                         {
                             "Name": "Workflows",
-                            "Load": true
+                            "Load": false
                         },
                         {
                             "Name": "Steps",
-                            "Load": true,
+                            "Load": false,
                             "Initialize": true,
                             "UI":true
                         }
@@ -367,13 +419,13 @@
                     "Components": [
                         {
                             "Name": "Runs",
-                            "Load": true,
+                            "Load": false,
                             "Initialize": true,
                             "UI": true
                         },
                         {
                             "Name": "TestPlans",
-                            "Load": true,
+                            "Load": false,
                             "Initialize": true,
                             "UI": true,
                             "Components": [
@@ -385,13 +437,13 @@
                                     "Components": [
                                         {
                                             "Name": "Steps",
-                                            "Load": true,
+                                            "Load": false,
                                             "Initialize": true,
                                             "UI": false,
                                             "Components": [
                                                 {
                                                     "Name": "EditTest",
-                                                    "Load": true,
+                                                    "Load": false,
                                                     "Initialize": true,
                                                     "UI": true
                                                 }
@@ -399,7 +451,7 @@
                                         },
                                         {
                                             "Name": "TestGrid",
-                                            "Load": true,
+                                            "Load": false,
                                             "Initialize": true,
                                             "UI": false
                                         }

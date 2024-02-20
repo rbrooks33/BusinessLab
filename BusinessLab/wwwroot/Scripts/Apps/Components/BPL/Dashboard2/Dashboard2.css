@@ -39,23 +39,40 @@
 }
 .DashboardWorkflowContainer {
     margin-top: 30px;
-    margin-left: 2px;
-    margin-right:2px;
+    margin-left: 10px;
+    margin-right:10px;
     text-align:center;
-    
+    font-size:1em;
+    font-weight:bold;
+}
+.Dashboard_Status_Title {
+    font-size: 1vw;
+    font-weight: initial;
 }
 .DashboardWorkflowStatus {
     border: solid 1px #1961AE;
     width: 2.7vw;
     height: 8px;
-    display: table-cell;
+    display: none;
+    font-size:1vw;
 }
 .DashboardAppsContainer {
     margin-top: 10px;
     text-align: center;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .DashboardActionsContainer {
     margin-top: 10px;
     text-align: center;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.AppLink{
+    cursor:pointer;
+    
+}
+.AppLink:hover{
+    color:blue;
 }

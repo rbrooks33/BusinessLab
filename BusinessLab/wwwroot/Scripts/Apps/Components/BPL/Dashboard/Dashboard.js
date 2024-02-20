@@ -26,15 +26,20 @@
         },
         RefreshLogTotals: function () {
 
-            $.each(Me.AppList, function (i, a) {
-                setTimeout(function () {
-                    //if (Me.DashboardControls.Model.TimerEnabled) {
+            Me.Root.Apps.GetAllApps(function (data) {
+
+                $.each(data, function (i, a) {
+                    setTimeout(function () {
+                        //if (Me.DashboardControls.Model.TimerEnabled) {
                         //Apps.Notify('info', 'timer');
                         Me.GetLogTotals(a.AppID);
-                    //}
-                }, 5000);
+                        //}
+                    }, 500);
 
-            })
+                })
+
+
+            });
 
         },
         GetLogTotals: function (appId) {

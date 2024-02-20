@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 using System.Data;
 
 namespace BusinessLabClassLib
@@ -339,140 +340,166 @@ namespace BusinessLabClassLib
             ", null);
             result.Success = true;
         }
-			//public static void RunAction(string actionUniqueId, MiniApps.Models.Action action, MiniAppsContext db, ref Result result)
-			//{
-			//    result.Success = false; //reset
+        public static void GetAllActions(ref Result result)
+        {
+            result.Data = Data.ExecuteCSSqlite(@"
+                SELECT * FROM Actions", null);
+            result.Success = true;
 
-			//    //Get action type id
-			//    var actionType = db.Actions.Where(at => at.UniqueID == actionUniqueId).SingleOrDefault();
+        }
+        public static void GetAllActionLogs(ref Result result)
+        {
+            if (result.ParamExists("ActionID"))
+            {
+                var sqliteParams = new List<SqliteParameter>();
+                sqliteParams.Add(new SqliteParameter() { ParameterName = "@ActionID", Value = result.GetParam("ActionID") });
+                result.Data = Data.ExecuteCSSqlite(@"
+                    SELECT 
+                    (SELECT count(*) from Logs INNER JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID WHERE Actions_Steps.ActionID = @ActionID AND Logs.LogSeverity = 1) AS InfoCount,
+                    (SELECT count(*) from Logs INNER JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID WHERE Actions_Steps.ActionID = @ActionID AND Logs.LogSeverity = 2) AS GoodCount,
+                    (SELECT count(*) from Logs INNER JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID WHERE Actions_Steps.ActionID = @ActionID AND Logs.LogSeverity = 3) AS UglyCount,
+                    (SELECT count(*) from Logs INNER JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID WHERE Actions_Steps.ActionID = @ActionID AND Logs.LogSeverity = 4) AS BadCount,
+                    0 AS IssueCount
+                   
+                ", sqliteParams.ToArray());
+                result.Success = true;
+            }
+        }
 
-			//    if (actionType != null)
-			//    {
-			//        //action.Args.AddRange(new List<ActionArgValue>()
-			//        //{
-			//        //    new ActionArgValue() { Value = new ActionArg() { ArgName = "iActionTypeID", ArgValue = actionType.ActionTypeID.ToString() } },
-			//        //    new ActionArgValue() { Value = new ActionArg() { ArgName = "Email", ArgValue = "sdfsdf" } },
-			//        //    new ActionArgValue() { Value = new ActionArg() { ArgName = "OfficeID", ArgValue = "sdfeeeef" } }
-			//        //});
+        //public static void RunAction(string actionUniqueId, MiniApps.Models.Action action, MiniAppsContext db, ref Result result)
+        //{
+        //    result.Success = false; //reset
 
-			//        //RunAction(action, db, ref result);
-			//    }
-			//    else
-			//    {
-			//        result.FailMessages.Add($"Action type unique id '{actionUniqueId}' not found in action types.");
-			//    }
+        //    //Get action type id
+        //    var actionType = db.Actions.Where(at => at.UniqueID == actionUniqueId).SingleOrDefault();
 
-			//    //var severity = result.FailMessages.Count > 0 ? LogSeverities.Exception : LogSeverities.Information;
+        //    if (actionType != null)
+        //    {
+        //        //action.Args.AddRange(new List<ActionArgValue>()
+        //        //{
+        //        //    new ActionArgValue() { Value = new ActionArg() { ArgName = "iActionTypeID", ArgValue = actionType.ActionTypeID.ToString() } },
+        //        //    new ActionArgValue() { Value = new ActionArg() { ArgName = "Email", ArgValue = "sdfsdf" } },
+        //        //    new ActionArgValue() { Value = new ActionArg() { ArgName = "OfficeID", ArgValue = "sdfeeeef" } }
+        //        //});
 
-			//    //common.AddLog(29, severity, "11111111-1111-1111-1111-111111111111", "RunAction by action id result", "RunActionByUniqueID", hub);
-			//}
-			//public static void RunAction(MiniApps.Models.Action action, MiniAppsContext db, ref Result result)
-			//{
+        //        //RunAction(action, db, ref result);
+        //    }
+        //    else
+        //    {
+        //        result.FailMessages.Add($"Action type unique id '{actionUniqueId}' not found in action types.");
+        //    }
 
+        //    //var severity = result.FailMessages.Count > 0 ? LogSeverities.Exception : LogSeverities.Information;
 
-			//    //If provided, associate with a log app
-			//    int.TryParse(Main.GetArgValue(action, "LogAppID", ref result), out int iLogAppId);
-			//    //string officeId = common.ArgValue(action, "OfficeID", ref result);  
-			//    //string email = common.ArgValue(action, "Email", ref result);
-
-			//    //var user = common.GetUserFromOfficeID(officeId, ref result);
-
-			//    if (int.TryParse(Main.GetArgValue(action, "ActionTypeID", ref result), out int actiontypeid))
-			//    {
-			//        var actionType = db.Actions.Where(at => at.ActionID == actiontypeid).SingleOrDefault();
-			//        if (actionType != null)
-			//        {
-			//            string editorType = actionType.EditorType.Trim().ToLower();
-
-			//            if (editorType == "csharp")
-			//            {
-			//                if (!String.IsNullOrEmpty(actionType.Code.Trim())
-			//                    && !String.IsNullOrEmpty(actionType.VariableDelimiter.Trim()))
-			//                {
-			//                    string code = actionType.Code;
-
-			//                    //foreach (var arg in action.Args)
-			//                    //{
-			//                    //    if (arg.Value.ArgName.ToLower() != "method"
-			//                    //        && arg.Value.ArgName.ToLower() != "actiontypeid"
-			//                    //        && arg.Value.ArgName.ToLower() != "email"
-			//                    //        && arg.Value.ArgName.ToLower() != "officeid")
-			//                    //    {
-			//                    //        code = code.Replace(actionType.VariableDelimiter.Trim() + arg.Value.ArgName, arg.Value.ArgValue);
-			//                    //    }
-			//                    //}
-
-			//                    try
-			//                    {
-
-			//                        dynamic script = CSScriptLib.CSScript.Evaluator.LoadMethod(
-			//                        $@"
-			//                            public string Product(WebApplication1.Classes.BBContext db, WebApplication1.Models.Action action, ref CommonClassLib.Models.Common.Result result)
-			//                            {{
-			//                                {code}           
-			//                            }}      
-			//                        ");
-
-			//                        result.Data = script.Product(db, action, ref result);
-			//                        result.SuccessMessages.Add($"Action run success for #{actiontypeid}. Result: {Newtonsoft.Json.JsonConvert.SerializeObject(result)}");
-			//                        //common.AddLog(iLogAppId, LogSeverities.Information, officeId, $"Action run success for #{actiontypeid}. Result: {Newtonsoft.Json.JsonConvert.SerializeObject(result)} code: " + code, "", hub);
-			//                        result.Success = true;
-			//                    }
-			//                    catch (Exception ex)
-			//                    {
-			//                        result.FailMessages.Add($"Action run for #{actiontypeid} exception: {ex.ToString()}");
-			//                        //common.AddLog(iLogAppId, LogSeverities.Exception, officeId, $"Action run exception for #{actiontypeid}: {ex.ToString()}", "", hub);
-			//                    }
-			//                }
-			//                else result.FailMessages.Add("Arg sCode null or empty.");
-			//            }
-			//            else if (editorType == "sql")
-			//            {
-			//                if (!String.IsNullOrEmpty(actionType.Sql.Trim())
-			//                    && !String.IsNullOrEmpty(actionType.VariableDelimiter.Trim()))
-			//                {
-			//                    string sql = actionType.Sql;
-
-			//                    var parameters = new List<Microsoft.Data.SqlClient.SqlParameter>();
-
-			//                    //foreach (var arg in action.Args)
-			//                    //{
-			//                    //    if (arg.Value.ArgName.ToLower() != "method")
-			//                    //    {
-			//                    //        var param = new Microsoft.Data.SqlClient.SqlParameter("@" + arg.Value.ArgName, arg.Value.ArgValue);
-			//                    //        parameters.Add(param);
-			//                    //    }
-			//                    //}
-
-			//                    sql = (String.IsNullOrEmpty(sql) ? "select 'empty sql'" : sql);
-			//                    result.Data = DB.Execute(sql, db, parameters.ToArray());
-			//                    result.Success = true;
-			//                }
-			//                else result.FailMessages.Add("Arg sCode null or empty.");
-
-			//            }
-			//            else
-			//                result.FailMessages.Add("action type " + actionType.ActionName + " has no handler.");
-
-			//            //common.AddLog(iLogAppId, LogSeverities.Information, officeId, "Action:" + actionType.sActionType + ": " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "SuccessfullActionTest", hub);
-
-			//        }
-			//        else
-			//            result.FailMessages.Add("ActionType not found for id " + actiontypeid.ToString());
-
-			//    }
-			//    else
-			//        result.FailMessages.Add("iActionTypeID not found in args.");
-
-			//    if (result.FailMessages.Count > 0)
-			//    {
-			//        //if (result.Success)
-			//        //    common.AddLog(iLogAppId, LogSeverities.Warning, officeId, "Action Fails: " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "ActionSuccessWithFails", hub);
-			//        //else
-			//        //    common.AddLog(iLogAppId, LogSeverities.Exception, officeId, "Action Fails: " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "ActionFail", hub);
-			//    }
-			//}
+        //    //common.AddLog(29, severity, "11111111-1111-1111-1111-111111111111", "RunAction by action id result", "RunActionByUniqueID", hub);
+        //}
+        //public static void RunAction(MiniApps.Models.Action action, MiniAppsContext db, ref Result result)
+        //{
 
 
-		}
+        //    //If provided, associate with a log app
+        //    int.TryParse(Main.GetArgValue(action, "LogAppID", ref result), out int iLogAppId);
+        //    //string officeId = common.ArgValue(action, "OfficeID", ref result);  
+        //    //string email = common.ArgValue(action, "Email", ref result);
+
+        //    //var user = common.GetUserFromOfficeID(officeId, ref result);
+
+        //    if (int.TryParse(Main.GetArgValue(action, "ActionTypeID", ref result), out int actiontypeid))
+        //    {
+        //        var actionType = db.Actions.Where(at => at.ActionID == actiontypeid).SingleOrDefault();
+        //        if (actionType != null)
+        //        {
+        //            string editorType = actionType.EditorType.Trim().ToLower();
+
+        //            if (editorType == "csharp")
+        //            {
+        //                if (!String.IsNullOrEmpty(actionType.Code.Trim())
+        //                    && !String.IsNullOrEmpty(actionType.VariableDelimiter.Trim()))
+        //                {
+        //                    string code = actionType.Code;
+
+        //                    //foreach (var arg in action.Args)
+        //                    //{
+        //                    //    if (arg.Value.ArgName.ToLower() != "method"
+        //                    //        && arg.Value.ArgName.ToLower() != "actiontypeid"
+        //                    //        && arg.Value.ArgName.ToLower() != "email"
+        //                    //        && arg.Value.ArgName.ToLower() != "officeid")
+        //                    //    {
+        //                    //        code = code.Replace(actionType.VariableDelimiter.Trim() + arg.Value.ArgName, arg.Value.ArgValue);
+        //                    //    }
+        //                    //}
+
+        //                    try
+        //                    {
+
+        //                        dynamic script = CSScriptLib.CSScript.Evaluator.LoadMethod(
+        //                        $@"
+        //                            public string Product(WebApplication1.Classes.BBContext db, WebApplication1.Models.Action action, ref CommonClassLib.Models.Common.Result result)
+        //                            {{
+        //                                {code}           
+        //                            }}      
+        //                        ");
+
+        //                        result.Data = script.Product(db, action, ref result);
+        //                        result.SuccessMessages.Add($"Action run success for #{actiontypeid}. Result: {Newtonsoft.Json.JsonConvert.SerializeObject(result)}");
+        //                        //common.AddLog(iLogAppId, LogSeverities.Information, officeId, $"Action run success for #{actiontypeid}. Result: {Newtonsoft.Json.JsonConvert.SerializeObject(result)} code: " + code, "", hub);
+        //                        result.Success = true;
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        result.FailMessages.Add($"Action run for #{actiontypeid} exception: {ex.ToString()}");
+        //                        //common.AddLog(iLogAppId, LogSeverities.Exception, officeId, $"Action run exception for #{actiontypeid}: {ex.ToString()}", "", hub);
+        //                    }
+        //                }
+        //                else result.FailMessages.Add("Arg sCode null or empty.");
+        //            }
+        //            else if (editorType == "sql")
+        //            {
+        //                if (!String.IsNullOrEmpty(actionType.Sql.Trim())
+        //                    && !String.IsNullOrEmpty(actionType.VariableDelimiter.Trim()))
+        //                {
+        //                    string sql = actionType.Sql;
+
+        //                    var parameters = new List<Microsoft.Data.SqlClient.SqlParameter>();
+
+        //                    //foreach (var arg in action.Args)
+        //                    //{
+        //                    //    if (arg.Value.ArgName.ToLower() != "method")
+        //                    //    {
+        //                    //        var param = new Microsoft.Data.SqlClient.SqlParameter("@" + arg.Value.ArgName, arg.Value.ArgValue);
+        //                    //        parameters.Add(param);
+        //                    //    }
+        //                    //}
+
+        //                    sql = (String.IsNullOrEmpty(sql) ? "select 'empty sql'" : sql);
+        //                    result.Data = DB.Execute(sql, db, parameters.ToArray());
+        //                    result.Success = true;
+        //                }
+        //                else result.FailMessages.Add("Arg sCode null or empty.");
+
+        //            }
+        //            else
+        //                result.FailMessages.Add("action type " + actionType.ActionName + " has no handler.");
+
+        //            //common.AddLog(iLogAppId, LogSeverities.Information, officeId, "Action:" + actionType.sActionType + ": " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "SuccessfullActionTest", hub);
+
+        //        }
+        //        else
+        //            result.FailMessages.Add("ActionType not found for id " + actiontypeid.ToString());
+
+        //    }
+        //    else
+        //        result.FailMessages.Add("iActionTypeID not found in args.");
+
+        //    if (result.FailMessages.Count > 0)
+        //    {
+        //        //if (result.Success)
+        //        //    common.AddLog(iLogAppId, LogSeverities.Warning, officeId, "Action Fails: " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "ActionSuccessWithFails", hub);
+        //        //else
+        //        //    common.AddLog(iLogAppId, LogSeverities.Exception, officeId, "Action Fails: " + Newtonsoft.Json.JsonConvert.SerializeObject(result), "ActionFail", hub);
+        //    }
+        //}
+
+
+    }
 }

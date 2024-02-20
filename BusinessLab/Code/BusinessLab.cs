@@ -329,7 +329,7 @@ namespace BusinessLab
             messageResult.Params.Add(new Result.Param { Name = "PushName", Value = "TestJob" });
             messageResult.Params.Add(new Result.Param { Name = "RequestName", Value = "SendMessage" });
 			messageResult.Message = message; // $"Starting to execute job {actionId}";
-            PushHub.SendMessageByService(messageResult);
+            //BusinessLabClassLib.PushHub.SendMessageByService(messageResult);
            
         }
         public static async Task<string> PostATECApi(Result result)

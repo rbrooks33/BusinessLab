@@ -28,10 +28,36 @@ namespace BusinessLabClassLib
 					VALUES (@StepID, @Title, @Description, @LogSeverity, @UniqueID)";
 
 				Data.Execute(sql, result.GetSqliteParamArray());
+
+				//SendMessageByServicde
 			}
 			catch (Exception ex) { 
 				result.FailMessages.Add(ex.ToString());
 			}
 		}
+		public static void Add(ref Result result)
+		{
+			if(result.ParamExists("StepID", Result.ParamType.Int)
+				&& result.ParamExists("Title", Result.ParamType.String)
+				&& result.ParamExists("Description", Result.ParamType.String)
+				&& result.ParamExists("UniqueID", Result.ParamType.String)
+				&& result.ParamExists("SeverityID", Result.ParamType.Int))
+			{
+                result.SqliteParams.Clear();
+                result.AddSqliteParam("@StepID", result.GetParam("StepID"));
+                result.AddSqliteParam("@Title", result.GetParam("Title").Replace("'", "''"));
+                result.AddSqliteParam("@Description", result.GetParam("Description").Replace("'", "''"));
+                result.AddSqliteParam("@UniqueID", result.GetParam("UniqueID").Replace("'", "''"));
+                result.AddSqliteParam("@SeverityID", result.GetParam("SeverityID"));
+
+                string sql = $@"
+
+					INSERT INTO Logs (StepID, Title, Description, LogSeverity, UniqueID) 
+					VALUES (@StepID, @Title, @Description, @SeverityID, @UniqueID)";
+
+                Data.Execute(sql, result.GetSqliteParamArray());
+				result.Success = true;
+            }
+        }
 	}
 }

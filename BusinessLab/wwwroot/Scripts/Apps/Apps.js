@@ -94,7 +94,7 @@
 
         if (Apps.ActiveDeployment.Debug) {
             Apps.ActiveDeployment.WebRoot = 'https://localhost:54322';
-            Apps.ActiveDeployment.Version = 8; //don't change so often
+            Apps.ActiveDeployment.Version = 9; //don't change so often
 
         }
 
@@ -2180,6 +2180,28 @@ Apps.Data = {
                 Apps.Components.BPL.HandleError(Apps.Data.GlobalPOST.Result);
         });
 
+    },
+    Execute: function (requestCommand, args, successcallback, errorcallback) {
+
+        args.push({ Name: 'RequestName', Value: requestCommand });
+
+        let result = {
+            Params: args
+        };
+
+        Apps.Data.GlobalPOST.Execute(result, function () {
+
+            if (Apps.Data.GlobalPOST.Success && Apps.Data.GlobalPOST.Result.FailMessages.length == 0) {
+                if (successcallback)
+                    successcallback(Apps.Data.GlobalPOST);
+            }
+            else {
+                if (errorcallback)
+                    errorcallback(Apps.Data.GlobalPOST.Result);
+                else
+                    Apps.Components.BPL.HandleError(Apps.Data.GlobalPOST.Result);
+            }
+        });
     },
     RegisterGlobalPOST: function (postUrl, args, sync) {
 
