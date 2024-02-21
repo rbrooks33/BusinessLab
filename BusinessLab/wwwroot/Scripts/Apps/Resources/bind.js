@@ -38,10 +38,16 @@ Apps.Define([], function () {
             }
         },
         BindingFinished: null,
-        DataBind: function (obj, key, isCollection, callback, changedCallback, boundCallback) {
+        DataBind: function (obj, key, isCollection, callback, changedCallback, boundCallback, isControl) {
 
             //Me.Obj = obj;
             var boundElements = $("[data-bind-type='" + key + "']");
+
+            ////prop definition
+            //let test = obj.Value;
+            //obj.Value = 'testerino';
+            //obj.Value = 'oh yeah';
+            //let test2 = obj.Value;
 
             $.each(boundElements, function (index, boundElement) {
 
@@ -65,7 +71,7 @@ Apps.Define([], function () {
                     //var propertyValue = '';
                     var collectionIndex = 0;
                     if (propertyCollectionName) {
-                    //    propertyValue = isCollection ? eval("Me.Obj" + propertyCollectionName) : eval("Me.Obj." + propertyName);
+                        //    propertyValue = isCollection ? eval("Me.Obj" + propertyCollectionName) : eval("Me.Obj." + propertyName);
                         let collectionIndexStart = propertyCollectionName.indexOf('[');
                         let collectionIndexEnd = propertyCollectionName.indexOf(']');
                         collectionIndex = propertyCollectionName.substr(collectionIndexStart + 1, collectionIndexEnd - (collectionIndexStart + 1));
@@ -122,31 +128,34 @@ Apps.Define([], function () {
                         //    this.select();
                         //});
                     }
-                    else if (elementType.toLowerCase() === "div"
-                        || elementType.toLowerCase() === "span") {
+                    else if (elementType.toLowerCase() === "div" || elementType.toLowerCase() === "span") {
+
+                        let boundName = '';
+                        let isColl = false;
+                        if (propertyCollectionName) {
+                            boundName = propertyCollectionName;
+                            isColl = true;
+                        }
+                        else {
+                            boundName = propertyName;
+                        }
+
+                        if (isControl)
+                            boundName = 'Value';
 
                         let contentType = $(boundElement).attr('data-bind-contenttype');
 
                         if (contentType == 'text' || contentType == undefined) {
 
-                            $(boundElement).text(propertyValue);
+                            //On Bind: element value --> obj value
+                            eval('obj.' + boundName + ' = "' + $(boundElement).text().trim() + '"');
 
-                            let boundName = '';
-                            let isColl = false;
-                            if (propertyCollectionName) {
-                                boundName = propertyCollectionName;
-                                isColl = true;
-                            }
-                            else {
-                                boundName = propertyName;
-                            }
-
-
+                            //On Event: obj value to element value
                             //Note: Non-editable elements' change event must be fired programmatically
                             //(e.g. "Apps.$('element').change()")
                             $(boundElement).off().on('change', function () {
 
-                                eval("obj." + boundName + " = '" + $(this).text() + "'");
+                                eval('obj.' + boundName + ' = "' + $(boundElement).text().trim() + '"');
 
                                 //if (Me.ChangedCallback)
                                 //    Me.ChangedCallback(propertyName, Apps.$(this).text());
@@ -158,7 +167,7 @@ Apps.Define([], function () {
                             });
                         }
                         else if (contentType == 'html') {
-                            $(boundElement).html(propertyValue);
+                            eval('obj.' + boundName + ' = "' + $(boundElement).html().trim() + '"');
                             //change?
                         }
                         else if (contentType == 'none') {
@@ -373,7 +382,7 @@ Apps.Define([], function () {
                 Me.CountDownBind.check();
             });
         },
-        DataBindControls: function (data, bindType, controlsObject, isCollection) {
+        DataBindControls: function (data, bindType, controlsObject, isCollection, isControl) {
             //Binding and validation.
 
             if (!Me.ControlTypes)
@@ -481,7 +490,7 @@ Apps.Define([], function () {
                         if (controlsObject['Changed'])
                             controlsObject.Changed(selector, propertyName, newValue, collIndex, isColl, event);
                     }
-                }
+                }, null, isControl
             );
             //Me.Validate(bindType, controlsObject);
         },
