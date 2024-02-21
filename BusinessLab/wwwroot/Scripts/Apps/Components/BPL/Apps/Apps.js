@@ -18,6 +18,7 @@
         },
         GetAllApps: function (callback) {
             Apps.Data.Execute("GetAllApps", [], function (result) {
+                Me.Model.AppList = result.Data;
                 callback(result.Data);
             });
         },
@@ -37,6 +38,7 @@
             Me.EditApp.Show(app)
         },
         Model: {
+            AppList: [],
             AppsHTML: ''
         },
         Controls: {

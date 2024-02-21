@@ -1,21 +1,56 @@
 ﻿<script id="StepRelationships_Template" type="text/template">
 
     <!--
-        0 = relationship name
-        1 = target html
+        
+        0 = relationship object id
+        1 = relationship name
         -->
     <div style="display:flex;">
         <div>
-            <div>Workflows/Steps</div>
+            <div>Available Steps</div>
             <div>
-                <select data-bind-property="StepRelationshipWorkflows"></select>
+                <select data-bind-property="StepRelationshipSource"></select>
             </div>
+            <div data-bind-property="StepRelationshipSourceSteps"></div>
         </div>
         <div>
-            <div>'{0}'' Steps</div>
-            <div>{1}</div>
+            <div>Assigned {1} Steps</div>
+            <div data-bind-property="StepRelationshipTarget" data-bind-uniqueid="{0}"></div>
         </div>
     </div>
 
+
+</script>
+
+<script id="StepRelationships_SourceRow_Template" type="text/template">
+
+    <!--
+        0 = step id
+        1 = step name
+    -->
+    <tr>
+        <td><i class="fa-solid fa-plus" style="cursor:pointer;" onclick="Apps.Components.BPL.Areas.Workflows.Steps.StepRelationships.Add({0});"></i></td>
+        <td>{0}</td>
+        <td>{1}</td>
+
+    </tr>
+
+</script>
+
+<script id="StepRelationships_TargetRow_Template" type="text/template">
+
+    <!--
+        0 = step id
+        1 = step name
+        2 = workflow id
+        3 = workflow name
+    -->
+    <tr>
+        <td><i class="fa-solid fa-minus" style="cursor:pointer;" onclick="Apps.Components.BPL.Areas.Workflows.Steps.StepRelationships.Remove({0});"></i></td>
+        <td>{0}</td>
+        <td>{1}</td>
+        <td>{2}</td>
+        <td>{3}</td>
+    </tr>
 
 </script>

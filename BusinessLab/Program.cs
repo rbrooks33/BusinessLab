@@ -96,6 +96,8 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 					case "GetAllApps": Apps.GetAllApps(ref result); break;
                     case "GetAllAppLogs": Apps.GetAllAppLogs(ref result); break;
 					case "GetAppSteps": Apps.GetAppSteps(ref result); break;
+					case "AddStepToApp": Apps.AddStepToApp(ref result); break;
+                    case "RemoveStepFromApp": Apps.RemoveStepFromApp(ref result); break;
 
                     //Areas
                     case "GetAreas": Areas.GetAreas(ref result); break;

@@ -61,5 +61,30 @@ namespace BusinessLabClassLib
                 result.Success = true;
             }
         }
+        public static void AddStepToApp(ref Result result)
+        {
+            var sqliteParams = new List<SqliteParameter>();
+
+            sqliteParams.Add(new SqliteParameter() { ParameterName = "@AppID", Value = result.GetParam("AppID") });
+            sqliteParams.Add(new SqliteParameter() { ParameterName = "@StepID", Value = result.GetParam("StepID") });
+
+            RemoveStepFromApp(ref result);
+
+            //Data.ExecuteCSSqlite(@"DELETE FROM Apps_Steps WHERE AppID = @AppID AND StepID = @StepID", sqliteParams.ToArray());
+            Data.ExecuteCSSqlite(@"INSERT INTO Apps_Steps (AppID, StepID) VALUES (@AppID, @StepID)", sqliteParams.ToArray());
+
+            result.Success = true;
+        }
+        public static void RemoveStepFromApp(ref Result result)
+        {
+            var sqliteParams = new List<SqliteParameter>();
+
+            sqliteParams.Add(new SqliteParameter() { ParameterName = "@AppID", Value = result.GetParam("AppID") });
+            sqliteParams.Add(new SqliteParameter() { ParameterName = "@StepID", Value = result.GetParam("StepID") });
+
+            Data.ExecuteCSSqlite(@"DELETE FROM Apps_Steps WHERE AppID = @AppID AND StepID = @StepID", sqliteParams.ToArray());
+
+            result.Success = true;
+        }
     }
 }
