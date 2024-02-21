@@ -147,10 +147,10 @@ Apps.Define([], function () {
 
                         if (contentType == 'text' || contentType == undefined) {
 
-                            //On Bind: element value --> obj value
-                            eval('obj.' + boundName + ' = "' + $(boundElement).text().trim() + '"');
+                            //On Bind: element value <-- obj value
+                            $(boundElement).text(eval('obj.' + boundName));
 
-                            //On Event: obj value to element value
+                            //On Event: obj value --> element value
                             //Note: Non-editable elements' change event must be fired programmatically
                             //(e.g. "Apps.$('element').change()")
                             $(boundElement).off().on('change', function () {
@@ -167,7 +167,7 @@ Apps.Define([], function () {
                             });
                         }
                         else if (contentType == 'html') {
-                            eval('obj.' + boundName + ' = "' + $(boundElement).html().trim() + '"');
+                            $(boundElement).html(eval('obj.' + boundName));
                             //change?
                         }
                         else if (contentType == 'none') {

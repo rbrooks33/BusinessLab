@@ -1356,6 +1356,8 @@
 
         let elementSelector = $('[data-bind-property="' + propertyName + '"]');
         let collectionSelector = $('[data-bind-collection-property="' + propertyName + '"]');
+        let contentType = elementSelector.attr('data-bind-contenttype');
+
         let isCollection = false;
         if (collectionSelector.length > 0) {
             isCollection = true;
@@ -1374,21 +1376,32 @@
         //For simplicity make type name same as property
         elementSelector.attr('data-bind-type', propertyName);
 
-        //Bind and validate existing values
-        //component.Controls[propertyName]['Value'] = '';
+        //Set initial value
         let val = '';
-
         Object.defineProperty(component.Controls[propertyName], 'Value', {
             get() {
-                //return this.propVal;
                 return val;
             },
             set(x) {
-                //let hi = 'ya';
-                //Value = x;
                 val = x;
             }
         });
+
+        if (hasElement) {
+            switch (elementSelector[0].localName) {
+                case 'span':
+                case 'div':
+
+                    if(contentType == 'text')
+                        component.Controls[propertyName].Value = elementSelector.text()
+                    else if(contentType == 'html')
+                        component.Controls[propertyName].Value = elementSelector.html()
+
+                    break;
+                        
+            }
+        }
+        component.Controls[propertyName].Value = elementSelector.html();
 
         Apps.Bind.DataBindControls(component.Controls[propertyName], propertyName, component.Controls, isCollection, true);
     },

@@ -28,6 +28,15 @@
         Controls: {
             DashboardContainer: {
                 Bound: function () {
+                    let that = this;
+                    Me.Root.Areas.Get(function (areas) {
+                        Me.Model.Areas = areas.Data;
+                        let html = '';
+                        $.each(Me.Model.Areas, function (i, a) {
+                            html += Me.UI.Templates.Area_Template.HTML([a.AreaID, a.AreaName]);
+                        });
+                        that.Selector.html(html);
+                    });
 
                 }
             },
