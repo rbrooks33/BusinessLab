@@ -22,23 +22,49 @@
             Me.ActionLogs.Refresh();
         },
         Model: {
-            Areas: [],
-            AreaContainerHTML: ''
+            Areas: []
         },
         Controls: {
             DashboardContainer: {
                 Bound: function () {
                     let that = this;
                     Me.Root.Areas.Get(function (areas) {
+
                         Me.Model.Areas = areas.Data;
+
                         let html = '';
                         $.each(Me.Model.Areas, function (i, a) {
                             html += Me.UI.Templates.Area_Template.HTML([a.AreaID, a.AreaName]);
                         });
                         that.Selector.html(html);
+
+                        Apps.BindElement('DashboardAreaWorkflows', Me);
+
                     });
 
                 }
+            },
+            DashboardAreaWorkflows: {
+                Bound: function () {
+                    let areaid = this.Selector.attr('data-bind-areaid');
+
+                    let areaWorkflows = Enumerable.From(Me.Root.Areas.Workflows.Model.Workflows).Where(w => w.AreaID == areaid).ToArray();
+
+                    let workflowHtml = '';
+                    $.each(areaWorkflows, function (i, w) {
+                        workflowHtml += Me.UI.Templates.Dashboard_WorkflowStatus_Template.HTML([areaid, w.WorkflowID, w.WorkflowName, w.StepCount]);
+                    });
+                    this.Data.Value = workflowHtml;
+
+                    Apps.BindElement('DashboardAreaApps', Me);
+                    Apps.BindElement('DashboardAreaActions', Me);
+                }
+            },
+            DashboardAreaApps: {
+
+            },
+            DashboardAreaApps: {
+
             },
             AreaContainerHTML: {
                 Bound: function () {

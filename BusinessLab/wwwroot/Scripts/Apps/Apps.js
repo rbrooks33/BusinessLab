@@ -1376,34 +1376,38 @@
         //For simplicity make type name same as property
         elementSelector.attr('data-bind-type', propertyName);
 
-        //Set initial value
-        let val = '';
-        Object.defineProperty(component.Controls[propertyName], 'Value', {
-            get() {
-                return val;
-            },
-            set(x) {
-                val = x;
+        if (component.Controls[propertyName]) {
+
+            if (!component.Controls[propertyName].Value) {
+                //Set initial value
+                let val = '';
+                Object.defineProperty(component.Controls[propertyName], 'Value', {
+                    get() {
+                        return val;
+                    },
+                    set(x) {
+                        val = x;
+                    }
+                });
+
+                if (hasElement) {
+                    switch (elementSelector[0].localName) {
+                        case 'span':
+                        case 'div':
+
+                            if (contentType == 'text')
+                                component.Controls[propertyName].Value = elementSelector.text()
+                            else if (contentType == 'html')
+                                component.Controls[propertyName].Value = elementSelector.html()
+
+                            break;
+
+                    }
+                }
+                component.Controls[propertyName].Value = elementSelector.html();
             }
-        });
-
-        if (hasElement) {
-            switch (elementSelector[0].localName) {
-                case 'span':
-                case 'div':
-
-                    if(contentType == 'text')
-                        component.Controls[propertyName].Value = elementSelector.text()
-                    else if(contentType == 'html')
-                        component.Controls[propertyName].Value = elementSelector.html()
-
-                    break;
-                        
-            }
+            Apps.Bind.DataBindControls(component.Controls[propertyName], propertyName, component.Controls, isCollection, true);
         }
-        component.Controls[propertyName].Value = elementSelector.html();
-
-        Apps.Bind.DataBindControls(component.Controls[propertyName], propertyName, component.Controls, isCollection, true);
     },
     GetMoveBindSourcex: function (sourceId, destinationId, c, moveOnly) {
 

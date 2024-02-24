@@ -1,11 +1,6 @@
 ﻿<div data-bind-template="BPLHeader"></div>
 
-
-<div data-bind-property="DashboardContainer" data-bind-contenttype="html" class="DashboardContainerStyle">
-
-    <div class="DashboardAreaContainer"></div>
-
-</div>
+<div data-bind-property="DashboardContainer" data-bind-contenttype="html" class="DashboardContainerStyle"></div>
 
 <script id="Area_Template" type="text/template">
     <!--
@@ -15,8 +10,10 @@
         3 = apps html
         4 = actions html
     -->
+    <div class="DashboardColumnStyle">
 
         <div class="DashboardAreaTitle">#{0} {1}</div>
+
         <div class="DashboardStatusContainer">
             <div class="DashboardAreaStatus DashboardStatus_Good"></div>
             <div class="DashboardAreaStatus DashboardStatus_Bad"></div>
@@ -24,26 +21,26 @@
             <div class="DashboardAreaStatus DashboardStatus_Info"></div>
         </div>
 
-        <div class="DashboardWorkflowContainer" data-bind-property="DashboardAreaWorkflows"></div>
-        <div class="DashboardAppsContainer" data-bind-property="DashboardAreaApps"></div>
-        <div class="DashboardActionsContainer" data-bind-property="DashboardAreaApps"></div>
+        <div data-bind-property="DashboardAreaWorkflows" data-bind-contenttype="html" data-bind-areaid="{0}" class="DashboardWorkflowContainer"></div>
+        <div data-bind-property="DashboardAreaApps" data-bind-contenttype="html" data-bind-areaid="{0}" class="DashboardAppsContainer"></div>
+        <div data-bind-property="DashboardAreaActions" data-bind-contenttype="html" data-bind-areaid="{0}" class="DashboardActionsContainer"></div>
 
         <!--
-            <div class="DashboardWorkflowContainer">
-            <div class="DashboardStatusContainerTitle_{0}" style="font-size:1.5vw;font-weight:bold;">Workflows</div>
-            {2}
-        </div>
+        <div class="DashboardWorkflowContainer">
+        <div class="DashboardStatusContainerTitle_{0}" style="font-size:1.5vw;font-weight:bold;">Workflows</div>
+        {2}
+    </div>
 
-        <div class="DashboardAppsContainer">
-            <div class="AppStatusContainerTitle_{0}" style="font-size: 1.5vw; font-weight: bold;">Apps</div>
-            {3}
-        </div>
+    <div class="DashboardAppsContainer">
+        <div class="AppStatusContainerTitle_{0}" style="font-size: 1.5vw; font-weight: bold;">Apps</div>
+        {3}
+    </div>
 
-        <div class="DashboardActionsContainer">
-            <div class="ActionsStatusContainerTitle_{0}" style="font-size: 1.5vw; font-weight: bold;">Actions</div>
-            {4}
-        </div>-->
-
+    <div class="DashboardActionsContainer">
+        <div class="ActionsStatusContainerTitle_{0}" style="font-size: 1.5vw; font-weight: bold;">Actions</div>
+        {4}
+    </div>-->
+    </div>
 
 </script>
 
