@@ -6,14 +6,14 @@
         },
         Refresh: function () {
 
-            Me.Root.Apps.GetAllApps(function (apps) {
+            Me.Root.Areas.GetAllAreas(function (areas) {
 
-                $.each(apps, function (i, app) {
-                    Me.Root.Apps.GetAllAppLogs(app.AppID, function (logapps) {
+                $.each(areas, function (i, area) {
+                    Me.Root.Areas.GetAllAreaLogs(area.AreaID, function (logcounts) {
 
-                        $.each(logapps, function (i, logcounts) {
+                        $.each(logcounts, function (i, logcount) {
                             setTimeout(function () {
-                                Me.RefreshApp(app, logcounts);
+                                Me.RefreshArea(area, logcount);
                             }, 500)
                         });
 
@@ -21,9 +21,9 @@
                 });
             });
         },
-        RefreshApp: function (app, logcounts) {
+        RefreshArea: function (area, logcounts) {
 
-            let appId = app.AppID;
+            let id = area.AreaID;
 
             if (logcounts.GoodCount == 0
                 && logcounts.BadCount == 0
@@ -31,22 +31,22 @@
                 && logcounts.InfoCount == 0
                 && logcounts.IssueCount == 0
             ) {
-                $('#MySpecialty_MiniAppStatus_Container_' + appId).hide(400);
+                //$('#MySpecialty_MiniAppStatus_Container_' + id).hide(400);
             }
             else {
 
-                $('#MySpecialty_MiniAppStatus_Container_' + appId).css('display', 'flex');
+                //$('#MySpecialty_MiniAppStatus_Container_' + id).css('display', 'flex');
 
                 //Good
                 if (logcounts.GoodCount > 0) {
-                    $('.AppStatus_Good_' + appId)
+                    $('.AreaStatus_Good_' + id)
                         .css('display', 'table-cell')
                         .css('color', 'white')
                         .text(logcounts.GoodCount)
                         .show(400);
                 }
                 else
-                    $('.AppStatus_Good_' + appId).css('display', 'none');
+                    $('.AreaStatus_Good_' + id).css('display', 'none');
 
                 //Bad
                 if (logcounts.BadCount > 0) {
@@ -65,39 +65,39 @@
                     }
 
                     if (show) {
-
-                        $('.AppStatus_Bad_' + appId)
+                        $('.AreaStatus_Bad_' + id)
                             .css('display', 'table-cell')
                             .css('color', badColor)
                             .css('background-color', badBackground)
                             .text(logcounts.BadCount)
                             .show(400);
+
                     }
                 }
                 else
-                    $('.AppStatus_Bad_' + appId).css('display', 'none');
+                    $('.AreaStatus_Bad_' + id).css('display', 'none');
 
                 //Ugly
                 if (logcounts.UglyCount > 0) {
-                    $('.AppStatus_Ugly_' + appId)
+                    $('.AreaStatus_Ugly_' + id)
                         .css('display', 'table-cell')
                         .css('color', 'black')
                         .text(logcounts.UglyCount)
                         .show(400);
                 }
                 else
-                    $('.AppStatus_Ugly_' + appId).css('display', 'none');
+                    $('.AreaStatus_Ugly_' + id).css('display', 'none');
 
                 //Info
                 if (logcounts.InfoCount > 0) {
-                    $('.AppStatus_Info_' + appId)
+                    $('.AreaStatus_Info_' + id)
                         .css('display', 'table-cell')
                         .css('color', 'black')
                         .text(logcounts.InfoCount)
                         .show(400);
                 }
                 else
-                    $('.AppStatus_Info_' + appId).css('display', 'none');
+                    $('.AreaStatus_Info_' + id).css('display', 'none');
 
             //    //Issue
             //    if (app.IssueCount > 0) {

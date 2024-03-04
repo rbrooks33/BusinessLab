@@ -37,6 +37,7 @@
         },
         GetAllActions: function (callback) {
             Apps.Data.Execute("GetAllActions", [], function (result) {
+                Me.ActionsModel.Model.Actions = result.Data;
                 callback(result.Data);
             });
         },
@@ -48,7 +49,14 @@
                 });
         },
         GetWorkflowActions: function (callback) {
-            Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetWorkflowActions"), function (data) {
+            Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetWorkflowActions"), function (result) {
+                Me.ActionsModel.Model.WorkflowActions = result.Data;
+                callback(result.Data);
+            });
+
+        },
+        GetAreaActions: function (callback) {
+            Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetAreaActions"), function (data) {
                 callback(data);
             });
 

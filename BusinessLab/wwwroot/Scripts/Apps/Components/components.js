@@ -1,6 +1,6 @@
 {
     "Components": [
-       
+
         {
             "Name": "BPL",
             "Load": true,
@@ -188,8 +188,13 @@
                             "Name": "WorkflowLogs",
                             "Load": true,
                             "Initialize": true
+                        },
+                        
+                        {
+                            "Name": "AreaLogs",
+                            "Load": true,
+                            "Initialize": true
                         }
-
                     ]
                 },
                 {
@@ -264,6 +269,19 @@
                     ]
                 }
 
+            ]
+        },
+        {
+            "Name": "ATEC",
+            "Load": true,
+            "Initialize": true,
+            "UI": true,
+            "Components": [
+                {
+                    "Name": "OrderViewer",
+                    "Load": true,
+                    "Initialize":true
+                }
             ]
         },
         {

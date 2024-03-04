@@ -654,6 +654,32 @@
             }
             return message;
         },
+        TimeElapsed2(date) {
+
+            const since = date.getTime(); // 1491685200000; // Saturday, 08-Apr-17 21:00:00 UTC
+            const elapsed = (new Date().getTime() - since) / 1000;
+            var message = {
+                Days: 0,
+                Hours: 0,
+                Minutes: 0,
+                Seconds: 0,
+                Text: ''
+            };
+
+            if (elapsed >= 0) {
+
+                message.Days = Math.floor(elapsed / 86400);
+                message.Hours = Math.floor(elapsed / 3600);
+                message.Minutes = Math.floor(elapsed / 60);
+                message.Seconds = Math.floor(elapsed);
+                message.Text = `${message.Days}d ${message.Hours}h ${message.Minutes}m ${message.Seconds}s ago`;
+
+            }
+            else {
+                Apps.Notify('info', 'Elapsed time lesser than 0, i.e. specified datetime is still in the future.');
+            }
+            return message;
+        },
         Middle: function (selector) {
             var result = { left: 0, top: 0 };
             var screenWidth = $(window).width();

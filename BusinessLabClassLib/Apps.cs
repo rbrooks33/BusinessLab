@@ -34,10 +34,35 @@ namespace BusinessLabClassLib
                 sqliteParams.Add(new SqliteParameter() { ParameterName = "@AppID", Value = result.GetParam("AppID") });
                 result.Data = Data.ExecuteCSSqlite(@"
 		            SELECT
-					(SELECT COUNT(*) FROM Logs l WHERE l.AppID = @AppID AND l.LogSeverity = 1) as InfoCount,
-					(SELECT COUNT(*) FROM Logs l WHERE l.AppID = @AppID AND l.LogSeverity = 2) as GoodCount,
-					(SELECT COUNT(*) FROM Logs l WHERE l.AppID = @AppID AND l.LogSeverity = 3) as UglyCount,
-					(SELECT COUNT(*) FROM Logs l WHERE l.AppID = @AppID AND l.LogSeverity = 4) as BadCount,
+					(
+                        SELECT COUNT(*) FROM Logs l 
+                        INNER JOIN Apps_Steps ON Apps_Steps.StepID = l.StepID 
+                        WHERE Apps_Steps.AppID = @AppID AND l.LogSeverity = 1
+                    ) as InfoCount,
+					(
+                        SELECT COUNT(*) FROM Logs l 
+                        INNER JOIN Apps_Steps ON Apps_Steps.StepID = l.StepID 
+                        WHERE Apps_Steps.AppID = @AppID AND l.LogSeverity = 2
+                    ) as GoodCount,
+					(
+                        SELECT COUNT(*) FROM Logs l 
+                        INNER JOIN Apps_Steps ON Apps_Steps.StepID = l.StepID 
+                        WHERE Apps_Steps.AppID = @AppID AND l.LogSeverity = 3
+                    ) as UglyCount,
+					(
+                        SELECT COUNT(*) FROM Logs l 
+                        INNER JOIN Apps_Steps ON Apps_Steps.StepID = l.StepID 
+                        WHERE Apps_Steps.AppID = @AppID AND l.LogSeverity = 4
+                    ) 
+                    as BadCount,                    (
+                        SELECT 
+	                    julianday('now') - julianday(Logs.Created)
+                        FROM Logs 
+                        INNER JOIN Apps_Steps ON Apps_Steps.StepID = Logs.StepID 
+                        WHERE Apps_Steps.AppID = @AppID AND Logs.LogSeverity = 4
+                        ORDER BY Logs.Created DESC LIMIT 1
+                    ) AS BadAge,
+
 					0 As IssueCount
 
                 ", sqliteParams.ToArray());

@@ -23,7 +23,7 @@
 				string response = client.UploadString(new Uri(url), "POST", contextjson);
 				//string response = Encoding.UTF8.GetString(responseBytes);
 
-				Logs.Add(1, "Push Message By Service Sent", result.Message ?? "blank message", ref result, Logs.LogSeverity.Info, "SendMessageByService");
+				Logs.Add(1, "Push Message By Service Sent", result.Message ?? "blank message", ref result, 1, "SendMessageByService");
 			}
 
 		}

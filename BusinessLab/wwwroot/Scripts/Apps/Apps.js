@@ -1364,50 +1364,54 @@
             elementSelector = collectionSelector;
         }
 
-        let hasElement = elementSelector.length > 0;
-        Apps.AutoBindReferences.push({
-            Name: propertyName,
-            ComponentObject: component,
-            Component: component.Config.Name,
-            ElementType: hasElement ? elementSelector[0].localName : '[no element]',
-            ElementClass: hasElement ? elementSelector[0].className : '[no element]'
-        });
+        $.each(elementSelector, function (i, s) {
 
-        //For simplicity make type name same as property
-        elementSelector.attr('data-bind-type', propertyName);
+            let selector = $(s);
+            let hasElement = selector.length > 0;
+            Apps.AutoBindReferences.push({
+                Name: propertyName,
+                ComponentObject: component,
+                Component: component.Config.Name,
+                ElementType: hasElement ? selector[0].localName : '[no element]',
+                ElementClass: hasElement ? selector[0].className : '[no element]'
+            });
 
-        if (component.Controls[propertyName]) {
+            //For simplicity make type name same as property
+            elementSelector.attr('data-bind-type', propertyName);
 
-            if (!component.Controls[propertyName].Value) {
-                //Set initial value
-                let val = '';
-                Object.defineProperty(component.Controls[propertyName], 'Value', {
-                    get() {
-                        return val;
-                    },
-                    set(x) {
-                        val = x;
+            if (component.Controls[propertyName]) {
+
+                if (component.Controls[propertyName].Value == undefined) {
+                    //Set initial value
+                    let val = '';
+                    Object.defineProperty(component.Controls[propertyName], 'Value', {
+                        get() {
+                            return val;
+                        },
+                        set(x) {
+                            val = x;
+                        }
+                    });
+
+                    if (hasElement) {
+                        switch (selector[0].localName) {
+                            case 'span':
+                            case 'div':
+
+                                if (contentType == 'text')
+                                    component.Controls[propertyName].Value = selector.text()
+                                else if (contentType == 'html')
+                                    component.Controls[propertyName].Value = selector.html()
+
+                                break;
+
+                        }
                     }
-                });
-
-                if (hasElement) {
-                    switch (elementSelector[0].localName) {
-                        case 'span':
-                        case 'div':
-
-                            if (contentType == 'text')
-                                component.Controls[propertyName].Value = elementSelector.text()
-                            else if (contentType == 'html')
-                                component.Controls[propertyName].Value = elementSelector.html()
-
-                            break;
-
-                    }
+                    component.Controls[propertyName].Value = selector.html();
                 }
-                component.Controls[propertyName].Value = elementSelector.html();
+                Apps.Bind.DataBindControls(component.Controls[propertyName], propertyName, component.Controls, isCollection, true);
             }
-            Apps.Bind.DataBindControls(component.Controls[propertyName], propertyName, component.Controls, isCollection, true);
-        }
+        });
     },
     GetMoveBindSourcex: function (sourceId, destinationId, c, moveOnly) {
 

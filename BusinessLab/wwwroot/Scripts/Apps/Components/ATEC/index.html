@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ATEC Utilities</title>
+    <script src="../../Apps.js"></script>
+
+    <!--Ace-->
+    <script src="../../Resources/Ace/ace.js"></script>
+    <script src="../../Resources/Ace/mode-json.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../Resources/Ace/theme-terminal.js" type="text/javascript" charset="utf-8"></script>
+
+    <script>
+        Apps.ComponentsReady = function () {
+            Apps.Components.ATEC.Show();
+        }
+    </script>
+</head>
+<body>
+    <div class="SalesWizardBody">
+        <h1>Sales Wizard Admin</h1>
+        <div class="EnvironmentSelection">
+            <h3>Environment</h3>
+            <select class="SelectEnvironment form-control" onchange="Apps.Components.ATEC.SelectEnvironment();">
+                <option selected value="0">Select An Environment</option>
+                <option value="1">Dev</option>
+                <option value="3">Live</option>
+            </select>
+
+        </div>
+        <div class="AppData">
+
+            <div class="LeftColumn">
+                <h2>App Sessions</h2>
+                <div data-bind-property="ATECUtilities" data-bind-contenttype="html"></div>
+
+            </div>
+            <div class="RightColumn">
+                <h2>App Steps</h2>
+                <div data-bind-property="AppStepsGrid"></div>
+            </div>
+        </div>
+        </div>
+</body>
+</html>

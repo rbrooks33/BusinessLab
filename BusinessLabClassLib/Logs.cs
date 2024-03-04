@@ -11,10 +11,13 @@ namespace BusinessLabClassLib
 			Exception = 4
 		}
 
-		public static void Add(int stepId, string title, string description, ref Result result, LogSeverity severity = LogSeverity.Info, string uniqueId = "")
+		public static void Add(int stepId, string title, string description, ref Result result, int severity, string uniqueId = "")
 		{
 			try
-			{
+			{ 
+				if (severity == 4)
+					description = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(description);
+
 				result.SqliteParams.Clear();
 				result.AddSqliteParam("@StepID", stepId.ToString());
 				result.AddSqliteParam("@Title", title.Replace("'","''"));
@@ -43,10 +46,14 @@ namespace BusinessLabClassLib
 				&& result.ParamExists("UniqueID", Result.ParamType.String)
 				&& result.ParamExists("SeverityID", Result.ParamType.Int))
 			{
-                result.SqliteParams.Clear();
+				string description = result.GetParam("Description");
+				if (result.GetParam("SeverityID") == "4")
+					description = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(description);
+				
+				result.SqliteParams.Clear();
                 result.AddSqliteParam("@StepID", result.GetParam("StepID"));
                 result.AddSqliteParam("@Title", result.GetParam("Title").Replace("'", "''"));
-                result.AddSqliteParam("@Description", result.GetParam("Description").Replace("'", "''"));
+                result.AddSqliteParam("@Description", description.Replace("'", "''"));
                 result.AddSqliteParam("@UniqueID", result.GetParam("UniqueID").Replace("'", "''"));
                 result.AddSqliteParam("@SeverityID", result.GetParam("SeverityID"));
 
@@ -59,5 +66,10 @@ namespace BusinessLabClassLib
 				result.Success = true;
             }
         }
+		public static void GetLogs(ref Result result)
+		{
+			result.Data = Data.ExecuteCSSqlite("SELECT * FROM Logs", null);
+			result.Success = true;
+		}
 	}
 }

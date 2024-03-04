@@ -3,10 +3,14 @@
         Root: Apps.Components.BPL,
         Initialize: function (callback) {
             callback();
+            Apps.Data.Execute("GetLogs", [], function (result) {
+                Me.Model.Logs = result.Data;
+            });
         },
         Show: function () {
             Me.UI.HideAll(); //Hides all but me
             Me.Root.ShowHeroHeader();
+
         },
         Add: function (stepId, title, description, uniqueId, logSeverityId) {
             Apps.Data.Execute('AddLog', [
@@ -18,7 +22,7 @@
             ]);
         },
         Model: {
-
+            Logs: []
         },
         Controls: {
 

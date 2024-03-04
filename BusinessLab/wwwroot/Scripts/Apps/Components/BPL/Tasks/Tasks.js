@@ -2,7 +2,7 @@
     let Me = {
         Root: Apps.Components.BPL,
         Initialize: function (callback) {
-            Me.UI.Drop();
+            //Me.UI.Drop();
             callback();
         },
         Show: function () {

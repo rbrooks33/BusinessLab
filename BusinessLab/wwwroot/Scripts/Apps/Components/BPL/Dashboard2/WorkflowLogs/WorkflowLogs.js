@@ -6,14 +6,14 @@
         },
         Refresh: function () {
 
-            Me.Root.Apps.GetAllWorkflows(function (workflows) {
+            Me.Root.Areas.Workflows.GetAllWorkflows(function (workflows) {
 
                 $.each(workflows, function (i, workflow) {
-                    Me.Root.Apps.GetAllWorkflowLogs(workflow.WorkflowID, function (logapps) {
+                    Me.Root.Areas.Workflows.GetAllWorkflowLogs(workflow.WorkflowID, function (logcounts) {
 
-                        $.each(workflows, function (i, logcounts) {
+                        $.each(logcounts, function (i, logcount) {
                             setTimeout(function () {
-                                Me.RefreshWorkflow(workflow, logcounts);
+                                Me.RefreshWorkflow(workflow, logcount);
                             }, 500)
                         });
 
@@ -21,7 +21,7 @@
                 });
             });
         },
-        RefreshApp: function (workflow, logcounts) {
+        RefreshWorkflow: function (workflow, logcounts) {
 
             let id = workflow.WorkflowID; // appId = app.AppID;
 
@@ -31,11 +31,11 @@
                 && logcounts.InfoCount == 0
                 && logcounts.IssueCount == 0
             ) {
-                $('#MySpecialty_MiniAppStatus_Container_' + id).hide(400);
+                //$('#MySpecialty_MiniAppStatus_Container_' + id).hide(400);
             }
             else {
 
-                $('#MySpecialty_MiniAppStatus_Container_' + id).css('display', 'flex');
+                //$('#MySpecialty_MiniAppStatus_Container_' + id).css('display', 'flex');
 
                 //Good
                 if (logcounts.GoodCount > 0) {
@@ -50,11 +50,29 @@
 
                 //Bad
                 if (logcounts.BadCount > 0) {
-                    $('.WorkflowStatus_Bad_' + id)
-                        .css('display', 'table-cell')
-                        .css('color', 'white')
-                        .text(logcounts.BadCount)
-                        .show(400);
+
+                    let show = false;
+
+                    if (logcounts.BadAge <= 1) {
+                        badBackground = 'red';
+                        badColor = 'white';
+                        show = true;
+                    }
+                    else if (logcounts.BadAge > 1 && logcounts.BadAge <= 7) {
+                        badBackground = 'yellow';
+                        badColor = 'black';
+                        show = true;
+                    }
+
+                    if (show) {
+
+                        $('.WorkflowStatus_Bad_' + id)
+                            .css('display', 'table-cell')
+                            .css('color', badColor)
+                            .css('background-color', badBackground)
+                            .text(logcounts.BadCount)
+                            .show(400);
+                    }
                 }
                 else
                     $('.AppStatus_Bad_' + id).css('display', 'none');

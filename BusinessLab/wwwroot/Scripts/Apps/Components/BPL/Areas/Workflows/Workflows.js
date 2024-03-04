@@ -63,6 +63,28 @@
             //TODO: Depends on having called "Set"
             Me.SetHTML(Me.ParentName, Me.Data, Me.Selector);
         },
+        GetAllWorkflows: function (callback) {
+            Apps.Data.Execute("GetWorkflows", [], function (result) {
+                callback(result.Data);
+            });
+
+        },
+        GetAllWorkflowLogs: function (workflowId, callback) {
+            Apps.Data.Execute("GetAllWorkflowLogs", [{ Name: 'WorkflowID', Value: workflowId.toString() }], function (result) {
+                callback(result.Data);
+            });
+
+        },
+        GetWorkflowLogDetail: function (workflowId, severityId, callback) {
+            //let areaLogs = Me.Data.WorkflowLogs;
+            Apps.Data.Execute("GetWorkflowLogDetail", [
+                { Name: 'WorkflowID', Value: workflowId.toString() },
+                { Name: 'SeverityID', Value: severityId.toString() }
+            ], function (result) {
+                callback(result.Data);
+            });
+
+        },
         Get: function (callback) {
             Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetWorkflows"), function (data) {
                 callback(data);
@@ -122,9 +144,12 @@
         },
         Edit: function (workflowId) {
 
-            let workflow = Enumerable.From(Me.Root.Dashboard2.Model.Workflows).Where(w => w.WorkflowID == workflowId).ToArray()[0];
+            let workflow = Enumerable.From(Me.Model.Workflows).Where(w => w.WorkflowID == workflowId).ToArray()[0];
             Me.EditWorkflow.Show(workflow);
 
+        },
+        Data: {
+            WorkflowLogs: []
         },
         Model: {
             Workflows:[]

@@ -16,20 +16,35 @@
     background: #1961AE;
     color: white;
 }
+.AreaSectionsTitle{
+    text-align:center;
+    margin-top:10px;
+    font-size:1.1vw;
+}
 .DashboardAreaStatus {
-    border: solid 1px blue;
+    border: solid 1px #1961AE;
     width: 2.7vw;
-    height: 19px;
-    display: table-cell;
+
+    font-size:1vw;
+    display: none;
+    text-align: center;
 }
 .DashboardStatusContainer {
-    position: absolute;
+    margin-top: 5px;
+    justify-content: center;
+    display: flex;
+    /*    position: absolute;
     border: solid 1px #1961AE;
     width: 11vw;
-    height: 20px;
+    height: 20px;*/
 }
-.DashboardStatus_Good{
-    background-color:green;
+.WorkflowStatusContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+.DashboardStatus_Good {
+    background-color: green;
 }
 .DashboardStatus_Bad {
     background-color:red;
@@ -41,12 +56,11 @@
     background-color: white;
 }
 .DashboardWorkflowContainer {
-    margin-top: 30px;
+ 
     margin-left: 10px;
     margin-right:10px;
     text-align:center;
     font-size:1em;
-    font-weight:bold;
 }
 .Dashboard_Status_Title {
     font-size: 1vw;
@@ -55,7 +69,7 @@
 .DashboardWorkflowStatus {
     border: solid 1px #1961AE;
     width: 2.7vw;
-    height: 8px;
+
     display: none;
     font-size:1vw;
 }
@@ -72,9 +86,12 @@
     margin-left: 10px;
     margin-right: 10px;
 }
+.AppStatusContainer{
+    display:flex;
+    justify-content:center;
+}
 .AppLink{
     cursor:pointer;
-    font-weight:bold;
 }
 .AppLink:hover{
     color:blue;

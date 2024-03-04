@@ -2,6 +2,16 @@
 
     <div id="divDebug" class="debugContainerStyle">
         <div class="btn-group debugbuttongroup">
+            <ul class="top-level-menu btn btn-secondary">
+
+                <li>
+                    <a id="linkAppsDataButton" style="border-radius: 5px; border-radius: 5px; margin-top: -5px; padding-top: 6px;" href="#">Data</a>
+
+                    <ul class="data second-level-menu"></ul>
+
+                </li>
+
+            </ul>
             <!--<div class="btn btn-primary" onclick="Apps.Components.Debug.ShowComponents();">Components</div>-->
             <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Debug.Event('design');">Trace</div>
             <div class="btn btn-secondary" onclick="Apps.Components.Helpers.Debug.RunTests();">Run Tests</div>

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Reflection.PortableExecutable;
 using BusinessLab.Code;
 using BusinessLabClassLib;
+using IT_Admin.Code;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,10 +73,16 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 {
     try
     {
-        //hub.Clients.All.SendAsync(JsonConvert.SerializeObject(result));
-        //PushHub.SendMessage(hub, result);
+		//var client = new HttpClient();
+		//var response = client.GetAsync("https://www.atecorp.com:7099/api/main?severityid=1&title=tester&description=testeruni&uniqueid=rodney&appuniqueid=saleswizard&stepuniqueid=crm");
+		//var responseText = response.GetAwaiter().GetResult();
 
-        var business = new Business(scheduler);
+		//new HttpClient().GetAsync("https://www.atecorp.com:7099/api/main?severityid=1&title=tester&description=testeruni&uniqueid=rodney&appuniqueid=saleswizard&stepuniqueid=crm");
+
+		//hub.Clients.All.SendAsync(JsonConvert.SerializeObject(result));
+		//PushHub.SendMessage(hub, result);
+
+		var business = new Business(scheduler);
 		if (1 == 1) //BusinessLab.Passwordless.ValidatePasswordlessToken(ref result))
 		{
 			var requestName = result.Params.Where(p => p.Name == "RequestName");
@@ -85,11 +92,8 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 				switch (requestName.Single().Value)
 				{
 					//Common
-					case "AddLog": Logs.Add(ref result);
-
-                        PushHub.SendMessage(hub, result, "New Log");
-
-                        break;
+					case "AddLog": Logs.Add(ref result); PushHub.SendMessage(hub, result, "New Log"); break;
+					case "GetLogs": Logs.GetLogs(ref result); break;
 
 					//Apps
 					case "GetWorkflowApps": Apps.GetWorkflowApps(ref result); break;
@@ -102,13 +106,16 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
                     //Areas
                     case "GetAreas": Areas.GetAreas(ref result); break;
 					case "UpsertArea": Areas.UpsertArea(ref result); break;
+					case "GetAllAreaLogs": Areas.GetAllAreaLogs(ref result); break;
+					case "GetAreaLogDetail": Areas.GetAreaLogDetail(ref result); break;
 
 					//Workflows
 					case "GetWorkflows": Workflows.GetWorkflows(ref result); break;
 					case "SaveWorkflow": Workflows.SaveWorkflow(ref result); break;
 					case "AddWorkflow": Workflows.AddWorkflow(ref result); break;
                     case "GetAllWorkflows": Apps.GetAllApps(ref result); break;
-                    case "GetAllWorkflowLogs": Apps.GetAllAppLogs(ref result); break;
+                    case "GetAllWorkflowLogs": Workflows.GetAllWorkflowLogs(ref result); break;
+					case "GetWorkflowLogDetail": Workflows.GetWorkflowLogDetail(ref result); break;
 
                     //Steps
                     case "GetSteps": Steps.GetSteps(ref result); break;
@@ -125,6 +132,7 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 					case "RunAction": Actions.RunAction(ref result); break;
 					case "TestActionCode": Actions.TestCode(ref result); break;
 					case "GetWorkflowActions": Actions.GetWorkflowActions(ref result); break;
+					//case "GetAreaActions": Actions.
                     case "GetAllActions": Actions.GetAllActions(ref result); break;
                     case "GetAllActionLogs": Actions.GetAllActionLogs(ref result); break;
 
@@ -164,6 +172,13 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 					case "GetCloudQueue": CloudQueue.GetCloudQueue(ref result); break;
 					case "UpsertCloudQueue": CloudQueue.UpsertCloudQueue(ref result); break;
 
+					//External
+					case "External.GetOrderLogs": External.GetOrderLogs(ref result); break;
+					case "External.GetCustomers": External.GetCustomers(ref result); break;
+					case "External.GetSalesWizardSteps": External.GetSalesWizardSteps(ref result); break;
+					case "External.GetWorkflowApps": External.GetWorkflowApps(ref result); break;
+					case "External.GetWorkflowActions": External.GetWorkflowActions(ref result); break;
+
 					default:
 						result.FailMessages.Add("No handler for requestname value " + requestName.Single().Value);
 						break;
@@ -178,7 +193,7 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
     catch (System.Exception ex)
     {
         result.FailMessages.Add("api exception: " + ex.Message + ". See exception logs for more information.");
-        Logs.Add(4, "Exception stack trace", ex.ToString(), ref result, Logs.LogSeverity.Exception);
+        Logs.Add(0, "API Exception", ex.ToString(), ref result, 4);
 
     }
 

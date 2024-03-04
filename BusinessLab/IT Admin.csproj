@@ -71,8 +71,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
+    <PackageReference Include="Microsoft.ClearScript.V8" Version="7.4.4" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.9" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.2" />
     <PackageReference Include="Quartz" Version="3.6.3" />
     <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.6.3" />
     <PackageReference Include="Quartz.Serialization.Json" Version="3.6.3" />
@@ -82,6 +83,21 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BusinessLabClassLib\BusinessLabClassLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resource1.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resource1.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resource1.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <!--<ItemGroup>

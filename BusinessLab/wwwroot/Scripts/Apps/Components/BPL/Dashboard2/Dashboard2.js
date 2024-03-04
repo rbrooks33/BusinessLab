@@ -6,65 +6,181 @@
             callback();
         },
         Show: function () {
+
             Me.UI.HideAll(); //Hides all but me
-            //Apps.BindHTML(Me.UI.Selector, Me.DashboardControls, true);
             Me.Root.ShowHeroHeader();
-            //setInterval(Me.RefreshLogTotals, 5000);
 
-            Me.Root.Areas.PopulateAreaModels();
+            //Populate all area, app and action data
 
-            Apps.BindElement('DashboardContainer', Me);
+            Me.Root.Areas.PopulateAreaModels(function () {
 
-            Me.RefreshLogs();
+                Me.Root.Apps.GetWorkflowApps(function () {
+
+                    Me.Root.Actions.GetWorkflowActions(function () {
+
+                        Apps.BindElement('DashboardContainer', Me);
+                        Me.RefreshLogs();
+
+                    })
+                })
+            });
         },
         RefreshLogs: function () {
+            Me.AreaLogs.Refresh();
             Me.AppLogs.Refresh();
             Me.ActionLogs.Refresh();
+            Me.WorkflowLogs.Refresh();
         },
+        ViewAreaLogs: function (areaId, severityId) {
+            Me.Root.Areas.GetAreaLogDetail(areaId, severityId, function (data) {
+                let sorted = Enumerable.From(data).OrderByDescending(o => o.Created).ToArray();
+
+                ////Set bad to yellow if a day old
+                //if (severityId == 4
+                //    && sorted.length > 0
+                //    && Apps.Util.TimeElapsed2(new Date(sorted[0].Created)).Hours < 24) {
+                //    //No logs less than 24 hours old
+                //    $('AreaStatus_Bad_' + areaId).css('background-color', 'yellow');
+                //}
+                //else
+                //    $('AreaStatus_Bad_' + areaId).css('background-color', 'red');
+                let html = Me.GetDataTable(sorted);
+                Apps.OpenDialog(Me, 'ViewAreaLogsDialog', 'Area Log Detail', html);
+            })
+        },
+        ViewWorkflowLogs: function (workflowId, severityId) {
+            Me.Root.Areas.Workflows.GetWorkflowLogDetail(workflowId, severityId, function (data) {
+                Apps.OpenDialog(Me, 'ViewWorkflowLogsDialog', 'Workflow Log Detail', Me.GetDataTable(data));
+            })
+        },
+        //GetWorkflowApps: function (callback) {
+        //    Apps.Data.Execute("External.GetWorkflowApps", [], function (result) {
+        //        Me.Data.WorkflowApps = result.Data;
+        //        callback();
+        //    });
+
+        //},
+        //GetWorkflowActions: function (callback) {
+        //    Apps.Data.Execute("External.GetWorkflowActions", [], function (result) {
+        //        Me.Data.WorkflowActions = result.Data;
+        //        callback();
+        //    });
+
+        //},
+        GetDataTable: function (data) {
+
+            if (data.length > 0) {
+
+
+                let html = Apps.Bind.GetTable({
+                    data: data,
+                    tableid: 'tablewithnoid',
+                    theadbinding: function (firstRow) {
+                        let th = '';
+                        $.each(Object.keys(firstRow), function (i, column) {
+                            th += '<th>' + column + '</th>';
+                        });
+                        return th;
+                    },
+                    rowbinding: function (row) {
+                        let td = '<tr>';
+                        $.each(Object.keys(row), function (i, column) {
+                            td += '<td>' + row[column] + '</td>';
+                        });
+                        td += '</tr>';
+                        return td;
+
+                    }
+                });
+
+                return html[0].outerHTML;
+            }
+            else {
+                return 'no records';
+            }
+        },
+
         Model: {
             Areas: []
+        },
+        Data: {
+            WorkflowApps: [],
+            WorkflowActions: []
         },
         Controls: {
             DashboardContainer: {
                 Bound: function () {
+
                     let that = this;
+
                     Me.Root.Areas.Get(function (areas) {
 
                         Me.Model.Areas = areas.Data;
-
-                        let html = '';
                         $.each(Me.Model.Areas, function (i, a) {
-                            html += Me.UI.Templates.Area_Template.HTML([a.AreaID, a.AreaName]);
-                        });
-                        that.Selector.html(html);
 
-                        Apps.BindElement('DashboardAreaWorkflows', Me);
+                            let html = Me.UI.Templates.Area_Template.HTML([a.AreaID, a.AreaName]);
+                            that.Selector.append(html);
+
+                            Apps.BindElement('DashboardAreaWorkflows', Me);
+                            Apps.BindElement('DashboardAreaApps', Me);
+                            Apps.BindElement('DashboardAreaActions', Me);
+                        });
+                        //Binds DashboardAreaWorkflows, -Apps and -Actions
+                        //Apps.BindHTML(that.Selector, Me);
 
                     });
-
                 }
             },
             DashboardAreaWorkflows: {
+
                 Bound: function () {
+
+                    let that = this;
+
                     let areaid = this.Selector.attr('data-bind-areaid');
 
-                    let areaWorkflows = Enumerable.From(Me.Root.Areas.Workflows.Model.Workflows).Where(w => w.AreaID == areaid).ToArray();
+                    let areaWorkflows = Enumerable
+                        .From(Me.Root.Areas.Workflows.Model.Workflows)
+                        .Where(w => w.AreaID == areaid).ToArray();
 
-                    let workflowHtml = '';
                     $.each(areaWorkflows, function (i, w) {
-                        workflowHtml += Me.UI.Templates.Dashboard_WorkflowStatus_Template.HTML([areaid, w.WorkflowID, w.WorkflowName, w.StepCount]);
-                    });
-                    this.Data.Value = workflowHtml;
 
-                    Apps.BindElement('DashboardAreaApps', Me);
-                    Apps.BindElement('DashboardAreaActions', Me);
+                        let workflowHtml = Me.UI.Templates.Dashboard_WorkflowStatus_Template.HTML([areaid, w.WorkflowID, w.WorkflowName, w.StepCount]);
+                        that.Selector.append(workflowHtml);
+
+                    });
                 }
             },
             DashboardAreaApps: {
 
-            },
-            DashboardAreaApps: {
+                Bound: function () {
 
+                    let that = this;
+
+                    let areaid = this.Selector.attr('data-bind-areaid');
+
+                    let areaApps = Enumerable.From(Me.Root.Apps.Data.WorkflowApps).Where(app => app.AreaID == areaid).ToArray();
+                    $.each(areaApps, function (i, app) {
+                        let appsHtml = Me.UI.Templates.Dashboard_AppStatus_Template.HTML([app.AreaID, app.AppID, app.AppName]);
+                        that.Selector.append(appsHtml);
+                    });
+
+                }
+            },
+            DashboardAreaActions: {
+                Bound: function () {
+                    let that = this;
+
+                    let areaid = this.Selector.attr('data-bind-areaid');
+
+                    let areaActions = Enumerable.From(Me.Root.Actions.ActionsModel.Model.WorkflowActions).Where(action => action.AreaID == areaid).ToArray();
+                    $.each(areaActions, function (i, action) {
+                        let actionsHtml = Me.UI.Templates.Dashboard_AppStatus_Template.HTML([action.AreaID, action.ActionID, action.ActionName]);
+                        that.Selector.append(actionsHtml);
+                    });
+
+
+                }
             },
             AreaContainerHTML: {
                 Bound: function () {

@@ -11,14 +11,15 @@
             Me.Root.ShowHeroHeader();
         },
         GetWorkflowApps: function (callback) {
-            Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetWorkflowApps"), function (data) {
-                callback(data);
+            Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetWorkflowApps"), function (result) {
+                Me.Data.WorkflowApps = result.Data;
+                callback(result.Data);
             });
 
         },
         GetAllApps: function (callback) {
             Apps.Data.Execute("GetAllApps", [], function (result) {
-                Me.Model.AppList = result.Data;
+                Me.Data.Apps = result.Data;
                 callback(result.Data);
             });
         },
@@ -39,7 +40,12 @@
         },
         Model: {
             AppList: [],
-            AppsHTML: ''
+            AppsHTML: '',
+
+        },
+        Data: {
+            Apps: [],
+            WorkflowApps: []
         },
         Controls: {
             AppsHTML: {

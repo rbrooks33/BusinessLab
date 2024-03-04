@@ -7,6 +7,7 @@
         },
         Model: {
             Actions: [],
+            WorkflowActions: [],
             ActionTriggerTypes: [
                 {
                     Name: 'JS',

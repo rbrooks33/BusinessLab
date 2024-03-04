@@ -48,6 +48,9 @@
                     }
                 ]
             });
+
+            $('#contentDebug').show();
+            Me.BuildData();
         },
         CountDownTests: {
             count: 0,
@@ -580,45 +583,91 @@
             $('.' + key + '.second-level-menu').css('top', offset2 + 'px');
 
         },
+        DebugData: {},
         BuildData: function () {
 
-            let datas = [];
+            let datas = {
+                Table1: [
+                    {
+                        T1C1: 't1  c1 r1',
+                        T1C2: 't1 c2 r1'
+                    },
+                    {
+                        T1C1: 't1  c1 r2',
+                        T1C2: 't1 c2 r2'
+                    }
 
-            $.each(Apps.Componet)
-            var dataCount = Object.keys(Apps.Data).length;
+                ],
+                Table2: [
+                    {
+                        T2C1: 't2  c1 r1',
+                        T2C2: 't2 c2 r1'
+                    },
+                    {
+                        T2C1: 't2  c1 r2',
+                        T2C2: 't2 c2 r2'
+                    }
+                ]
+            };
+
+            Me.DebugData = [];
+
+            let dataCount = 0;
+            $.each(Apps.ComponentList, function (i, c) {
+                if (c.Model) {
+                    dataCount++;
+                }
+            });
 
             $("#linkAppsDataButton").text("Data (" + dataCount + ")");
 
-            var offset1 = Object.keys(Apps.Data).length * 30;
+            var offset1 = dataCount * 30;
             var offset2 = offset1 - (offset1 * 2); //make it a negative
             var offset3 = -30;
 
-            $.each(Apps.Data, function (dataName, datum) {
-
-                var rowCount = '0';
-                if (datum) {
-                    rowCount = datum.length;
-
-                    var li2 = $('<li><a href="#" onclick="Apps.Debug.ShowData(\'' + dataName + '\', Apps.Data.' + dataName + ');">' + dataName + ' (' + rowCount + ')</a></li>').appendTo($('.data.second-level-menu'));
-
+            $.each(Apps.ComponentList, function (i, c) {
+                if (c.Model) {
+                    //Me.DebugData.push(c.Model);
+                    let rowCount = Object.keys(c.Model).length;
+                    let dataName = c.Config.Name;
+                    var li2 = $('<li><a href="#" onclick="Apps.Components.Helpers.Debug.ShowData(\'' + dataName + '\', Apps.Components.Helpers.Debug.DebugData.' + dataName + ');">' + dataName + ' (' + rowCount + ')</a></li>').appendTo($('.data.second-level-menu'));
                     var ul3 = $('<ul class="data third-level-menu" style="position:relative;top:-30px;background-color:#999999;"></ul>').appendTo(li2);
 
-                    var li4 = $('<li><div id="divColumnList' + dataName + '" style="background-color:#999999;color:white;padding:15px;"></div></li>').appendTo(ul3);
-
-                    if (datum.length > 0) //at least one prop
-                    {
-                        var propTop = 30;
-                        var props = Object.keys(datum[0]);
-
-                        $.each(props, function (propIndex, propName) {
-                            propTop -= 30;
-                            $('<div>' + propName + '</div>').appendTo($("#divColumnList" + dataName));
-                        });
-
-                        $("#divColumnList" + dataName).css("position", "fixed").css("bottom", "30px").height(datum[0].length * 30);
-                    }
                 }
             });
+
+            ////$.each(datas, function (dataName, datum) {
+            //for (let x = 0; x < dataCount; x++) {
+
+            //    let datum = Me.DebugData[Object.keys(Me.DebugData)[x]];
+
+
+            //    let dataName = Object.keys(Me.DebugData)[x];
+
+            //    var rowCount = '0';
+            //    if (datum) {
+            //        rowCount = datum.length;
+
+            //        var li2 = $('<li><a href="#" onclick="Apps.Components.Helpers.Debug.ShowData(\'' + dataName + '\', Apps.Components.Helpers.Debug.DebugData.' + dataName + ');">' + dataName + ' (' + rowCount + ')</a></li>').appendTo($('.data.second-level-menu'));
+
+            //        //var ul3 = $('<ul class="data third-level-menu" style="position:relative;top:-30px;background-color:#999999;"></ul>').appendTo(li2);
+
+            //        //var li4 = $('<li><div id="divColumnList' + dataName + '" style="background-color:#999999;color:white;padding:15px;"></div></li>').appendTo(ul3);
+
+            //    //    if (datum.length > 0) //at least one prop
+            //    //    {
+            //    //        var propTop = 30;
+            //    //        var props = Object.keys(datum[0]);
+
+            //    //        $.each(props, function (propIndex, propName) {
+            //    //            propTop -= 30;
+            //    //            $('<div>' + propName + '</div>').appendTo($("#divColumnList" + dataName));
+            //    //        });
+
+            //    //        $("#divColumnList" + dataName).css("position", "fixed").css("bottom", "30px").height(datum[0].length * 30);
+            //    //    }
+            //    }
+            ////};
 
             $('.data.second-level-menu').css('top', offset2 + 'px');
         },
@@ -628,7 +677,7 @@
         ShowData: function (dataName, data) {
 
             //make a table
-            var dataTable = Apps.Binder.GetTable({
+            var dataTable = Apps.Bind.GetTable({
                 databindkey: "datatable",
                 data: data,
                 tableid: "tableAppsDataShow",
@@ -655,13 +704,14 @@
                 }
             });
 
+            Apps.OpenDialog(Me, 'DataBarDialog', dataName + ' Data', dataTable[0].outerHTML);
 
             //add to dialog
-            $('#dialogDebugShowData_Title').text(dataName + ' Data');
-            Apps.Dialogs.Content('dialogDebugShowData', dataTable[0].outerHTML);
-            Apps.Dialogs.SaveCallback = Me.CloseData;
-            Apps.Dialogs.CancelCallback = Me.CloseData;
-            Apps.Dialogs.Open('dialogDebugShowData');
+        //    $('#dialogDebugShowData_Title').text(dataName + ' Data');
+        //    Apps.Dialogs.Content('dialogDebugShowData', dataTable[0].outerHTML);
+        //    Apps.Dialogs.SaveCallback = Me.CloseData;
+        //    Apps.Dialogs.CancelCallback = Me.CloseData;
+        //    Apps.Dialogs.Open('dialogDebugShowData');
         },
         CloseData() {
             Apps.Dialogs.Close('dialogDebugShowData');

@@ -102,9 +102,57 @@
     cursor: pointer;
 }
 
+.debugButtonDropdown {
+}
+
 .debugButton :hover {
     background-color: aliceblue;
 }
+
+
+.top-level-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    height: 39px;
+    width: 97px;
+    padding-top: 3px;
+}
+
+.top-level-menu > li {
+/*    position: relative;
+    float: left;
+    height: 30px;
+    width: 150px;
+    background: #999999;*/
+}
+
+    .top-level-menu > li:hover {
+        background: #CCCCCC;
+    }
+
+.top-level-menu li:hover > ul {
+    /* On hover, display the next level's menu */
+    display: inline;
+}
+
+
+/* Menu Link Styles */
+
+.top-level-menu a /* Apply to all links inside the multi-level menu */ {
+    font: bold 14px Arial, Helvetica, sans-serif;
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 0 0 0 10px;
+    /* Make the link cover the entire list item-container */
+    display: block;
+    line-height: 30px;
+}
+
+    .top-level-menu a:hover {
+        color: #000000;
+    }
+
 
 .fourth-level-menu {
     position: absolute;
@@ -167,51 +215,9 @@
             background: #CCCCCC;
         }
 
-.top-level-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.debugButtonDropdown {
-    position: relative;
-    top: 14px;
-    left: 15px;
-}
-
-.top-level-menu > li {
-    position: relative;
-    float: left;
-    height: 30px;
-    width: 150px;
-    background: #999999;
-}
-
-    .top-level-menu > li:hover {
-        background: #CCCCCC;
-    }
-
-.top-level-menu li:hover > ul {
-    /* On hover, display the next level's menu */
-    display: inline;
-}
 
 
-/* Menu Link Styles */
 
-.top-level-menu a /* Apply to all links inside the multi-level menu */ {
-    font: bold 14px Arial, Helvetica, sans-serif;
-    color: #FFFFFF;
-    text-decoration: none;
-    padding: 0 0 0 10px;
-    /* Make the link cover the entire list item-container */
-    display: block;
-    line-height: 30px;
-}
-
-    .top-level-menu a:hover {
-        color: #000000;
-    }
 
 #primary_nav_wrap {
     margin-top: 15px

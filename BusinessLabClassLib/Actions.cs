@@ -162,7 +162,7 @@ namespace BusinessLabClassLib
                             catch (Exception ex)
                             {
                                 result.FailMessages.Add($"Action run for #{actionId} exception: {ex}");
-                                Logs.Add(0, $"Action run exception for #{action.ActionID.ToString()}", ex.ToString(), ref result, Logs.LogSeverity.Exception,"actionrun");
+                                Logs.Add(0, $"Action run exception for #{action.ActionID.ToString()}", ex.ToString(), ref result, 4,"actionrun");
                             }
                         }
                         else result.FailMessages.Add("Arg sCode null or empty.");
@@ -340,7 +340,17 @@ namespace BusinessLabClassLib
             ", null);
             result.Success = true;
         }
-        public static void GetAllActions(ref Result result)
+		public static void GetAreaActions(ref Result result)
+		{
+			result.Data = Data.ExecuteCSSqlite(@"
+                SELECT DISTINCT Actions.ActionID, Actions.ActionName, Workflows.AreaID FROM Actions
+                INNER JOIN Actions_Steps ON Actions_Steps.ActionID = Actions.ActionID
+                INNER JOIN Steps ON Steps.StepID = Actions_Steps.StepID
+                INNER JOIN Workflows ON Workflows.WorkflowID = Steps.WorkflowID
+            ", null);
+			result.Success = true;
+		}
+		public static void GetAllActions(ref Result result)
         {
             result.Data = Data.ExecuteCSSqlite(@"
                 SELECT * FROM Actions", null);
@@ -358,7 +368,21 @@ namespace BusinessLabClassLib
                     (SELECT count(*) from Logs INNER JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID WHERE Actions_Steps.ActionID = @ActionID AND Logs.LogSeverity = 1) AS InfoCount,
                     (SELECT count(*) from Logs INNER JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID WHERE Actions_Steps.ActionID = @ActionID AND Logs.LogSeverity = 2) AS GoodCount,
                     (SELECT count(*) from Logs INNER JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID WHERE Actions_Steps.ActionID = @ActionID AND Logs.LogSeverity = 3) AS UglyCount,
-                    (SELECT count(*) from Logs INNER JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID WHERE Actions_Steps.ActionID = @ActionID AND Logs.LogSeverity = 4) AS BadCount,
+                    (
+                        SELECT count(*) from Logs 
+                        INNER JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID 
+                        WHERE Actions_Steps.ActionID = @ActionID AND Logs.LogSeverity = 4
+                    ) 
+                    AS BadCount,
+                    (
+                        SELECT 
+	                    julianday('now') - julianday(Logs.Created)
+                        FROM Logs 
+                        INNER JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID 
+                        WHERE Actions_Steps.ActionID = @ActionID AND Logs.LogSeverity = 4
+                        ORDER BY Logs.Created DESC LIMIT 1
+                    ) AS BadAge,
+
                     0 AS IssueCount
                    
                 ", sqliteParams.ToArray());

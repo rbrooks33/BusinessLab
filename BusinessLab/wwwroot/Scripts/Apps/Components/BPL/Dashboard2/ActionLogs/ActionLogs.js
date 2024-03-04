@@ -50,11 +50,29 @@
 
                 //Bad
                 if (logcounts.BadCount > 0) {
-                    $('.AppStatus_Bad_' + id)
-                        .css('display', 'table-cell')
-                        .css('color', 'white')
-                        .text(logcounts.BadCount)
-                        .show(400);
+
+                    let show = false;
+
+                    if (logcounts.BadAge <= 1) {
+                        badBackground = 'red';
+                        badColor = 'white';
+                        show = true;
+                    }
+                    else if (logcounts.BadAge > 1 && logcounts.BadAge <= 7) {
+                        badBackground = 'yellow';
+                        badColor = 'black';
+                        show = true;
+                    }
+
+                    if (show) {
+
+                        $('.AppStatus_Bad_' + id)
+                            .css('display', 'table-cell')
+                            .css('color', badColor)
+                            .css('background-color', badBackground)
+                            .text(logcounts.BadCount)
+                            .show(400);
+                    }
                 }
                 else
                     $('.AppStatus_Bad_' + id).css('display', 'none');

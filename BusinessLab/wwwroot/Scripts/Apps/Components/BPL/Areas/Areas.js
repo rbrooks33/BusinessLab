@@ -4,7 +4,7 @@ Apps.Define([], function () {
         Root: Apps.Components.BPL,
         Post: Apps.Components.BPL.Data.Posts.Main,
        Initialize: function (callback) {
-           Me.UI.Drop();
+           //Me.UI.Drop();
            Me.Root.ShowHeroHeader();
             callback();
         },
@@ -17,6 +17,7 @@ Apps.Define([], function () {
                 Apps.BindHTML(Me.UI.Selector, Me, true);
             });
         },
+        //Returns all area related data
         PopulateAreaModels: function (callback) {
             Apps.Data.Execute("GetAreas", [], function (areas) {
                 Me.Model.Areas = areas.Data;
@@ -28,6 +29,27 @@ Apps.Define([], function () {
                             callback();
                     });
                 });
+            });
+        },
+        GetAllAreaLogs: function (areaId, callback) {
+            Apps.Data.Execute("GetAllAreaLogs",[{ Name: 'AreaID', Value: areaId.toString() } ], function (result) {
+                Me.Data.AreaLogs = result.Data;
+                callback(result.Data);
+            });
+        },
+        GetAreaLogDetail: function (areaId, severityId, callback) {
+            //let areaLogs = Me.Data.AreaLogs;
+            Apps.Data.Execute("GetAreaLogDetail", [
+                { Name: 'AreaID', Value: areaId.toString() },
+                { Name: 'SeverityID', Value: severityId.toString() }
+            ], function (result) {
+                callback(result.Data);
+            });
+
+        },
+        GetAllAreas: function (callback) {
+            Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetAreas"), function (result) {
+                callback(result.Data);
             });
         },
         Get: function (callback) {
@@ -68,6 +90,9 @@ Apps.Define([], function () {
             let data = Enumerable.From(Me.Workflows.Model.Workflows).Where(w => w.AreaID == parent[parentIdFieldName]).ToArray();
 
             Me.Workflows.SetHTML(parentNameFieldName, data, $('#' + childCellId));
+        },
+        Data: {
+            AreaLogs: []
         },
         Model: {
             Areas:[]
