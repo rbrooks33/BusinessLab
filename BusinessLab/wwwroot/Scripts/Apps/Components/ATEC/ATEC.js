@@ -5,7 +5,7 @@
             callback();
         },
         Show: function () {
-           // $('.SelectEnvironment').val(1);
+            // $('.SelectEnvironment').val(1);
         },
         SelectEnvironment: function (html) {
 
@@ -91,6 +91,21 @@
             mode = ace.require("ace/mode/json").Mode;
             Me.Model.JSONEditor.session.setMode(new mode());
 
+        },
+        ViewSessions: function (customerId) {
+
+            let environment = $('.SelectEnvironment').val();
+
+            Apps.Data.Execute("External.GetSessions", [
+                { Name: 'Environment', Value: environment },
+                { Name: 'CustomerID', Value: customerId.toString() }],
+                function (data) {
+
+                    let sorted = Enumerable.From(data.Data).OrderByDescending(d => d.Created).ToArray();
+                    let html = Me.OrderViewer.GetDataTable(sorted);
+
+                    Apps.OpenDialog(Me, 'ViewSessionsDialog', 'Customer Sessions', html);
+                });
         },
         Last24Hours: function (stepId) {
             //let logs = [];

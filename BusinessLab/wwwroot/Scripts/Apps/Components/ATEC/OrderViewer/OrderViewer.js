@@ -62,7 +62,12 @@
                             let td = '<tr>';
                             $.each(Object.keys(row), function (i, column) {
                                 if (column == 'Order') {
-                                    td += '<td><div class="btn btn-primary" onclick="Apps.Components.ATEC.ViewOrder(\'' + escape(row[column]) + '\');">View Order</div></td>';
+                                    td += '<td>';
+                                    td += '  <div class="btn-group">'
+                                    td += '    <div class="btn btn-primary" onclick="Apps.Components.ATEC.ViewOrder(\'' + escape(row[column]) + '\');">View Order</div>';
+                                    td += '    <div class="btn btn-primary" onclick="Apps.Components.ATEC.ViewSessions(' + row['CustomerID'] + ');">View Sessions</div>';
+                                    td += '  </div>';
+                                    td += '</td> ';
                                 }
                                 else if (column == 'Created') {
                                     td += '<td>' + Apps.Util.FormatDateTime2(row[column]);

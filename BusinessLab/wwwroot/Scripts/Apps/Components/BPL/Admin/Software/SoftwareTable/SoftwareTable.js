@@ -41,7 +41,14 @@
                         actionclick: function (element, obj, tr) {
                             Apps.Components.BPL.Actions.OpenInGit(obj);
                         }
+                    },
+                    {
+                        text: 'Open Publish',
+                        actionclick: function (element, obj, tr) {
+                            Apps.Components.BPL.Admin.Software.Publish.Open(obj);
+                        }
                     }
+
 
                 ],
                 rowbuttons: [

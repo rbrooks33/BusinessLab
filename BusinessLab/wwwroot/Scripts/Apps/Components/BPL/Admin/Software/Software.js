@@ -9,6 +9,7 @@
         GetTable: function (callback) {
             let args = Apps.Data.GetPostArgs('GetSoftware');
             Apps.Data.ExecutePostArgs(args, function (post) {
+                Me.Data.Software = post.Data;
                 let softwareTableHTML = Me.SoftwareTable.Refresh(post.Data);
                 if (callback)
                     callback(softwareTableHTML);
@@ -25,11 +26,17 @@
         OpenInGit: function () {
 
         },
+        OpenPublish: function () {
+
+        },
         AddBPLServer: function () {
             Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("AddBPLServer"), function (data) {
                 Apps.Notify('success', 'Server project created!');
             });
 
+        },
+        Data: {
+            Software: []
         }
     };
     return Me;
