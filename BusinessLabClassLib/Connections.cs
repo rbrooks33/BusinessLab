@@ -11,7 +11,12 @@ namespace BusinessLabClassLib
 	{
 		public static void GetConnections(ref Result result)
 		{
-			result.Data = Data.ExecuteSqlite("SELECT * FROM Connections", null);
+			string sql = @"
+				SELECT * FROM Connections c 
+				INNER JOIN 
+					ConnectionTypes ct ON ct.ConnectionTypeID = c.ConnectionTypeID";
+
+			result.Data = Data.Execute(Data.CreateParams(sql, sql, result.Params));
 			result.Success = true;
 		}
 		public static void GetConnectionString(ref Result result)

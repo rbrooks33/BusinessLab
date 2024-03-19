@@ -18,9 +18,9 @@ namespace BusinessLabClassLib
 		{
 			result.Success = false; //reset
 
-			var p = new List<SqliteParameter>();
-			p.Add(new SqliteParameter("@Name", name));
-			var dtConfig = Data.ExecuteSqlite("SELECT ConfigValue FROM Configs WHERE ConfigName = @Name", p.ToArray());
+			string sql = "SELECT ConfigValue FROM Configs WHERE ConfigName = @Name";
+
+			var dtConfig = Data.Execute(Data.CreateParams(sql, sql, result.Params));
 			if (dtConfig.Rows.Count == 1)
 			{
 				result.Data = dtConfig.Rows[0]["ConfigValue"].ToString();
