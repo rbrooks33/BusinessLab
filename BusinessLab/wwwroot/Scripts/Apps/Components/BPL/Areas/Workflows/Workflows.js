@@ -49,11 +49,13 @@
                 ],
                 fields: [
                     Apps.Grids.GetField('WorkflowName'),
-                    Apps.Grids.GetField('WorkflowDescription', 'editor')
+                    Apps.Grids.GetField('WorkflowDescription', 'editor'),
+                    Apps.Grids.GetField('StepCount')
                 ],
                 columns: [
                     Apps.Grids.GetColumn("WorkflowName", "Workflow"),
-                    Apps.Grids.GetColumn("WorkflowDescription", "Description")
+                    Apps.Grids.GetColumn("WorkflowDescription", "Description"),
+                    Apps.Grids.GetColumn("StepCount", "Step Count")
                 ]
             };
 
@@ -109,27 +111,25 @@
                         Apps.Notify('success', 'Workflow added!');
                     }
                     else {
-                        Apps.Components.Home.HandleError(post.Result);
+                        Me.Root.HandleError(post.Result);
                     }
                 });
 
         },
         Save: function (workflow) {
 
-            let post = Apps.Components.Home.Main;
-
             let args = { Params: [ { Name: 'RequestName', Value: 'SaveWorkflow' } ], Data: workflow };
 
-            post.Refresh(args, [], function () {
+            Me.Post.Refresh(args, [], function () {
 
-                if (post.Success) {
+                if (Me.Post.Success) {
                     let index = Me.Data.findIndex(w => w.WorkflowID == workflow.WorkflowID);
                     Me.Data[index] = workflow;
                     Apps.Notify('success', 'Saved! ');
                     Me.Refresh();
                 }
                 else {
-                    Apps.Components.Home.HandleError(post.Result);
+                    Me.Root.HandleError(Me.Post.Result);
                 }
             });
         },

@@ -80,11 +80,15 @@
                         ],
                         fields: [
                             Apps.Grids.GetField('AreaID'),
-                            Apps.Grids.GetField('AreaName')
+                            Apps.Grids.GetField('AreaName'),
+                            Apps.Grids.GetField('WorkflowCount')
                         ],
                         columns: [
-                            Apps.Grids.GetColumn('AreaID', 'ID'),
-                            Apps.Grids.GetColumn("AreaName", "Area Name")
+                            Apps.Grids.GetColumn('AreaID', 'ID', function (area) {
+                                return '#' + area.AreaID;
+                            }),
+                            Apps.Grids.GetColumn("AreaName", "Area Name"),
+                            Apps.Grids.GetColumn("WorkflowCount", "Workflows")
                         ]
                     };
 

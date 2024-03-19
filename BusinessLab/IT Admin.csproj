@@ -38,6 +38,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\Scripts\Apps\Components\BPL\Areas\Areas.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\BPL\Areas\AreasControls\AreasControls.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\BPL\Areas\Old.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\BPL\Areas\Workflows\EditWorkflow\EditWorkflow.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\BPL\Areas\Workflows\Steps\StepRelationships\StepRelationships.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\BPL\Areas\Workflows\Steps\Steps.js" />
+    <None Include="wwwroot\Scripts\Apps\Components\BPL\Areas\Workflows\Workflows.js" />
     <None Include="wwwroot\Scripts\Apps\Components\BPL\Dashboard2\ActionLogs\ActionLogs.js" />
     <None Include="wwwroot\Scripts\Apps\Components\BPL\Dashboard2\AppLogs\AppLogs.js" />
     <None Include="wwwroot\Scripts\Apps\Components\BPL\Dashboard2\AreaLogs\AreaLogs.js" />

@@ -99,8 +99,6 @@
 
         Save: function (step) {
 
-            let post = Apps.Components.Home.Main;
-
             step.StepDescription = step.StepDescription ? step.StepDescription : '[edit]';
 
             let args = {
@@ -114,21 +112,19 @@
             let index = Me.Data.findIndex(s => s.StepID == step.StepID);
             Me.Data[index] = step;
 
-            post.Refresh(args, [], function () {
+            Me.Post.Refresh(args, [], function () {
 
-                if (post.Success) {
+                if (Me.Post.Success) {
                     Apps.Notify('success', 'Saved! ');
                     Me.Refresh();
                 }
                 else {
-                    Apps.Components.Home.HandleError(post.Result);
+                    Me.Root.HandleError(Me.Post.Result);
                 }
             });
 
         },
         Add: function () {
-
-            let post = Apps.Components.Home.Main;
 
             let myargs = {
                 Params: [
@@ -138,14 +134,14 @@
 
             };
 
-            post.Refresh(myargs, [], function () {
+            Me.Post.Refresh(myargs, [], function () {
 
-                if (post.Success) {
+                if (Me.Post.Success) {
                     Apps.Notify('success', 'Step added!');
                     Me.Refresh();
                 }
                 else {
-                    Apps.Components.Home.HandleError(post.Result);
+                    Me.Root.HandleError(post.Result);
                 }
             });
         },
