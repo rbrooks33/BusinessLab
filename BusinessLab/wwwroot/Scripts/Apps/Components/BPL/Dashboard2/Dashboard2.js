@@ -116,15 +116,19 @@
                     Me.Root.Areas.Get(function (areas) {
 
                         Me.Model.Areas = areas.Data;
+                        that.Selector.empty();
+
                         $.each(Me.Model.Areas, function (i, a) {
 
                             let html = Me.UI.Templates.Area_Template.HTML([a.AreaID, a.AreaName]);
                             that.Selector.append(html);
 
-                            Apps.BindElement('DashboardAreaWorkflows', Me);
-                            Apps.BindElement('DashboardAreaApps', Me);
-                            Apps.BindElement('DashboardAreaActions', Me);
                         });
+
+                        Apps.BindElement('DashboardAreaWorkflows', Me);
+                        Apps.BindElement('DashboardAreaApps', Me);
+                        Apps.BindElement('DashboardAreaActions', Me);
+
                         //Binds DashboardAreaWorkflows, -Apps and -Actions
                         //Apps.BindHTML(that.Selector, Me);
 
@@ -143,6 +147,11 @@
                         .From(Me.Root.Areas.Workflows.Model.Workflows)
                         .Where(w => w.AreaID == areaid).ToArray();
 
+                    if (areaWorkflows.length > 0)
+                        $('.WorkflowsTitle_' + areaid).show();
+                    else
+                        $('.WorkflowsTitle_' + areaid).hide();
+
                     $.each(areaWorkflows, function (i, w) {
 
                         let workflowHtml = Me.UI.Templates.Dashboard_WorkflowStatus_Template.HTML([areaid, w.WorkflowID, w.WorkflowName, w.StepCount]);
@@ -160,6 +169,12 @@
                     let areaid = this.Selector.attr('data-bind-areaid');
 
                     let areaApps = Enumerable.From(Me.Root.Apps.Data.WorkflowApps).Where(app => app.AreaID == areaid).ToArray();
+
+                    if (areaApps.length > 0)
+                        $('.AppsTitle_' + areaid).show();
+                    else
+                        $('.AppsTitle_' + areaid).hide();
+
                     $.each(areaApps, function (i, app) {
                         let appsHtml = Me.UI.Templates.Dashboard_AppStatus_Template.HTML([app.AreaID, app.AppID, app.AppName]);
                         that.Selector.append(appsHtml);
@@ -174,6 +189,12 @@
                     let areaid = this.Selector.attr('data-bind-areaid');
 
                     let areaActions = Enumerable.From(Me.Root.Actions.ActionsModel.Model.WorkflowActions).Where(action => action.AreaID == areaid).ToArray();
+
+                    if (areaActions.length > 0)
+                        $('.ActionsTitle_' + areaid).show();
+                    else
+                        $('.ActionsTitle_' + areaid).hide();
+
                     $.each(areaActions, function (i, action) {
                         let actionsHtml = Me.UI.Templates.Dashboard_AppStatus_Template.HTML([action.AreaID, action.ActionID, action.ActionName]);
                         that.Selector.append(actionsHtml);
