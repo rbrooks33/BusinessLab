@@ -1,5 +1,6 @@
 ﻿Apps.Define([], function () {
     var Me = {
+        Root: Apps.Components.BPL,
         Name: 'BPLHome',
         Color: '#1961AE',
         Initialize: function (callback) {
@@ -58,7 +59,7 @@
                 let headerHtml = Me.Admin.Configs.GetConfigValue('HeaderHeroHtml');
                 $(h).html(headerHtml);
             });
-
+            Apps.BindElement('CurrentBPLConnection', Me);
         },
         ShowUsersDialog: function () {
             Me.Actions.Run(15, function (users) {
@@ -148,6 +149,17 @@
             LoggedInAs: {
                 Bound: function () {
                     //this.Selector.html('Nobody');
+                }
+            },
+            CurrentBPLConnection: {
+                Defaults: function () {
+                    let that = this;
+                    Apps.Data.Execute('GetBPLConnectionString', [], function (result) {
+
+                        that.Selector.text('Environment: ' + result.Data[0].ConnectionName);
+
+                    });
+
                 }
             }
         }
