@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Me",
+  "classifications": [ "Common", "Console" ],
+  "identity": "Brooksoft.WebApiProject",
+  "name": "Brooksoft templates: bpl webapi project",
+  "shortName": "bplwebapi",
+  "sourceName":"ExampleTemplate.AsyncProject",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  }
+}

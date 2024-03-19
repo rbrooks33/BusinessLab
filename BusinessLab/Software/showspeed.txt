@@ -1,0 +1,72 @@
+    this.Show = function (speed) {
+
+        //Re-check since variable doesn't change when removed from dom
+        //this.Selector = $(this.TemplateID);
+
+        //if (this.Selector.length === 0)
+        this.Drop(); //Drops the inner template content
+
+        //Find this components template references
+        let bindElements = $(document.body).find('[data-bind-template]'); //) $(this.Template.innerHTML).find('[data-bind-template]');
+
+        //Iterate through each template reference in this component
+        $.each(bindElements, function (index, element) {
+
+            let templateReferenceName = $(element).attr('data-bind-template');
+
+            //Iterate and find in other components
+            $.each(Apps.ComponentList, function (index, component) {
+
+                if (component.UI && component.UI.Templates) {
+
+                    let templateNames = Object.keys(component.UI.Templates);
+
+                    $.each(templateNames, function (i, t) {
+
+                        if (t == templateReferenceName)
+                            $(element).html(component.UI.Templates[t].HTML());
+
+                    });
+                }
+
+            });
+
+        });
+
+
+        // this.Selector.style.opacity = 0;
+        if (this.Selector)
+            this.Selector.show(); //.style.display = 'block';
+
+
+        return this;
+    };
+    this.Hide = function (speed) {
+
+        //if (this.Selector.length === 0)
+        //    this.Drop();
+
+        //this.Selector.style.display = 'none';
+        //let mySelector = $('#' + this.TemplateID);
+        //if (mySelector)
+        //    mySelector.hide(speed); //this.Selector.style.display = 'none';
+
+        if(this.Selector)
+            this.Selector.hide(speed);
+
+        return this;
+    };
+    //Show me, hide all else
+    this.HideAll = function (speed) {
+        var thisTemplateId = this.TemplateID;
+        this.Show(speed);
+        $.each(Apps.ComponentList, function (index, component) {
+
+            if (component.UI && component.UI.Templates) {
+                if(component.UI.TemplateID != thisTemplateId)
+                    component.UI.Hide(speed);
+            }
+
+        });
+
+    };
