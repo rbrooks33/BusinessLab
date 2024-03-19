@@ -6,7 +6,7 @@
 		{
 			result.Success = false; //reset
 			string sql = "INSERT INTO Software (SoftwareName, SoftwareDescription) VALUES ('[new software name]', '[new software description]'); select last_insert_rowid();";
-			var dt = Data.ExecuteCSSqlite(sql, null);
+			var dt = Data.Execute(Data.CreateParams(sql, sql, result.Params));
             if (dt.Rows.Count == 1)
             {
 				result.Data = dt.Rows[0][0].ToString();
@@ -29,9 +29,9 @@
 
 					if (!Directory.Exists(softwarePath))
 					{
-					System.IO.Directory.CreateDirectory(softwarePath);
+						System.IO.Directory.CreateDirectory(softwarePath);
 
-					  result.SuccessMessages.Add("Created all folders.");
+						result.SuccessMessages.Add("Created all folders.");
 
 						//Create solution
 						Command.Exec("dotnet", "new sln", new Dictionary<string, string>
@@ -68,7 +68,7 @@
 						Command.Exec("dotnet", "build", new Dictionary<string, string>() { { "", "" } }, buildProjectPath, ref result);
 
 						Command.Exec("C:\\Program Files\\IIS\\Microsoft Web Deploy V3\\msdeploy.exe", "", new Dictionary<string, string>() { { "", "" } }, buildProjectPath, ref result);
-						
+
 						result.Success = true;
 
 					}
@@ -81,7 +81,8 @@
 		}
 		public static void GetSoftware(ref Result result)
 		{
-			result.Data = Data.Execute("SELECT * FROM Software", null);
+			string sql = "SELECT * FROM Software";
+			result.Data = Data.Execute(Data.CreateParams(sql, sql, result.Params));
 			result.Success = true;
 		}
 		public static void UpdateSoftware(ref Result result)
@@ -96,7 +97,7 @@
 				result.AddSqliteParam("@SoftwareDescription", (string)result.DynamicData.SoftwareDescription);
 				result.AddSqliteParam("@Archived", (string)result.DynamicData.Archived);
 
-				Data.Execute($@"
+				Data.ExecuteSqlite($@"
                         UPDATE Software 
                         SET SoftwareName = @SoftwareName, 
                         SoftwareDescription = @SoftwareDescription,
@@ -114,9 +115,10 @@
 
 			if (result.ParamExists("SoftwareID", Result.ParamType.Int))
 			{
-				result.SqliteParams.Clear();
-				result.AddSqliteParam("@SoftwareID", (string)result.DynamicData.SoftwareID);
-				Data.Execute("UPDATE Software SET Archived = 1 WHERE SoftwareID = @SoftwareID", null);
+				string sql = "UPDATE Software SET Archived = 1 WHERE SoftwareID = @SoftwareID";
+				//result.SqliteParams.Clear();
+				//result.AddSqliteParam("@SoftwareID", (string)result.DynamicData.SoftwareID);
+				Data.Execute(Data.CreateParams(sql, sql, result.Params));
 				result.Success = true;
 			}
 		}
@@ -128,10 +130,10 @@
 
 			if (result.ParamExists("SoftwareID", Result.ParamType.Int))
 			{
-				result.SqliteParams.Clear();
-				result.AddSqliteParam("@SoftwareID", (string)result.DynamicData.SoftwareID);
-
-				result.Data = Data.Execute("SELECT * FROM SoftwareVersions WHERE SoftwareID = @SoftwareID", null);
+				//result.SqliteParams.Clear();
+				//result.AddSqliteParam("@SoftwareID", (string)result.DynamicData.SoftwareID);
+				string sql = "SELECT * FROM SoftwareVersions WHERE SoftwareID = @SoftwareID";
+				result.Data = Data.Execute(Data.CreateParams(sql, sql, result.Params));
 				result.Success = true;
 			}
 		}
@@ -142,9 +144,11 @@
 
 			if (result.ParamExists("SoftwareID", Result.ParamType.Int))
 			{
-				result.SqliteParams.Clear();
-				result.AddSqliteParam("@SoftwareID", (string)result.DynamicData.SoftwareID);
-				Data.Execute("INSERT INTO SoftwareVersions (SoftwareID, SoftwareVersionName, SoftwareVersionDescription) VALUES (@SoftwareID, '[New Software]', '[Software Description]')", null);
+				string sql = "INSERT INTO SoftwareVersions (SoftwareID, SoftwareVersionName, SoftwareVersionDescription) VALUES (@SoftwareID, '[New Software]', '[Software Description]')";
+
+				//result.SqliteParams.Clear();
+				//result.AddSqliteParam("@SoftwareID", (string)result.DynamicData.SoftwareID);
+				Data.Execute(Data.CreateParams(sql, sql, result.Params));
 				result.Success = true;
 			}
 		}
@@ -160,7 +164,7 @@
 				result.AddSqliteParam("@SoftwareVersionDescription", (string)result.DynamicData.SoftwareVersionDescription);
 				result.AddSqliteParam("@Archived", (string)result.DynamicData.Archived);
 
-				Data.Execute($@"
+				Data.ExecuteSqlite($@"
                         UPDATE SoftwareVersions 
                         SET SoftwareVersionName = @SoftwareVersionName, 
                         SoftwareVersionDescription = @SoftwareVersionDescription,
@@ -178,9 +182,9 @@
 
 			if (result.ParamExists("SoftwareVersionID", Result.ParamType.Int))
 			{
-				result.SqliteParams.Clear();
-				result.AddSqliteParam("@SoftwareVersionID", (string)result.DynamicData.SoftwareID);
-				Data.Execute("UPDATE SoftwareVersions SET Archived = 1 WHERE SoftwareVersionID = @SoftwareVersionID", null);
+				//result.SqliteParams.Clear();
+				//result.AddSqliteParam("@SoftwareVersionID", (string)result.DynamicData.SoftwareID);
+				Data.Execute(Data.CreateParams("UPDATE SoftwareVersions SET Archived = 1 WHERE SoftwareVersionID = @SoftwareVersionID", "UPDATE SoftwareVersions SET Archived = 1 WHERE SoftwareVersionID = @SoftwareVersionID", result.Params));
 				result.Success = true;
 			}
 		}
@@ -238,6 +242,50 @@
 			//	else
 			//		result.FailMessages.Add("Did not get software root folder.");
 			//}
+		}
+		public static void Build(ref Result result)
+		{
+			if (result.ParamExists("SoftwareID"))
+			{
+				string softwareId = result.GetParam("SoftwareID");
+				Config.GetValue("SoftwareRootFolder", ref result);
+
+				if (result.Success)
+				{
+					string rootPath = result.Data.ToString();
+					string softwarePath = rootPath + "\\" + softwareId;
+					string buildProjectPath = softwarePath + "\\Software" + softwareId; // + "\\Software" + newSoftwareId + ".csproj";
+
+					result.Success = false; //reset
+
+					Command.Exec("dotnet", "build", new Dictionary<string, string>() { { "", "" } }, buildProjectPath, ref result);
+				}
+			}
+		}
+		public static void Publish(ref Result result)
+		{
+			if (result.ParamExists("SoftwareID"))
+			{
+				string softwareId = result.GetParam("SoftwareID");
+				Config.GetValue("SoftwareRootFolder", ref result);
+
+				if (result.Success)
+				{
+					string rootPath = result.Data.ToString();
+					string softwarePath = rootPath + "\\" + softwareId;
+					string buildProjectPath = softwarePath + "\\Software" + softwareId; // + "\\Software" + newSoftwareId + ".csproj";
+					string publishFolder = softwarePath + "\\Published";
+					if(!Directory.Exists(publishFolder))
+					{
+						Directory.CreateDirectory(publishFolder);
+					}
+					result.Success = false; //reset
+
+					Command.Exec("dotnet", "publish", new Dictionary<string, string>() { 
+						{ "-o", publishFolder } 
+					}, buildProjectPath, ref result);
+				}
+			}
 		}
 	}
 }

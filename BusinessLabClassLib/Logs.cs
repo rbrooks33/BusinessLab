@@ -30,7 +30,7 @@ namespace BusinessLabClassLib
 					INSERT INTO Logs (StepID, Title, Description, LogSeverity, UniqueID) 
 					VALUES (@StepID, @Title, @Description, @LogSeverity, @UniqueID)";
 
-				Data.Execute(sql, result.GetSqliteParamArray());
+				Data.ExecuteSqlite(sql, result.GetSqliteParamArray());
 
 				//SendMessageByServicde
 			}
@@ -62,13 +62,13 @@ namespace BusinessLabClassLib
 					INSERT INTO Logs (StepID, Title, Description, LogSeverity, UniqueID) 
 					VALUES (@StepID, @Title, @Description, @SeverityID, @UniqueID)";
 
-                Data.Execute(sql, result.GetSqliteParamArray());
+                Data.ExecuteSqlite(sql, result.GetSqliteParamArray());
 				result.Success = true;
             }
         }
 		public static void GetLogs(ref Result result)
 		{
-			result.Data = Data.ExecuteCSSqlite("SELECT * FROM Logs", null);
+			result.Data = Data.ExecuteSqlite("SELECT * FROM Logs", null);
 			result.Success = true;
 		}
 	}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,14 @@ namespace BusinessLabClassLib
     {
         public static void GetAreas(ref Result result)
         {
-            result.Data = Data.ExecuteCSSqlite("SELECT * FROM Areas", null);
+            string sql = @"
+                SELECT *,
+	                (SELECT COUNT(*) FROM Workflows w WHERE w.AreaID = a.AreaID) AS WorkflowCount
+                FROM
+	                Areas a
+            ";
+
+            result.Data = Data.Execute(Data.CreateParams(sql, sql, result.Params));
             result.Success = true;
         }
         public static void UpsertArea(ref Result result)
@@ -21,40 +29,44 @@ namespace BusinessLabClassLib
 
             if (result.ParamExists("AreaID", Result.ParamType.Int))
             {
-                result.AddSqliteParam("@AreaID", (string)result.DynamicData.AreaID);
 
-                var databases = Data.Execute($@" 
+                //var p = Data.CreateParams(result.Params);
+
+                //result.AddSqliteParam("@AreaID", (string)result.DynamicData.AreaID);
+                string sql = $@" 
                     SELECT * FROM Areas 
                     WHERE AreaID = @AreaID
-                ", result.GetSqliteParamArray());
+                ";
+
+                var databases = Data.Execute(Data.CreateParams(sql, sql, result.Params));
 
                 if (databases.Rows.Count == 1)
                 {
                     //Update
-                    result.SqliteParams.Clear();
-                    result.AddSqliteParam("@AreaName", (string)result.DynamicData.AreaName);
-                    result.AddSqliteParam("@AreaID", (string)result.DynamicData.AreaID);
-
-                    Data.Execute($@"
+                    //result.SqliteParams.Clear();
+                    //result.AddSqliteParam("@AreaName", (string)result.DynamicData.AreaName);
+                    //result.AddSqliteParam("@AreaID", (string)result.DynamicData.AreaID);
+                    string sqlUpdate = $@"
                         UPDATE Areas 
                         SET AreaName = @AreaName
                         WHERE AreaID = @AreaID
-                    ", result.GetSqliteParamArray());
+                    ";
+                    Data.Execute(Data.CreateParams(sqlUpdate, sqlUpdate, result.Params));
 
                     result.Success = true;
                 }
                 else
                 {
                     //Insert
-                    result.SqliteParams.Clear();
-                    result.AddSqliteParam("@AreaName", "[New Area]");
-
-                    Data.Execute($@"
+                    //result.SqliteParams.Clear();
+                    //result.AddSqliteParam("@AreaName", "[New Area]");
+                    string sqlInsert = $@"
                         INSERT INTO Areas 
                             (AreaName) 
                         VALUES 
                             (@AreaName)
-                    ", result.GetSqliteParamArray());
+                    ";
+                    Data.Execute(Data.CreateParams(sqlInsert, sqlInsert, result.Params));
 
                     result.Success = true;
                 }
@@ -64,7 +76,6 @@ namespace BusinessLabClassLib
         {
             if (result.ParamExists("AreaID", Result.ParamType.Int))
             {
-                result.AddSqliteParam("AreaID", result.GetParam("AreaID"));
 
                 string sql = @"
                 SELECT
@@ -116,7 +127,63 @@ namespace BusinessLabClassLib
                 0 AS IssueCount
 
             ";
-                result.Data = Data.ExecuteCSSqlite(sql, result.SqliteParams.ToArray());
+
+                string sqlserver = @"
+
+
+
+				SELECT
+                (
+                    SELECT count(*) from Logs 
+	                LEFT JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID
+	                LEFT JOIN Apps_Steps ON Apps_Steps.StepID = Logs.StepID
+	                INNER JOIN Steps ON Steps.StepID = Logs.StepID
+	                INNER JOIN Workflows ON Workflows.WorkflowID = Steps.WorkflowID
+	                WHERE Workflows.AreaID = @AreaID AND Logs.LogSeverity = 1
+
+                ) AS InfoCount,
+                (
+                    SELECT count(*) from Logs 
+	                LEFT JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID 
+	                LEFT JOIN Apps_Steps ON Apps_Steps.StepID = Logs.StepID 
+	                INNER JOIN Steps ON Steps.StepID = Logs.StepID
+	                INNER JOIN Workflows ON Workflows.WorkflowID = Steps.WorkflowID
+	                WHERE Workflows.AreaID = @AreaID AND Logs.LogSeverity = 2
+                ) AS GoodCount,
+                (
+                    SELECT count(*) from Logs 
+	                LEFT JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID 
+	                LEFT JOIN Apps_Steps ON Apps_Steps.StepID = Logs.StepID 
+	                INNER JOIN Steps ON Steps.StepID = Logs.StepID
+	                INNER JOIN Workflows ON Workflows.WorkflowID = Steps.WorkflowID
+	                WHERE Workflows.AreaID = @AreaID AND Logs.LogSeverity = 3
+                ) AS UglyCount,
+                (
+                    SELECT count(*) from Logs 
+	                LEFT JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID 
+	                LEFT JOIN Apps_Steps ON Apps_Steps.StepID = Logs.StepID 
+	                INNER JOIN Steps ON Steps.StepID = Logs.StepID
+	                INNER JOIN Workflows ON Workflows.WorkflowID = Steps.WorkflowID
+	                WHERE Workflows.AreaID = @AreaID AND Logs.LogSeverity = 4
+                ) AS BadCount,
+                (
+                    SELECT TOP 1
+	                Datediff(d,convert(datetime, Logs.Created) , getdate())
+                    FROM Logs 
+	                LEFT JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID 
+	                LEFT JOIN Apps_Steps ON Apps_Steps.StepID = Logs.StepID 
+	                INNER JOIN Steps ON Steps.StepID = Logs.StepID
+	                INNER JOIN Workflows ON Workflows.WorkflowID = Steps.WorkflowID
+	                WHERE Workflows.AreaID = @AreaID AND Logs.LogSeverity = 4
+                    ORDER BY Logs.Created DESC 
+                ) AS BadAge,
+
+                0 AS IssueCount
+
+            ";
+
+
+                result.Data = Data.CreateParams(sql, sqlserver, result.Params);
                 result.Success = true;
             }
         }
@@ -125,8 +192,8 @@ namespace BusinessLabClassLib
             if (result.ParamExists("AreaID", Result.ParamType.Int)
                 && result.ParamExists("SeverityID", Result.ParamType.Int))
             {
-                result.AddSqliteParam("AreaID", result.GetParam("AreaID"));
-                result.AddSqliteParam("SeverityID", result.GetParam("SeverityID"));
+                //result.AddSqliteParam("AreaID", result.GetParam("AreaID"));
+                //result.AddSqliteParam("SeverityID", result.GetParam("SeverityID"));
 
                 string sql = @"
 
@@ -138,7 +205,8 @@ namespace BusinessLabClassLib
 	                WHERE Workflows.AreaID = @AreaID AND Logs.LogSeverity = @SeverityID
                   
             ";
-                var dt = Data.ExecuteCSSqlite(sql, result.SqliteParams.ToArray());
+
+                var dt = Data.Execute(Data.CreateParams(sql, sql, result.Params));
                 foreach(DataRow dr in dt.Rows)
                 {
                     if (dr["LogSeverity"].ToString() == "4")

@@ -10,7 +10,7 @@ namespace BusinessLabClassLib
     {
         public static void GetSteps(ref Result result)
         {
-            result.Data = Data.Execute($"SELECT * FROM Steps ORDER BY StepOrder");
+            result.Data = Data.Execute(Data.CreateParams($"SELECT * FROM Steps ORDER BY StepOrder", $"SELECT * FROM Steps ORDER BY StepOrder",result.Params));
             result.Success = true;
         }
 
@@ -20,8 +20,8 @@ namespace BusinessLabClassLib
 
             if (workflowId != null)
             {
-                FormattableString sql = $"INSERT INTO Steps (StepName, WorkflowID) VALUES ('new step', {workflowId.Value})";
-                result.Data = Data.Execute(sql);
+                string sql = $"INSERT INTO Steps (StepName, WorkflowID) VALUES ('new step', {workflowId.Value})";
+                result.Data = Data.Execute(Data.CreateParams(sql, sql, result.Params));
                 result.Success = true;
             }
             else
@@ -31,6 +31,7 @@ namespace BusinessLabClassLib
         {
             result.ValidateData();
             result.SqliteParams.Clear();
+            result.SqlParams.Clear();
 
             if (result.ParamExists("StepID", Result.ParamType.Int))
             {
@@ -41,7 +42,7 @@ namespace BusinessLabClassLib
                 result.AddSqliteParam("@StepOrder", (string)result.DynamicData.StepOrder);
                 result.AddSqliteParam("@Archived", (string)result.DynamicData.Archived);
 
-                Data.Execute($@"
+                string sqlite = $@"
                         UPDATE Steps 
                         SET StepName = @StepName, 
                         StepDescription = @StepDescription,
@@ -49,9 +50,31 @@ namespace BusinessLabClassLib
                         StepOrder = @StepOrder,
                         Archived = @Archived
                         WHERE StepID = @StepID
-                    ", result.GetSqliteParamArray());
+                    ";
 
-                result.Success = true;
+				result.AddSqlParam("@StepID", (string)result.DynamicData.StepID);
+				result.AddSqlParam("@StepName", (string)result.DynamicData.StepName);
+				result.AddSqlParam("@StepDescription", (string)result.DynamicData.StepDescription);
+				result.AddSqlParam("@FunctionalSpecs", (string)result.DynamicData.FunctionalSpecs);
+				result.AddSqlParam("@StepOrder", (string)result.DynamicData.StepOrder);
+				result.AddSqlParam("@Archived", (string)result.DynamicData.Archived);
+
+				//string sql = $@"
+    //                    UPDATE Steps 
+    //                    SET StepName = @StepName, 
+    //                    StepDescription = @StepDescription,
+    //                    FunctionalSpecs = @FunctionalSpecs,
+    //                    StepOrder = @StepOrder,
+    //                    Archived = @Archived
+    //                    WHERE StepID = @StepID
+    //                ";
+
+                var ps = new Data.ParamSet(sqlite, sqlite);
+                ps.SqliteParams = result.SqliteParams;
+                ps.SqlParams = result.SqlParams;
+
+                result.Data = Data.Execute(ps);
+				result.Success = true;
             }
         }
 

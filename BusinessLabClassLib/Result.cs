@@ -13,6 +13,7 @@ namespace BusinessLabClassLib
 			Codes = new List<Code>();
 			Params = new List<Param>();
 			SqliteParams = new List<SqliteParameter>();
+			SqlParams = new List<SqlParameter>();
 			DataPropertyValidations = new List<DataPropertyValidation>();
 		}
 		public enum ParamType
@@ -31,6 +32,7 @@ namespace BusinessLabClassLib
 		public List<Code> Codes { get; set; }
 		public List<Param> Params { get; set; }
 		public List<SqliteParameter> SqliteParams { get; set; }
+		public List<SqlParameter> SqlParams { get; set; }
 		public List<DataPropertyValidation> DataPropertyValidations { get; set; }
 		public object Data { get; set; }
 		public ExpandoObject ExpandoData { get; set; }
@@ -42,6 +44,14 @@ namespace BusinessLabClassLib
 		public SqliteParameter[]? GetSqliteParamArray()
 		{
 			return SqliteParams.ToArray();
+		}
+		public void AddSqlParam(string name, string value)
+		{
+			SqlParams.Add(new SqlParameter(name, value));
+		}
+		public SqlParameter[]? GetSqlParamArray()
+		{
+			return SqlParams.ToArray();
 		}
 		public void AddParam(string name, string value)
 		{

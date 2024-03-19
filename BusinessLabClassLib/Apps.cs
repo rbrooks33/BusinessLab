@@ -11,7 +11,7 @@ namespace BusinessLabClassLib
     {
         public static void GetWorkflowApps(ref Result result)
         {
-            result.Data = Data.ExecuteCSSqlite(@"
+            result.Data = Data.ExecuteSqlite(@"
                 SELECT DISTINCT Apps.AppID, Apps.AppName, Workflows.AreaID FROM Apps
                 INNER JOIN Apps_Steps ON Apps_Steps.AppID = Apps.AppID
                 INNER JOIN Steps ON Steps.StepID = Apps_Steps.StepID
@@ -21,7 +21,7 @@ namespace BusinessLabClassLib
         }
         public  static void GetAllApps(ref Result result)
         {
-            result.Data = Data.ExecuteCSSqlite(@"
+            result.Data = Data.ExecuteSqlite(@"
                 SELECT * FROM Apps", null);
             result.Success = true;
 
@@ -32,7 +32,7 @@ namespace BusinessLabClassLib
             {
                 var sqliteParams = new List<SqliteParameter>();
                 sqliteParams.Add(new SqliteParameter() { ParameterName = "@AppID", Value = result.GetParam("AppID") });
-                result.Data = Data.ExecuteCSSqlite(@"
+                result.Data = Data.ExecuteSqlite(@"
 		            SELECT
 					(
                         SELECT COUNT(*) FROM Logs l 
@@ -75,7 +75,7 @@ namespace BusinessLabClassLib
             {
                 var sqliteParams = new List<SqliteParameter>();
                 sqliteParams.Add(new SqliteParameter() { ParameterName = "@AppID", Value = result.GetParam("AppID") });
-                result.Data = Data.ExecuteCSSqlite(@"
+                result.Data = Data.ExecuteSqlite(@"
 		            SELECT s.StepID, s.StepName, s.WorkflowID,  w.WorkflowName FROM Apps a
                     INNER JOIN Apps_Steps ss ON a.AppID = ss.AppID
                     INNER JOIN Steps s ON s.StepID = ss.StepID
@@ -96,7 +96,7 @@ namespace BusinessLabClassLib
             RemoveStepFromApp(ref result);
 
             //Data.ExecuteCSSqlite(@"DELETE FROM Apps_Steps WHERE AppID = @AppID AND StepID = @StepID", sqliteParams.ToArray());
-            Data.ExecuteCSSqlite(@"INSERT INTO Apps_Steps (AppID, StepID) VALUES (@AppID, @StepID)", sqliteParams.ToArray());
+            Data.ExecuteSqlite(@"INSERT INTO Apps_Steps (AppID, StepID) VALUES (@AppID, @StepID)", sqliteParams.ToArray());
 
             result.Success = true;
         }
@@ -107,7 +107,7 @@ namespace BusinessLabClassLib
             sqliteParams.Add(new SqliteParameter() { ParameterName = "@AppID", Value = result.GetParam("AppID") });
             sqliteParams.Add(new SqliteParameter() { ParameterName = "@StepID", Value = result.GetParam("StepID") });
 
-            Data.ExecuteCSSqlite(@"DELETE FROM Apps_Steps WHERE AppID = @AppID AND StepID = @StepID", sqliteParams.ToArray());
+            Data.ExecuteSqlite(@"DELETE FROM Apps_Steps WHERE AppID = @AppID AND StepID = @StepID", sqliteParams.ToArray());
 
             result.Success = true;
         }

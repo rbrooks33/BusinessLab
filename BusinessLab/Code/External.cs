@@ -1,4 +1,5 @@
 ﻿using BusinessLabClassLib;
+using Microsoft.Data.SqlClient;
 using System.Data;
 using static IT_Admin.Code.External;
 
@@ -150,6 +151,28 @@ namespace IT_Admin.Code
                 INNER JOIN Workflows ON Workflows.WorkflowID = Steps.WorkflowID
             ", environment);
 
+				result.Success = true;
+			}
+		}
+		public static void GetSessions(ref Result result)
+		{
+			if(result.ParamExists("Environment") && result.ParamExists("CustomerID"))
+			{
+				int envInt = Convert.ToInt32(result.GetParam("Environment"));
+
+				var environment = (ExternalData.ConnectionType)envInt;
+
+				var connectionType = ExternalData.ConnectionType.DevAtecApiData;
+				if (environment == ExternalData.ConnectionType.LiveAtecApi)
+					connectionType = ExternalData.ConnectionType.LiveAtecApiData;
+
+					string sql = @"
+
+					SELECT * FROM ATECSessions WHERE KenticoCustomerID = @CustomerID
+				";
+
+				var p = new List<SqlParameter>() { new SqlParameter() { ParameterName = "@CustomerID", Value = result.GetParam("CustomerID") } };
+				result.Data = ExternalData.Execute(sql, connectionType, p.ToArray());
 				result.Success = true;
 			}
 		}

@@ -82,7 +82,7 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 		//hub.Clients.All.SendAsync(JsonConvert.SerializeObject(result));
 		//PushHub.SendMessage(hub, result);
 
-		var business = new Business(scheduler);
+		var actions = new Actions(scheduler);
 		if (1 == 1) //BusinessLab.Passwordless.ValidatePasswordlessToken(ref result))
 		{
 			var requestName = result.Params.Where(p => p.Name == "RequestName");
@@ -94,6 +94,7 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 					//Common
 					case "AddLog": Logs.Add(ref result); PushHub.SendMessage(hub, result, "New Log"); break;
 					case "GetLogs": Logs.GetLogs(ref result); break;
+					case "GetBPLConnectionString": Connections.GetBPLConnectionString(ref result); break;
 
 					//Apps
 					case "GetWorkflowApps": Apps.GetWorkflowApps(ref result); break;
@@ -125,38 +126,38 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 					case "GetPreview": Business.GetPreview(ref result); break;
 
 					//Actions
-					case "GetActions": Business.GetActions(ref result); break;
-					case "GetTemplates": Business.GetTemplates(ref result); break;
-					case "SaveAction": Business.SaveAction(ref result); break;
-					case "AddAction": Business.AddAction(ref result); break;
+					case "GetActions": Actions.GetAllActions(ref result); break;
+					//case "GetTemplates": Business.GetTemplates(ref result); break;
+					case "SaveAction": Actions.SaveAction(ref result); break;
+					case "AddAction": Actions.AddAction(ref result); break;
 					case "RunAction": Actions.RunAction(ref result); break;
-					case "TestActionCode": Actions.TestCode(ref result); break;
+					case "TestActionCode": Actions.RunActionTest(ref result); break;
 					case "GetWorkflowActions": Actions.GetWorkflowActions(ref result); break;
 					//case "GetAreaActions": Actions.
                     case "GetAllActions": Actions.GetAllActions(ref result); break;
                     case "GetAllActionLogs": Actions.GetAllActionLogs(ref result); break;
 
-                    case "TriggerJob": business.TriggerJob(ref result); break;
+                    case "TriggerJob": actions.TriggerJob(ref result); break;
 					case "SendMessage": PushHub.SendMessage(hub, result, result.Message); break;
 
 
-					case "GetDatabases": Business.GetDatabases(ref result); break;
-					case "UpsertDatabase": Business.UpsertDatabase(ref result); break;
+					//case "GetDatabases": Business.GetDatabases(ref result); break;
+					//case "UpsertDatabase": Business.UpsertDatabase(ref result); break;
 
 					//case "GetTemplates": Business.GetTemplates(ref result); break;
-					case "GetTemplate": Business.GetTemplates(ref result); break;
+					//case "GetTemplate": Business.GetTemplates(ref result); break;
 
 					//Projects
-					case "GetProjects": Business.GetProjects(ref result); break;
-					case "UpsertProject": Business.UpdateProject(ref result); break;
-					case "DeleteProject": Business.DeleteProject(ref result); break;
-					case "AddProject": Business.AddProject(ref result); break;
+					case "GetProjects": Projects.GetProjects(ref result); break;
+					case "UpsertProject": Projects.UpdateProject(ref result); break;
+					case "DeleteProject": Projects.DeleteProject(ref result); break;
+					case "AddProject": Projects.AddProject(ref result); break;
 
 					//Tasks
-					case "GetTasks": Business.GetTasks(ref result); break;
-					case "UpdateTask": Business.UpdateTask(ref result); break;
-					case "DeleteTask": Business.DeleteTask(ref result); break;
-					case "AddTask": Business.AddTask(ref result); break;
+					case "GetTasks": Tasks.GetTasks(ref result); break;
+					case "UpdateTask": Tasks.UpdateTask(ref result); break;
+					case "DeleteTask": Tasks.DeleteTask(ref result); break;
+					case "AddTask": Tasks.AddTask(ref result); break;
 
 					//Software
 					case "OpenFolder": Software.OpenFolder(ref result);break;
@@ -166,8 +167,10 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 					case "DeleteSoftware": Software.DeleteSoftware(ref result); break;
 					case "AddBPLServer": Software.AddBPLServer(ref result); break;
 					case "GetContent": Editors.GetContent(ref result); break;
+					case "Software.Build": Software.Build(ref result); break;
+					case "Software.Publish": Software.Publish(ref result); break;
 
-					case "GetConfigs": result.Data = Data.Execute("SELECT * FROM Configs", null, true); result.Success = true; break;
+					case "GetConfigs": result.Data = Data.ExecuteSqlite("SELECT * FROM Configs", null, true); result.Success = true; break;
 
 					case "GetCloudQueue": CloudQueue.GetCloudQueue(ref result); break;
 					case "UpsertCloudQueue": CloudQueue.UpsertCloudQueue(ref result); break;
@@ -178,6 +181,7 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 					case "External.GetSalesWizardSteps": External.GetSalesWizardSteps(ref result); break;
 					case "External.GetWorkflowApps": External.GetWorkflowApps(ref result); break;
 					case "External.GetWorkflowActions": External.GetWorkflowActions(ref result); break;
+					case "External.GetSessions": External.GetSessions(ref result); break;	
 
 					default:
 						result.FailMessages.Add("No handler for requestname value " + requestName.Single().Value);

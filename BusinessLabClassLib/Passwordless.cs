@@ -1,7 +1,6 @@
 ﻿using BusinessLabClassLib;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using System.Net.Mail;
 using System.Runtime.CompilerServices;
 
 namespace BusinessLab
@@ -15,9 +14,10 @@ namespace BusinessLab
 			{
 				var tokenParam = result.Params.Where(p => p.Name == "Token").SingleOrDefault();
 
-				var sql = FormattableStringFactory.Create($@"SELECT * FROM Users WHERE PasswordlessToken = '{result.GetParam("Token")}' AND DATEDIFF(MI, TokenUpdated, getdate()) < 60");
+				string sql = $@"SELECT * FROM Users WHERE PasswordlessToken = '{result.GetParam("Token")}' AND DATEDIFF(MI, TokenUpdated, getdate()) < 60";
+				string sqlite = $@"SELECT * FROM Users WHERE PasswordlessToken = '{result.GetParam("Token")}' AND DATEDIFF(MI, TokenUpdated, getdate()) < 60";
 
-				var tokenRows = Data.Execute(sql);
+				var tokenRows = Data.Execute(Data.CreateParams(sqlite, sql, result.Params));
 				if(tokenRows.Rows.Count == 1)
 				{
 					result.Codes.Add(new Result.Code { ID = 1, Description = "Token validated." });
@@ -31,8 +31,8 @@ namespace BusinessLab
 				if (result.Success)
 				{
 					//extend token expiration
-					var extendSql = FormattableStringFactory.Create($@"UPDATE Users SET TokenUpdated = getdate() WHERE PasswordlessToken = '{result.GetParam("Token")}'");
-					Data.Execute(extendSql);
+					string extendSql = $@"UPDATE Users SET TokenUpdated = getdate() WHERE PasswordlessToken = '{result.GetParam("Token")}'";
+					Data.Execute(Data.CreateParams(extendSql, extendSql, result.Params));
 				}
 			}
 			return result.Success;
@@ -42,8 +42,8 @@ namespace BusinessLab
 		{
 			if (result.ParamExists("Token"))
 			{
-				var sql = FormattableStringFactory.Create($@"SELECT * FROM Users WHERE PasswordlessToken = '{result.GetParam("Token")}'");
-				var dt = Data.Execute(sql);
+				string sql = $@"SELECT * FROM Users WHERE PasswordlessToken = '{result.GetParam("Token")}'";
+				var dt = Data.Execute(Data.CreateParams(sql, sql, result.Params));
 				if (dt != null)
 				{
 					if (dt.Rows.Count == 1)
@@ -55,15 +55,15 @@ namespace BusinessLab
 							//user exists, signed in
 							result.Data = dt; //Client checks existing data to decide true/false TODO: be more explicit
 
-							var sqlUpdate = FormattableStringFactory.Create($@"
+							string sqlUpdate = $@"
                                 UPDATE Users SET 
                                     PasswordlessToken = '{result.GetParam("Token")}', 
                                     TokenUpdated = getdate() 
                                 WHERE 
                                     Email = '{dt.Rows[0]["Email"].ToString()}'
-                            ");
+                            ";
 
-							Data.Execute(sqlUpdate);
+							Data.Execute(Data.CreateParams(sqlUpdate, sqlUpdate, result.Params));
 						}
 					}
 					//else
@@ -95,8 +95,8 @@ namespace BusinessLab
 				if (response.IsSuccessStatusCode)
 				{
 					//Email success
-					var sql = FormattableStringFactory.Create($@"SELECT * FROM Users WHERE Email = '{result.GetParam("Email")}'");
-					var dt = Data.Execute(sql);
+					string sql = $@"SELECT * FROM Users WHERE Email = '{result.GetParam("Email")}'";
+					var dt = Data.Execute(Data.CreateParams(sql, sql, result.Params));
 					if (dt.Rows.Count > 0)
 					{
 						if (dt.Rows.Count == 1)
@@ -104,7 +104,7 @@ namespace BusinessLab
 							//One account exists for that email
 							int userId = Convert.ToInt32(dt.Rows[0]["UserID"]);
 
-							var sqlUpdate = FormattableStringFactory.Create($@"
+							string sqlUpdate = $@"
 
                                     UPDATE 
                                         Users 
@@ -113,9 +113,9 @@ namespace BusinessLab
                                         TokenUpdated = '{DateTime.Now.ToString()}' 
                                     WHERE 
                                         UserID = {userId}
-                                ");
+                                ";
 
-							Data.Execute(sqlUpdate);
+							Data.Execute(Data.CreateParams(sqlUpdate, sqlUpdate, result.Params));
 
 							//result.SuccessMessages.Add("Token updated for user " + userId.ToString());
 							//result.Data = token;
@@ -140,14 +140,14 @@ namespace BusinessLab
 						result.FailMessages.Add("No account for that email " + result.GetParam("Email") + ". Creating.");
 
 
-						var sqlUpdate = FormattableStringFactory.Create($@"
+						string sqlUpdate = $@"
                                 INSERT INTO Users 
                                     (Email, Passcode, CMSUserID, Firstname, Lastname, TokenUpdated) 
                                 VALUES 
                                     ('{result.GetParam("Email")}', '{newPasscode}', 0, 'passcodeuser', 'passcodeuser', getdate())
-                            ");
+                            ";
 
-						Data.Execute(sqlUpdate);
+						Data.Execute(Data.CreateParams(sqlUpdate, sqlUpdate, result.Params));
 
 						//result.Data = token;
 						result.Codes.Add(
@@ -179,7 +179,7 @@ namespace BusinessLab
 			if (result.ParamExists("Email") &&
 				result.ParamExists("Passcode"))
 			{
-				var sql = FormattableStringFactory.Create($@"
+				string sql = $@"
                 SELECT 
                     * 
                 FROM 
@@ -188,8 +188,8 @@ namespace BusinessLab
                     Email = '{result.GetParam("Email")}' 
                 AND 
                     Passcode = '{result.GetParam("Passcode")}'
-            ");
-				var dt = Data.Execute(sql);
+            ";
+				var dt = Data.Execute(Data.CreateParams(sql, sql, result.Params));
 				if (dt != null)
 				{
 					if (dt.Rows.Count == 1)
@@ -197,7 +197,7 @@ namespace BusinessLab
 						result.Data = token; //Send back token to begin in authenticated state
 
 						//Update with token
-						var sqlToken = FormattableStringFactory.Create($@"
+						string sqlToken = $@"
 
                         UPDATE
                             Users
@@ -205,8 +205,8 @@ namespace BusinessLab
                             PasswordlessToken = '{token}'
                         WHERE
                             UserID = {dt.Rows[0]["UserID"]}
-                    ");
-						Data.Execute(sqlToken);
+                    ";
+						Data.Execute(Data.CreateParams(sqlToken, sqlToken, result.Params));
 						result.Success = true;
 					}
 				}
