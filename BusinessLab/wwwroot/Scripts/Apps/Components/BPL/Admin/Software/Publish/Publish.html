@@ -1,0 +1,18 @@
+﻿<script id="PublishDialog" type="text/template">
+
+    <!--
+        0 = software id
+        1 = software name
+    -->
+    <div>
+        <h1>Publish Software #{0}</h1>
+        <h2>{1}</h2>
+
+    </div>
+    <div>
+        <div class="btn-group">
+            <div class="btn btn-secondary" onclick="Apps.Components.BPL.Admin.Software.Publish.Build();">Build</div>
+            <div class="btn btn-secondary" onclick="Apps.Components.BPL.Admin.Software.Publish.Publish();">Publish</div>
+        </div>
+    </div>
+</script>

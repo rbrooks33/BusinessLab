@@ -48,6 +48,12 @@
                                     "Name": "SoftwareTable",
                                     "Load": true,
                                     "Initialize": true
+                                },
+                                {
+                                    "Name": "Publish",
+                                    "Load": true,
+                                    "Initialize": true,
+                                    "UI": true
                                 }
                             ]
                         },
