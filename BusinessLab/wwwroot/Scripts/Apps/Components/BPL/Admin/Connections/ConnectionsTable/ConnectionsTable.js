@@ -10,9 +10,9 @@
             //$('#contentDebug').show();
             Apps.Components.Helpers.Debug.UI.Show(400);
 
-            Me.Root.Actions.Run(9, function (data) {
+            Apps.Data.Execute("GetConnections", [], function (result) {
 
-                Me.Parent.Model.Connections = data;
+                Me.Parent.Model.Connections = result.Data;
 
                 var settings =
                 {
