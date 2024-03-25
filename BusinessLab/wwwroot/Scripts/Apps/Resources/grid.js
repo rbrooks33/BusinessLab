@@ -1264,7 +1264,7 @@ Apps.Define(['./util.js'], function (Util) {
                                     case 'text':
 
                                         if (fieldValue.length == 0)
-                                            fieldValue = '[edit]';
+                                            fieldValue = '&nbsp;&nbsp;&nbsp;&nbsp;';
 
                                         //let editlink = '<div style="font-size:10px;color:blue;cursor:pointer;" ' + editclick2 + '>Edit</div>';
                                         viewSpan = '<div class="grid_view_span" title="' + tooltip(Me.RowData) + '" ' + editclick + '>' + fieldValue  + '</div>';

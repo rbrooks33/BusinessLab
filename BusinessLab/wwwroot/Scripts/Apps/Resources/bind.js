@@ -457,7 +457,7 @@ Apps.Define([], function () {
                         Me.Validate(bindType, controlsObject, selector, data);
 
                         //let control = controlsObject[propertyName]; // eval('Me.Controls.' + propertyName);
-                        let control = eval('controlsObject.' + propertyName); //handles multi-level objects
+                        let control = controlsObject[bindType]; // eval('controlsObject.' + propertyName); //handles multi-level objects
 
                         if (control) {
 
