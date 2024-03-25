@@ -61,7 +61,45 @@
                 this.Messages.push({ Timestamp: timestamp, Message: message, Data: (data ? data : '') });
             },
             Params: [],
+            AddDataParams: function (data) {
 
+                let me = this;
+                let dataType = this.isType(data);
+
+                if (dataType == 'object') {
+
+                    $.each(Object.keys(data), function (i, d) {
+
+                        let dType = me.isType(data[d]);
+                        let dObj = data[d];
+
+                        if (dType == 'object') {
+                            //add child objects' props, for now only single-level object
+                            //to aid in passing objects to "Save" e.g.
+                            //me.AddDataParams(dObj);
+                        }
+                        else if (dType == 'array')
+                        {
+                            //do nothing with arrays, just creating params
+                        }
+                        else {
+                            me.Params.push({ Name: d, Value: dObj.toString() });
+                        }
+
+                    });
+                }
+                else
+                    this.FailedMessages.push('Object passed in for data is not of type object.');
+            },
+            isType: (function (obj) {
+                var cache = {};
+                var key;
+                return obj === null ? 'null' // null
+                        : (key = typeof obj) !== 'object' ? key // basic: string, boolean, number, undefined, function
+                            : obj.nodeType ? 'object' // DOM element
+                                : cache[key = ({}).toString.call(obj)] // cached. date, regexp, error, object, array, math
+                                || (cache[key] = key.slice(8, -1).toLowerCase()); // get XXXX from [object XXXX], and cache it
+            })
         };
         //resultReturn.AddSuccess(message, data);
         return resultReturn;
@@ -94,7 +132,7 @@
 
         if (Apps.ActiveDeployment.Debug) {
             Apps.ActiveDeployment.WebRoot = 'https://localhost:54322';
-            Apps.ActiveDeployment.Version = 9; //don't change so often
+            Apps.ActiveDeployment.Version = 10; //don't change so often
 
         }
 
@@ -819,6 +857,14 @@
 
         }
     },
+    ApplyArgs : function (html, argsArray) {
+
+        if (argsArray) {
+            html = html.SearchAndReplace.apply(html, argsArray);
+        }
+        return html;
+    },
+
     LoadScript: function (url, callback, fileNameId) {
 
         if (!document.getElementById(fileNameId)) {
@@ -1256,7 +1302,7 @@
         Apps.Components.Helpers.Dialogs.Open(id);
 
         let contentSelector = $('#' + id).find('.dialog-body');
-        Apps.BindHTML(contentSelector, component, true);
+        Apps.BindHTML(contentSelector, component);
     },
     GetTemplateHTML: function (templateId) {
         return $('script[id="' + templateId + '"]').html();
@@ -1264,9 +1310,9 @@
     MoveHTMLx: function (sourceSelector, destinationSelector) {
         Apps.GetMoveBindSource(sourceId, destinationId, null, true);
     },
-    BindHTML: function (selector, c, forceBind) {
+    BindHTML: function (selector, c) {
 
-        let references = Apps.AutoBindReferences;
+        //let references = Apps.AutoBindReferences;
         let innerElements = selector.find('[data-bind-property], [data-bind-collection-property]');
 
         $.each(innerElements, function (i, e) {
@@ -1314,9 +1360,9 @@
                         $(e).val(propertyValue);
                     }
                     //Add reference and create binding if not already exists
-                    let existing = Enumerable.From(references).Where(r => r.Name == bindpropname).ToArray();
+                    //let existing = Enumerable.From(references).Where(r => r.Name == bindpropname).ToArray();
 
-                    if (existing.length == 0 || forceBind) {
+                    //if (existing.length == 0) {
 
                         ////Add reference
                         //Apps.AutoBindReferences.push({
@@ -1334,9 +1380,9 @@
                         //Apps.Bind.DataBindControls(c.Model, bindpropname, c.Controls);
 
                         Apps.BindElement(bindpropname, c);
-                    }
-                    else
-                        console.debug('Found ' + existing.length + ' data-bind-property ' + bindpropname + ' in ' + c.Config.Name);
+                    //}
+                    //else
+                    //    console.debug('Found ' + existing.length + ' data-bind-property ' + bindpropname + ' in ' + c.Config.Name);
                     //});
 
                 }
@@ -1352,11 +1398,14 @@
         });
     },
     BindElement: function (propertyName, component) {
-        //Add reference
-
+        
+        let references = Apps.AutoBindReferences;
         let elementSelector = $('[data-bind-property="' + propertyName + '"]');
         let collectionSelector = $('[data-bind-collection-property="' + propertyName + '"]');
         let contentType = elementSelector.attr('data-bind-contenttype');
+
+        //hide inside templates 
+        elementSelector.find('[data-bind-template]').hide();
 
         let isCollection = false;
         if (collectionSelector.length > 0) {
@@ -1368,13 +1417,19 @@
 
             let selector = $(s);
             let hasElement = selector.length > 0;
-            Apps.AutoBindReferences.push({
-                Name: propertyName,
-                ComponentObject: component,
-                Component: component.Config.Name,
-                ElementType: hasElement ? selector[0].localName : '[no element]',
-                ElementClass: hasElement ? selector[0].className : '[no element]'
-            });
+
+            let existing = Enumerable.From(references).Where(r => r.Name == propertyName).ToArray();
+
+            if (existing.length == 0) {
+
+                Apps.AutoBindReferences.push({
+                    Name: propertyName,
+                    ComponentObject: component,
+                    Component: component.Config.Name,
+                    ElementType: hasElement ? selector[0].localName : '[no element]',
+                    ElementClass: hasElement ? selector[0].className : '[no element]'
+                });
+            }
 
             //For simplicity make type name same as property
             elementSelector.attr('data-bind-type', propertyName);
@@ -1409,7 +1464,7 @@
                     }
                     component.Controls[propertyName].Value = selector.html();
                 }
-                Apps.Bind.DataBindControls(component.Controls[propertyName], propertyName, component.Controls, isCollection, true);
+                Apps.Bind.DataBindControls(component.Model, propertyName, component.Controls, isCollection, true);
             }
         });
     },
@@ -2216,12 +2271,14 @@ Apps.Data = {
         });
 
     },
-    Execute: function (requestCommand, args, successcallback, errorcallback) {
+    Execute: function (requestCommand, args, successcallback, errorcallback, data) {
+
 
         args.push({ Name: 'RequestName', Value: requestCommand });
 
         let result = {
-            Params: args
+            Params: args,
+            Data: data
         };
 
         Apps.Data.GlobalPOST.Execute(result, function () {
