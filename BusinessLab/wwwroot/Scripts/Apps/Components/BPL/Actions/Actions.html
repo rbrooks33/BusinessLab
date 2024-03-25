@@ -3,7 +3,7 @@
     Actions
 </div>
 
-<div data-bind-property="BPLActionsHomePage" class="ActionsHome"></div>
+<div data-bind-property="ActionsTable" class="ActionsHome"></div>
 
 <script id="BPL_Actions_EditPage_Template" type="text/template">
 
@@ -13,68 +13,69 @@
     1 = action name
     3 = unique id
         -->
-    <h4>Action #{0}: {1}</h4>
-    <p>{2}</p>
-    <h4>Connection</h4>
-    <select data-bind-property="EditedAction.ConnectionID" class="form-control"></select>
+    <div class="ActionEditScreen">
+        <h4>Action #{0}: {1}</h4>
+        <p>{2}</p>
+        <h4>Connection</h4>
+        <select data-bind-property="ConnectionID" class="form-control"></select>
 
-    <h4>Unique ID</h4>
-    <input type="text" data-bind-property="EditedAction.UniqueID" class="form-control" />
+        <h4>Unique ID</h4>
+        <input type="text" data-bind-property="UniqueID" class="form-control" />
 
-    <h4>Variable Delimiter</h4>
-    <input type="text" data-bind-property="EditedAction.VariableDelimiter" class="form-control" />
+        <h4>Variable Delimiter</h4>
+        <input type="text" data-bind-property="VariableDelimiter" class="form-control" />
 
-    <!-- Editor Type Radios-->
-    <span>SQL</span>
-    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[0].Name" value="sql" checked />
-    <span>CSharp</span>
-    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[1].Name" value="csharp" />
-    <span>CMD</span>
-    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[2].Name" value="csharp" />
-    <span>PS</span>
-    <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-collection-property="EditorTypes[3].Name" value="csharp" />
+        <!-- Editor Type Radios-->
+        <span>SQL</span>
+        <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-property="EditorTypeRadioSQL" value="sql" checked />
+        <span>CSharp</span>
+        <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-property="EditorTypeRadioCS" value="cs" />
+        <span>CMD</span>
+        <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-property="EditorTypeRadioCMD" value="cmd" />
+        <span>PS</span>
+        <input type="radio" class="EditorTypeRadio" name="editortype" data-bind-property="EditorTypeRadioPS" value="ps" />
 
-    <h4 data-bind-property="EditedAction.EditorTypeTitle">SQL</h4> <!--switches in code-->
-    <!--Editor Types-->
-    <div data-bind-property="EditedAction.SQLEditor" class="ActionEditor"></div>
-    <div data-bind-property="EditedAction.CSharpEditor" class="ActionEditor"></div>
-    <div data-bind-property="EditedAction.CMDEditor" class="ActionEditor"></div>
-    <div data-bind-property="EditedAction.PSEditor" class="ActionEditor"></div>
+        <!--Editor Type-->
+        <h4 data-bind-property="EditorTypeTitle">SQL</h4>
 
-    <div class="btn-group" style="margin-top:10px;">
-        <div class="btn btn-warning" data-bind-property="EditedAction.ActionSave">Save &amp; Generate Examples</div>
-        <div class="btn btn-secondary" data-bind-property="EditedAction.TestCode">Save &amp; Test</div>
-        <!--<div class="btn btn-secondary" onclick="Apps.Components.BPL.Actions.TestSql({0});">Test SQL</div>
+        <!--Editors-->
+        <div data-bind-property="SQLEditor" class="ActionEditor"></div>
+        <div data-bind-property="CSharpEditor" class="ActionEditor"></div>
+        <div data-bind-property="CMDEditor" class="ActionEditor"></div>
+        <div data-bind-property="PSEditor" class="ActionEditor"></div>
+
+        <div class="btn-group" style="margin-top:10px;">
+            <div class="btn btn-warning" data-bind-property="ActionSave">Save &amp; Generate Examples</div>
+            <div class="btn btn-secondary" data-bind-property="TestCode">Save &amp; Test</div>
+            <!--<div class="btn btn-secondary" onclick="Apps.Components.BPL.Actions.TestSql({0});">Test SQL</div>
         <button type="button" class="btn btn-secondary" {6} onclick="Apps.Components.BPL.Actions.TestJob({0});">Test Job</button>-->
-    </div>
+        </div>
 
-    <!-- Trigger Types -->
-    <h3>Output</h3>
-    <div data-bind-property="EditedAction.ActionOutput" class="form-control" style="width:100%;"></div>
+        <!-- Result -->
+        <h4>Execution Result</h4>
+        <textarea data-bind-property="ActionSaveResult" class="form-control" style="width:100%;"></textarea>
 
-    <h3>JavaScript/Postman</h3>
-    <textarea data-bind-collection-property="ActionTriggerTypes[0].Code"
-              class="form-control"
-              style="width:100%;margin-bottom:10px;"></textarea>
-    <div class="btn btn-success"
-         data-bind-collection-property="ActionTriggerTypes[0].Run"
-         style="margin-bottom:10px;">Run</div>
+        <!-- Output -->
+        <h3>Output</h3>
+        <div data-bind-property="ActionOutput" class="form-control" style="width:100%;"></div>
 
-    <h3>T-SQL</h3>
-    <textarea data-bind-collection-property="ActionTriggerTypes[1].Code"
-              class="form-control"
-              style="width:100%;margin-bottom:10px;"></textarea>
-    <div data-bind-collection-property="ActionTriggerTypes[1].Run" class=" btn btn-success">Run</div>
+        <!-- JS Trigger-->
+        <h3>JavaScript/Postman</h3>
+        <textarea data-bind-collection-property="ActionTriggerTypesJS" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
+        <div data-bind-collection-property="ActionTriggerTypeJSRun" class="btn btn-success" style="margin-bottom:10px;">Run</div>
 
-    <!--<h3>C#</h3>
+        <!-- SQL Trigger-->
+        <h3>T-SQL</h3>
+        <textarea data-bind-collection-property="ActionTriggerTypesSQL" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
+        <div data-bind-collection-property="ActionTriggerTypesSQLRun" class=" btn btn-success">Run</div>
+
+        <!--<h3>C#</h3>
     <textarea data-bind-property="CSHARPActions" class="form-control" style="width:100%;margin-bottom:10px;"></textarea>
     <div class="btn-group" style="margin-bottom:10px;">
         <div class="btn btn-success" onclick="Apps.Components.BPL.Actions.ReportsTable.CSHARPRun({0});;">Run</div>
     </div>-->
-    <!-- Save/Execute Results-->
-    <h4>Execution Result</h4>
-    <textarea data-bind-property="EditedAction.ActionSaveResult" class="form-control" style="width:100%;"></textarea>
-
+        <!-- Save/Execute Results-->
+    </div>
 </script>
 
 

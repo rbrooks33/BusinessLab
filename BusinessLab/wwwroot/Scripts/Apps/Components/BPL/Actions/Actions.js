@@ -1,11 +1,11 @@
-﻿Apps.Define(['./Controls/Editors.js','./Controls/ActionsTable.js'], function (editors, actionsTable) {
+﻿Apps.Define(['./ActionsControls.js'], function (controls) {
     var Me = {
         Root: Apps.Components.BPL,
         Post: Apps.Data.GlobalPOST,
-        Editors: editors,
-        ActionsTable: actionsTable,
+        Controls: controls.Controls,
+        Model: controls.Model,
         SqlEditor: null,
-        CSharpEditor: null,
+        CSEditor: null,
         CMDEditor: null,
         PSEditor: null,
         SelectedAction: null,
@@ -18,26 +18,30 @@
                 callback();
         },
         Resize: function () {
-            if (Me.SqlEditor) {
+            if (Me.SqlEditor)
                 Me.SqlEditor.resize();
-                Me.CSharpEditor.resize();
-            }
+            if (Me.CSEditor)
+                Me.CSEditor.resize();
+            if (Me.CMDEditor)
+                Me.CMDEditor.resize();
+            if (Me.PSEditor)
+                Me.PSEditor.resize();
         },
         Show: function () {
 
-            Me.Controls = Me.ActionsControls.Controls;
-            Me.Model = Me.ActionsModel.Model;
-
             Me.UI.Drop();
             Me.UI.HideAll(); //Hides all but me and debug
-            Apps.BindHTML(Me.UI.Selector, Me, true);
-            //Apps.Components.Helpers.Debug.UI.Show();
+
+            Apps.BindElement('ActionsTable', Me);
+            //Apps.BindHTML(Me.UI.Selector, Me);
+
+            Apps.Components.Helpers.Debug.UI.Show();
             Me.Root.ShowHeroHeader();
 
         },
         GetAllActions: function (callback) {
             Apps.Data.Execute("GetAllActions", [], function (result) {
-                Me.ActionsModel.Model.Actions = result.Data;
+                Me.Model.Actions = result.Data;
                 callback(result.Data);
             });
         },
@@ -48,9 +52,20 @@
                     callback(result.Data);
                 });
         },
+        GetActionLogDetail: function (actionId, areaId, severityId, callback) {
+            //let areaLogs = Me.Data.WorkflowLogs;
+            Apps.Data.Execute("GetActionLogDetail", [
+                { Name: 'ActionID', Value: actionId.toString() },
+                { Name: 'AreaID', Value: areaId.toString() },
+                { Name: 'SeverityID', Value: severityId.toString() }
+            ], function (result) {
+                callback(result.Data);
+            });
+
+        },
         GetWorkflowActions: function (callback) {
             Apps.Data.ExecutePostArgs(Apps.Data.GetPostArgs("GetWorkflowActions"), function (result) {
-                Me.ActionsModel.Model.WorkflowActions = result.Data;
+                Me.Model.WorkflowActions = result.Data;
                 callback(result.Data);
             });
 
@@ -62,18 +77,20 @@
 
         },
         Edit: function (action) {
-
             Me.Model.EditedAction = action;
-
             let html = Me.UI.Templates.BPL_Actions_EditPage_Template.HTML([action.ActionID, action.ActionName, action.UniqueID]);
             Apps.OpenDialog(Me, 'BPL_Actions_Edit_Dialog', 'Edit Dialog', html);
 
-            //$('[data-bind-collection-property="EditorTypes[0]"]').click(); //.prop('checked', true);
-
+            switch (action.EditorType) {
+                case 'sql': Me.Controls.EditorTypeRadioSQL.Clicked(); break;
+                case 'cs': Me.Controls.EditorTypeRadioCS.Clicked(); break;
+                case 'cmd': Me.Controls.EditorTypeRadioCMD.Clicked(); break;
+                case 'ps': Me.Controls.EditorTypeRadioPS.Clicked(); break;
+            }
         },
         Add: function () {
-            Me.Root.Actions.Run(16, function () {
-                Me.Show();
+            Apps.Data.Execute("AddAction", [], function (result) {
+                  Me.Show();
             });
         },
 
@@ -82,11 +99,10 @@
             action.RepeatQuantity = action.RepeatQuantity ? action.RepeatQuantity : 0;
             action.RepeatIntervalSeconds = action.RepeatIntervalSeconds ? action.RepeatIntervalSeconds : 0;
 
-            let args = Apps.Data.GetPostArgs('SaveAction');
-            args.Params.push({ Name: 'ActionID', Value: action.ActionID.toString() });
-            args.Data = JSON.stringify(action);
+            let result = new Apps.Result2();
+            result.AddDataParams(action);
 
-            Apps.Data.ExecutePostArgs(args, function (post) {
+            Apps.Data.Execute('SaveAction', result.Params, function (result) {
 
                 //Find row and update
                 let row = Enumerable.From(Me.Model.Actions).Where(a =>  a.ActionID == action.ActionID).ToArray();
@@ -96,7 +112,7 @@
                     Apps.Notify('success', 'Action updated.');
                 }
 
-            });
+            }, null, result.Data);
 
         },
 
@@ -128,7 +144,7 @@
             let args = Apps.Data.GetPostArgs('TestActionCode');
             args.Params.push({ Name: 'ActionID', Value: action.ActionID.toString() });
 
-            switch (Me.Model.EditedAction.EditorType) {
+            switch (Me.Model.EditorType) {
 
                 case 'PS':
 
@@ -152,28 +168,30 @@
 
                     args.Data = {
                         ActionID: action.ActionID.toString(),
-                        Code: Me.CSharpEditor.getValue()
+                        Code: Me.CSEditor.getValue()
                     };
 
             }
             Apps.Data.ExecutePostArgs(args, function (post) {
 
-                if (post.Result.FailMessages.length == 0) {
+                Me.Controls.ActionSaveResult.Selector.val(JSON.stringify(post.Result));
 
-                    if (Me.Model.EditedAction.EditorType == 'PS') {
-                        Me.Controls.EditedAction.ActionSaveResult.Selector.val(JSON.stringify(post.Result.SuccessMessages) + JSON.stringify(post.Result.FailMessages));
+                if (post.Result.Success && post.Result.FailMessages.length == 0) {
+
+                    if (Me.Model.EditedAction.EditorType == 'ps') {
+                        Me.Controls.ActionSaveResult.Selector.val(JSON.stringify(post.Result.SuccessMessages) + JSON.stringify(post.Result.FailMessages));
                     }
-                    else if (Me.Model.EditedAction.EditorType == 'SQL') {
+                    else if (Me.Model.EditedAction.EditorType == 'sql') {
                         let html = Apps.Components.Helpers.Controls.QuickTable.GetTable(post.Data);
-                        Me.Controls.EditedAction.ActionOutput.Selector.html(html);
+                        Me.Controls.ActionOutput.Selector.html(html);
                     }
-                    else if (Me.Model.EditedAction.EditorType == 'CSharp') {
-                        Me.Controls.EditedAction.ActionOutput.Selector.html(post.Data);
+                    else if (Me.Model.EditedAction.EditorType == 'cs') {
+                        Me.Controls.ActionOutput.Selector.html(post.Data);
                     }
                 }
-                else
-                    Me.Controls.EditedAction.ActionSaveResult.Selector.val(JSON.stringify(post.Result.FailMessages));
+
             });
+
         },
         Run: function (actionId, callback, argParams) {
             let args = {
