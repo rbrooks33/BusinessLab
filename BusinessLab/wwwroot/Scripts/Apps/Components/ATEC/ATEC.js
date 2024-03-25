@@ -101,7 +101,7 @@
                 { Name: 'CustomerID', Value: customerId.toString() }],
                 function (data) {
 
-                    let sorted = Enumerable.From(data.Data).OrderByDescending(d => d.Created).ToArray();
+                    let sorted = Enumerable.From(data.Data).OrderByDescending(d => d.Updated).ToArray();
                     let html = Me.OrderViewer.GetDataTable(sorted);
 
                     Apps.OpenDialog(Me, 'ViewSessionsDialog', 'Customer Sessions', html);
@@ -128,6 +128,9 @@
             let logs = Enumerable.From(Me.Data.Logs).Where(l => l.StepID == stepId && Apps.Util.TimeElapsed2(new Date(l.Created)).Days <= 7).ToArray();
             let html = Me.OrderViewer.GetDataTable(logs);
             Apps.OpenDialog(Me, 'Last7DaysDialog', 'Last 7 Days', html);
+        },
+        AllSessions: function () {
+
         },
         Model: {
             JSONEditor: {}
