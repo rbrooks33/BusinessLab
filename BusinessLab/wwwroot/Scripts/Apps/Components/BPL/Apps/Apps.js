@@ -30,11 +30,21 @@
                 callback(result.Data);
             });
         },
+        GetAppLogDetail: function (appId, areaId, severityId, callback) {
+            Apps.Data.Execute("GetAppLogDetail", [
+                { Name: 'AppID', Value: appId.toString() },
+                { Name: 'AreaID', Value: areaId.toString() },
+                { Name: 'SeverityID', Value: severityId.toString() }
+            ], function (result) {
+                callback(result.Data);
+            });
+
+        },
         Edit: function (appId) {
 
             //NOTE: Dashboard populates workflows, apps and actions according to what it shows
             //at a later time, each component may load the collection completely
-            let app = Enumerable.From(Me.Root.Dashboard2.Model.Apps).Where(a => a.AppID == appId).ToArray()[0];
+            let app = Enumerable.From(Me.Root.Apps.Data.Apps).Where(a => a.AppID == appId).ToArray()[0];
 
             Me.EditApp.Show(app)
         },

@@ -6,21 +6,13 @@
             callback();
         },
         Refresh: function (destinationSelector) {
-            Me.Root.Actions.Run(Me.Root.Model.Configs.DevGetAllAppsActionID, function (apps) {
 
-                //Get other connections
-                Me.Root.Actions.Run(11, function (connections) {
-
-                    let bplConnections = Enumerable.From(connections)
-                        .Where(c => c.ConnectionTypeID == 4
-                            && c.Name == 'IsAppsDataSource'
-                            && c.Value == 'true').ToArray();
-
+                Apps.Data.Execute("GetAllApps",[], function (result) {
 
                     var settings =
                     {
                         id: "Apps_Table",
-                        data: apps,
+                        data: result.Data,
                         title: "Apps",
                         tablestyle: "margin:50px;width:85%;",
                         savecallback: function (obj, fieldName) {
@@ -49,7 +41,6 @@
                     destinationSelector.html(html);
 
                 });
-            });
 
         },
         Add: function () {
