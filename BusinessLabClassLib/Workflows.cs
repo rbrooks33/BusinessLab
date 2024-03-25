@@ -95,6 +95,31 @@ namespace BusinessLabClassLib
                     0 AS IssueCount
 
                 ";
+
+//				sql = @"
+
+//                    SELECT 
+//                        Logs.LogID, 
+//                        Logs.LogSeverity, 
+//                        Logs.Created, 
+//                        Logs.Title, 
+//                        Logs.Description, 
+//                        Logs.UniqueID, 
+//                        Logs.AppID, 
+//                        Logs.AppUniqueID, 
+//                        Logs.StepID, 
+//                        Logs.StepUniqueID 
+//                    FROM Logs 
+//					WHERE 
+//					(
+//						Logs.StepID IN (SELECT StepID FROM Steps WHERE WorkflowID = @WorkflowID)
+//					OR
+//						Logs.StepUniqueID IN (SELECT UniqueID FROM Steps WHERE WorkflowID = @WorkflowID)
+//					)
+//					AND
+//						Logs.LogSeverity = @LogSeverityID         
+//";
+
 				result.Data = Data.Execute(Data.CreateParams(sqlite, sql, result.Params));
                 result.Success = true;
             }
@@ -104,18 +129,37 @@ namespace BusinessLabClassLib
 			if (result.ParamExists("WorkflowID", Result.ParamType.Int)
 				&& result.ParamExists("SeverityID", Result.ParamType.Int))
 			{
-				result.AddSqliteParam("WorkflowID", result.GetParam("WorkflowID"));
-				result.AddSqliteParam("SeverityID", result.GetParam("SeverityID"));
-
 				string sql = @"
 
-                    SELECT Logs.* from Logs 
+                    SELECT 
+                        Logs.LogID, 
+                        Logs.LogSeverity, 
+                        Logs.Created, 
+                        Logs.Title, 
+                        Logs.Description, 
+                        Logs.UniqueID, 
+                        Logs.AppID, 
+                        Logs.AppUniqueID, 
+                        Logs.StepID, 
+                        Logs.StepUniqueID 
+                    FROM Logs 
 	                INNER JOIN Actions_Steps ON Actions_Steps.StepID = Logs.StepID
 	                LEFT JOIN Steps ON Steps.StepID = Logs.StepID
 	                LEFT JOIN Workflows ON Workflows.WorkflowID = Steps.WorkflowID
 	                WHERE Workflows.WorkflowID = @WorkflowID AND Logs.LogSeverity = @SeverityID
                     UNION
-                    SELECT Logs.* from Logs 
+                    SELECT 
+                        Logs.LogID, 
+                        Logs.LogSeverity, 
+                        Logs.Created, 
+                        Logs.Title, 
+                        Logs.Description, 
+                        Logs.UniqueID, 
+                        Logs.AppID, 
+                        Logs.AppUniqueID, 
+                        Logs.StepID, 
+                        Logs.StepUniqueID 
+                    FROM Logs 
 	                LEFT JOIN Apps_Steps ON Apps_Steps.StepID = Logs.StepID
 	                LEFT JOIN Steps ON Steps.StepID = Logs.StepID
 	                INNER JOIN Workflows ON Workflows.WorkflowID = Steps.WorkflowID

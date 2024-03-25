@@ -121,7 +121,44 @@ namespace BusinessLabClassLib
                 result.Success = true;
             }
         }
-        public static void AddStepToApp(ref Result result)
+		public static void GetAppLogDetail(ref Result result)
+		{
+			if (result.ParamExists("AppID", Result.ParamType.Int)
+				&& result.ParamExists("SeverityID", Result.ParamType.Int)
+                && result.ParamExists("AreaID"))
+			{
+				string sql = @"
+
+                    SELECT 
+                        Logs.LogID, 
+                        Logs.LogSeverity, 
+                        Logs.Created, 
+                        Logs.Title, 
+                        Logs.Description, 
+                        Logs.UniqueID, 
+                        Logs.AppID, 
+                        Logs.AppUniqueID, 
+                        Logs.StepID, 
+                        Logs.StepUniqueID 
+                    FROM Logs 
+					WHERE 
+					(
+						Logs.StepID IN (SELECT StepID FROM Apps_Steps WHERE Apps_Steps.StepID = Logs.StepID AND Apps_Steps.AppID = @AppID)
+					OR
+						Logs.StepUniqueID IN (SELECT UniqueID FROM Apps_Steps WHERE Apps_Steps.AppID = @AppID)
+					OR
+						Logs.AppUniqueID IN (SELECT UniqueID FROM Apps WHERE Apps.AppID = @AppID)
+					)
+					AND
+						Logs.LogSeverity = @LogSeverityID         
+";
+				result.Data = Data.Execute(Data.CreateParams(sql, sql, result.Params));
+				result.Success = true;
+
+			}
+		}
+
+		public static void AddStepToApp(ref Result result)
         { 
             string sql = @"INSERT INTO Apps_Steps (AppID, StepID) VALUES (@AppID, @StepID)";
 

@@ -95,11 +95,13 @@ app.MapPost("/api", ([FromServices] WorkflowScheduler scheduler, [FromServices]I
 					case "AddLog": Logs.Add(ref result); PushHub.SendMessage(hub, result, "New Log"); break;
 					case "GetLogs": Logs.GetLogs(ref result); break;
 					case "GetBPLConnectionString": Connections.GetBPLConnectionString(ref result); break;
+					case "GetConnections": Connections.GetConnections(ref result); break;
 
 					//Apps
 					case "GetWorkflowApps": Apps.GetWorkflowApps(ref result); break;
 					case "GetAllApps": Apps.GetAllApps(ref result); break;
                     case "GetAllAppLogs": Apps.GetAllAppLogs(ref result); break;
+					case "GetAppLogDetail": Apps.GetAppLogDetail(ref result); break;
 					case "GetAppSteps": Apps.GetAppSteps(ref result); break;
 					case "AddStepToApp": Apps.AddStepToApp(ref result); break;
                     case "RemoveStepFromApp": Apps.RemoveStepFromApp(ref result); break;

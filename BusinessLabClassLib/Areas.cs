@@ -183,7 +183,7 @@ namespace BusinessLabClassLib
             ";
 
 
-                result.Data = Data.CreateParams(sql, sqlserver, result.Params);
+                result.Data = Data.Execute(Data.CreateParams(sql, sqlserver, result.Params));
                 result.Success = true;
             }
         }

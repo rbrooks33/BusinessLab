@@ -420,6 +420,41 @@ namespace BusinessLabClassLib
 				result.Success = true;
 			}
 		}
+		public static void GetActionLogDetail(ref Result result)
+		{
+			if (result.ParamExists("ActionID", Result.ParamType.Int)
+				&& result.ParamExists("SeverityID", Result.ParamType.Int)
+				&& result.ParamExists("AreaID"))
+			{
+				string sql = @"
+
+	                SELECT 
+                        Logs.LogID, 
+                        Logs.LogSeverity, 
+                        Logs.Created, 
+                        Logs.Title, 
+                        Logs.Description, 
+                        Logs.UniqueID, 
+                        Logs.AppID, 
+                        Logs.AppUniqueID, 
+                        Logs.StepID, 
+                        Logs.StepUniqueID 
+                    FROM Logs 
+					WHERE 
+					(
+						Logs.StepID IN (SELECT StepID FROM Actions_Steps WHERE Actions_Steps.ActionID = @ActionID)
+					OR
+						Logs.StepID IN (SELECT StepID FROM Steps WHERE Steps.WorkflowID IN (SELECT WorkflowID FROM Workflows WHERE AreaID = @AreaID))
+					)
+					AND
+						Logs.LogSeverity = 1
+                ";
+				result.Data = Data.Execute(Data.CreateParams(sql, sql, result.Params));
+				result.Success = true;
+
+			}
+		}
+
 		public static void SaveAction(ref Result result)
 		{
 			if (result.ParamExists("ActionID", Result.ParamType.Int))
@@ -436,27 +471,26 @@ namespace BusinessLabClassLib
 						action.Code = action.Code.Replace("'", "''");
 
 					string sql = $@"
-                
 
+						UPDATE Actions SET 
+							ActionName = @ActionName,
+							ActionDescription = @ActionDescription,
+							Sql = @Sql,
+							Code = @Code,
+							VariableDelimiter = @VariableDelimiter,
+							UniqueID = @UniqueID,
+							EditorType = @EditorType,
+							FailActionDescription = @FailActionDescription,
+							SuccessActionDescription = @SuccessActionDescription,
+							RepeatQuantity = @RepeatQuantity,
+							RepeatIntervalSeconds = @RepeatIntervalSeconds,
+							CronSchedule = @CronSchedule,
+							CodeCMD = @CodeCMD,
+							CodePS = @CodePS
 
-                UPDATE Actions SET 
-                    ActionName = {action.ActionName ?? ""},
-                    ActionDescription = {action.ActionDescription ?? ""},
-                    Sql = {action.Sql ?? ""}, 
-                    Code = {action.Code ?? ""}, 
-                    VariableDelimiter = {action.VariableDelimiter ?? ""}, 
-                    UniqueID = {action.UniqueID ?? ""}, 
-                    EditorType = {action.EditorType ?? ""},
-                    FailActionDescription = {action.FailActionDescription ?? ""},
-                    SuccessActionDescription = {action.SuccessActionDescription ?? ""},
-                    RepeatQuantity = {action.RepeatQuantity},
-                    RepeatIntervalSeconds = {action.RepeatIntervalSeconds},
-                    CronSchedule = {action.CronSchedule ?? ""},
-                    CodeCMD = {action.CodeCMD ?? ""},
-                    CodePS = {action.CodePS ?? ""}
-
-                WHERE 
-                    ActionID = {result.GetParam("ActionID")}";
+						WHERE 
+							ActionID = @ActionID
+					";
 
 					result.Data = Data.Execute(Data.CreateParams(sql, sql, result.Params));
 					result.Success = true;
