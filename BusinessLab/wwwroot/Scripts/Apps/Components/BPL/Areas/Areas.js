@@ -80,7 +80,7 @@ Apps.Define([], function () {
 
         },
         Configuration: {
-            GetAreasActionID: 27
+            
         },
         SetWorkflows: function (parent, parentIdFieldName, parentNameFieldName, childCellId) {
 
